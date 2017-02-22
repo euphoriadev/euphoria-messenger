@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/msgRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <ru.euphoria.messenger.view.CircleImageView
+        android:id="@+id/msgAvatar"
+        android:layout_width="@dimen/avatar_chat_size"
+        android:layout_height="@dimen/avatar_chat_size"
+        android:layout_gravity="center_vertical|top"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginTop="6dp" />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/msgIndicator"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_gravity="center"
+        android:layout_marginRight="8dp"
+        android:tint="?android:textColorSecondary"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_vector_access_time" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ru.euphoria.messenger.view.BoundedLinearLayout
+            android:id="@+id/msgBubble"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:background="@drawable/message_received_shadow"
+            android:minHeight="30dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/msgBody"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center"
+                android:autoLink="all"
+                android:gravity="start|center"
+                android:linksClickable="true"
+                android:textColor="?android:textColorPrimary"
+                android:textSize="16sp" />
+
+            <LinearLayout
+                android:id="@+id/magAttachments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            </LinearLayout>
+
+        </ru.euphoria.messenger.view.BoundedLinearLayout>
+
+        <LinearLayout
+            android:layout_marginLeft="14dp"
+            android:id="@+id/msgImages"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

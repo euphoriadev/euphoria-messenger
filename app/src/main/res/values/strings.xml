@@ -1,0 +1,58 @@
+<resources>
+    <string name="app_name">Euphoria</string>
+
+    <string name="navigation_drawer_open">Drawer opened</string>
+    <string name="navigation_drawer_close">Drawer closed</string>
+
+    <!--Navigation drawer items -->
+    <string name="item_news">Новости</string>
+    <string name="item_friends">Друзья</string>
+    <string name="item_messages">Сообщения</string>
+    <string name="item_audios">Аудиозаписи</string>
+    <string name="item_gifts">Подарки</string>
+    <string name="item_videos">Видео</string>
+    <string name="item_groups">Группы</string>
+    <string name="item_docs">Документы</string>
+    <string name="item_notes">Заметки</string>
+    <string name="item_settings">Настройки</string>
+    <string name="item_exit">Выход из аккаунта</string>
+
+    <string name="auth">Авторизация</string>
+    <string name="login_with_token">Вход через токен</string>
+
+    <string name="check_connection">Ошибка! Где интернет?</string>
+    <string name="thanks">Спасибо!</string>
+    <string name="me">Я:</string>
+    <string name="hint_edit_message">Сообщение…</string>
+    <string name="delete_dialog">Удалить диалог</string>
+    <string name="delete_dialog_summary"><![CDATA[Вы уверены, что хотите удалить диалог c <b>%s</b>?\nВосстановить его будет нельзя]]></string>
+
+    <string name="subtitle_online">в сети</string>
+    <string name="subtitle_last_seen">заходил(а) %s</string>
+    <string name="subtitle_community">сообщество</string>
+    <string name="subtitle_chat">%d участников</string>
+
+    <string name="refresh">Обновить</string>
+
+    <!-- General Settings -->
+    <string name="pref_night_mode_title">Ночной режим</string>
+    <string name="pref_theme_color_title">Цветовая схема</string>
+    <string name="pref_random_theme_title">Случайная тема</string>
+    <string name="pref_icon_color_title">Цвет значка</string>
+    <string name="pref_chat_background">Фон сообщений</string>
+    <string name="pick_color">Выберите цвет</string>
+
+    <!-- Navigation Drawer Settings -->
+    <string name="pref_category_drawer">Боковое шторка</string>
+    <string name="pref_drawer_gravity_title">Расположение</string>
+    <string name="pref_header_type_title">Заголовок</string>
+    <string name="pref_header_blur_radius">Радиус размытия заголовка</string>
+
+    <!--About Settings-->
+    <string name="pref_about">О приложении</string>
+    <string name="pref_version_title">Версия</string>
+    <string name="pref_devs_title">Игорь Морозкин (<b>Разраб</b>),
+        \nВиктор Гардетский (<b>Дизайнер</b>),
+        \nАлександр Белоусов (<b>Дизайнер</b>)</string>
+
+</resources>

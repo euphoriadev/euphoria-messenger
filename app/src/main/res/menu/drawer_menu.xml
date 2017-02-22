@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/navFriends"
+            android:icon="@drawable/ic_vector_person"
+            android:title="@string/item_friends"/>
+        <item
+            android:id="@+id/navMessages"
+            android:icon="@drawable/ic_vector_question_answer"
+            android:title="@string/item_messages"/>
+        <item
+            android:id="@+id/navAudios"
+            android:icon="@drawable/ic_vector_music_note"
+            android:title="@string/item_audios"/>
+
+        <item
+            android:id="@+id/navVideos"
+            android:icon="@drawable/ic_vector_movie"
+            android:title="@string/item_videos"/>
+        <item
+            android:id="@+id/navGroups"
+            android:icon="@drawable/ic_vector_people"
+            android:title="@string/item_groups"/>
+        <item
+            android:id="@+id/navGifts"
+            android:icon="@drawable/ic_vector_gift"
+            android:title="@string/item_gifts"/>
+
+        <item
+            android:id="@+id/navDocs"
+            android:icon="@drawable/ic_vector_folder"
+            android:title="@string/item_docs"/>
+
+        <item
+            android:id="@+id/navNotes"
+            android:icon="@drawable/ic_vector_note"
+            android:title="@string/item_notes"/>
+
+    </group>
+
+
+    <group
+        android:id="@+id/navMenuOther"
+        android:checkableBehavior="none">
+
+        <item
+            android:id="@+id/navSettings"
+            android:title="@string/item_settings"/>
+        <item
+            android:id="@+id/navExit"
+            android:title="@string/item_exit"/>
+    </group>
+
+</menu>
