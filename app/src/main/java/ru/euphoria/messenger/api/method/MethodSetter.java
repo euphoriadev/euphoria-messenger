@@ -66,8 +66,9 @@ public class MethodSetter {
         StringBuilder buffer = new StringBuilder();
         try {
             for (Map.Entry<String, String> entry : params.entrySet()) {
-                if (buffer.length() != 0)
+                if (buffer.length() != 0) {
                     buffer.append("&");
+                }
 
                 buffer.append(entry.getKey())
                         .append("=")
@@ -83,7 +84,7 @@ public class MethodSetter {
         return VKApi.execute(getSignedUrl(), cls);
     }
 
-    public <E>  void execute(Class<E> cls, VKApi.OnResponseListener<E> listener) {
+    public <E> void execute(Class<E> cls, VKApi.OnResponseListener<E> listener) {
         VKApi.execute(getSignedUrl(), cls, listener);
     }
 

@@ -35,7 +35,7 @@ import ru.euphoria.messenger.util.ArrayUtil;
 public class VKApi {
     public static final String TAG = "Euphoria.VKApi";
     public static final String BASE_URL = "https://api.vk.com/method/";
-    public static final String API_VERSION = "5.44";
+    public static final String API_VERSION = "5.62";
 
     public static UserConfig config;
     public static String lang = AppGlobal.locale.getLanguage();
@@ -59,6 +59,10 @@ public class VKApi {
 
         JsonObject json = new JsonObject(buffer.toString());
         checkError(json, url);
+
+        if (cls == null) {
+            return null;
+        }
 
         if (cls == VKLongPollServer.class) {
             VKLongPollServer server = new VKLongPollServer(json.optJsonObject("response"));
@@ -152,6 +156,7 @@ public class VKApi {
 
             int code = error.optInt("error_code");
             String message = error.optString("error_msg");
+
             VKException e = new VKException(url, message, code);
             if (code == ErrorCodes.CAPTCHA_NEEDED) {
                 e.captchaImg = error.optString("captcha_img");
@@ -162,17 +167,6 @@ public class VKApi {
             }
             throw e;
         }
-    }
-
-    public static String unescape(String text) {
-        if (TextUtils.isEmpty(text)) {
-            return null;
-        }
-
-        return text.replace("&amp;", "&")
-                .replace("&quot;", "\"").replace("<br>", "\n")
-                .replace("&gt;", ">").replace("&lt;", "<")
-                .replace("<br/>", "\n").replace("&ndash;", "-").trim();
     }
 
     /** Methods for users */
@@ -194,6 +188,12 @@ public class VKApi {
     public static VKApps apps() {
         return new VKApps();
     }
+
+    /** Methods for account */
+    public static VKAccounts account() {
+        return new VKAccounts();
+    }
+
 
     public static class VKUsers {
         private VKUsers() {
@@ -470,6 +470,19 @@ public class VKApi {
          */
         public AppMethodSetter get() {
             return new AppMethodSetter("apps.get");
+        }
+    }
+
+    public static class VKAccounts {
+
+        /** Marks a current user as offline. */
+        public MethodSetter setOffline() {
+            return new MethodSetter("account.setOffline");
+        }
+
+        /** Marks the current user as online for 15 minutes. */
+        public MethodSetter setOnline() {
+            return new MethodSetter("account.setOnline");
         }
     }
 

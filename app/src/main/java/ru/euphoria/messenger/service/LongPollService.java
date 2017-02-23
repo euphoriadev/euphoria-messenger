@@ -44,7 +44,6 @@ public class LongPollService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
         return null;
     }
 
@@ -79,7 +78,7 @@ public class LongPollService extends Service {
 
                     long tsResponse = response.optLong("ts");
                     JsonArray updates = response.getJsonArray("updates");
-                    Log.i(TAG, "response = " + updates);
+                    Log.i(TAG, "updates: " + updates);
 
                     server.ts = tsResponse;
                     if (updates.length() != 0) {
@@ -110,8 +109,6 @@ public class LongPollService extends Service {
                     .userAgent(MOBILE_USER_AGENT)
                     .receive(buffer)
                     .disconnect();
-
-            Log.w(TAG, "server: " + buffer);
             return new JsonObject(buffer.toString());
         }
 

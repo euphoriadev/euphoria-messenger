@@ -228,7 +228,7 @@ public class MessagesActivity extends BaseActivity implements View.OnClickListen
                         } else {
                             insertMessages(messages);
                         }
-                        loading = false;
+                        loading = messages.isEmpty();
                     }
 
                     @Override

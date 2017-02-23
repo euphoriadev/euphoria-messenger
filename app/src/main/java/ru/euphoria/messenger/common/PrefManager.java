@@ -30,6 +30,14 @@ public class PrefManager {
         putBoolean(PREF_KEY_TRANSLUCENT_STATUS_BAR, value);
     }
 
+    public static boolean getOffline() {
+        return getBoolean(PREF_KEY_OFFLINE, true);
+    }
+
+    public static void setOffline(boolean value) {
+        putBoolean(PREF_KEY_OFFLINE, value);
+    }
+
     /**
      * Set a String value in the preferences editor and apply
      *

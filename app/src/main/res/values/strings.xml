@@ -35,12 +35,28 @@
     <string name="refresh">Обновить</string>
 
     <!-- General Settings -->
+    <string name="pref_category_general">Внешний вид</string>
     <string name="pref_night_mode_title">Ночной режим</string>
     <string name="pref_theme_color_title">Цветовая схема</string>
     <string name="pref_random_theme_title">Случайная тема</string>
     <string name="pref_icon_color_title">Цвет значка</string>
     <string name="pref_chat_background">Фон сообщений</string>
     <string name="pick_color">Выберите цвет</string>
+
+    <!--System Panels Settings -->
+    <string name="pref_category_system_panels_title">Системные панели</string>
+    <string name="pref_translucent_status_bar_title">Прозрачный статус бар</string>
+
+    <!--Invisible Mode Settings -->
+    <string name="pref_category_invisible_title">Режим невидимки</string>
+    <string name="pref_offline_title">Оффлайн</string>
+    <string name="pref_no_reading_title">Нечиталка</string>
+    <string name="pref_no_typing_title">Непизделка</string>
+
+    <!--Notifications Settings -->
+    <string name="pref_category_notifications">Уведомления</string>
+    <string name="pref_enable">Включить</string>
+    <string name="pref_led_enable">LED индикатор</string>
 
     <!-- Navigation Drawer Settings -->
     <string name="pref_category_drawer">Боковое шторка</string>

@@ -39,6 +39,7 @@ import ru.euphoria.messenger.common.ThemeManager;
 import ru.euphoria.messenger.database.DatabaseHelper;
 import ru.euphoria.messenger.database.MemoryCache;
 import ru.euphoria.messenger.service.LongPollService;
+import ru.euphoria.messenger.service.OnlineService;
 import ru.euphoria.messenger.util.AndroidUtils;
 import ru.euphoria.messenger.util.ThemeUtil;
 
@@ -95,12 +96,20 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     protected void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
+
+        if (!PrefManager.getOffline()) {
+            startService(new Intent(this, OnlineService.class));
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+
+        if (!PrefManager.getOffline()) {
+            stopService(new Intent(this, OnlineService.class));
+        }
     }
 
     @Subscribe(sticky = true)

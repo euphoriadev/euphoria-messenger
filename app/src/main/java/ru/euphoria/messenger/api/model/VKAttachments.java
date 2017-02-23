@@ -65,6 +65,7 @@ public class VKAttachments {
                 case TYPE_VIDEO: attachments.add(new VKVideo(object)); break;
                 case TYPE_DOC:   attachments.add(new VKDoc(object)); break;
                 case TYPE_STICKER:   attachments.add(new VKSticker(object)); break;
+                case TYPE_LINK:   attachments.add(new VKLink(object)); break;
             }
         }
 

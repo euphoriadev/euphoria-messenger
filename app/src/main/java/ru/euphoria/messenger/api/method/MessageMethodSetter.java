@@ -173,8 +173,8 @@ public class MessageMethodSetter extends MethodSetter {
      * Unique ID used to prevent re-sending of the same message
      * (Not necessarily)
      */
-    public MessageMethodSetter guid(int value) {
-        put("guid", value);
+    public MessageMethodSetter randomId(int value) {
+        put("random_id", value);
         return this;
     }
 

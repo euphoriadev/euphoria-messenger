@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="Внешний вид">
+    <PreferenceCategory android:title="@string/pref_category_general">
         <SwitchPreference
             android:defaultValue="false"
             android:key="night_mode"
@@ -10,7 +10,7 @@
         <SwitchPreference
             android:defaultValue="false"
             android:key="random_theme"
-            android:title="@string/pref_random_theme_title"/>
+            android:title="@string/pref_random_theme_title" />
         <Preference
             android:key="theme_color"
             android:title="@string/pref_theme_color_title" />
@@ -24,10 +24,10 @@
             android:title="@string/pref_chat_background" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Системные панели">
+    <PreferenceCategory android:title="@string/pref_category_system_panels_title">
         <SwitchPreference
             android:key="translucent_status_bar"
-            android:title="Прозрачный статус бар" />
+            android:title="@string/pref_translucent_status_bar_title" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_category_drawer">
@@ -43,19 +43,34 @@
             android:entries="@array/pref_header_type"
             android:entryValues="@array/pref_header_type_keys"
             android:key="header_type"
-            android:title="@string/pref_header_type_title"/>
+            android:title="@string/pref_header_type_title" />
 
         <ListPreference
             android:defaultValue="2"
             android:entries="@array/pref_drawer_blur_radius"
             android:entryValues="@array/pref_drawer_blur_radius_keys"
             android:key="blur_radius"
-            android:title="@string/pref_header_blur_radius"/>
+            android:title="@string/pref_header_blur_radius" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Уведомления">
-        <SwitchPreference android:title="Включить" />
-        <SwitchPreference android:title="LED индикатор" />
+    <PreferenceCategory android:title="@string/pref_category_invisible_title">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="offline"
+            android:title="@string/pref_offline_title" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="no_reading"
+            android:title="@string/pref_no_reading_title" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="no_typing"
+            android:title="@string/pref_no_typing_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_category_notifications">
+        <SwitchPreference android:title="@string/pref_enable" />
+        <SwitchPreference android:title="@string/pref_led_enable" />
     </PreferenceCategory>
 
 

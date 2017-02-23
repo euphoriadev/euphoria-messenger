@@ -1,6 +1,7 @@
 package ru.euphoria.messenger.util;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
@@ -26,6 +27,16 @@ public class AndroidUtils {
         dateFormatter = new SimpleDateFormat("HH:mm"); // 15:57
         dateMonthFormatter = new SimpleDateFormat("d MMM"); // 23 Окт
         dateYearFormatter = new SimpleDateFormat("d MMM, yyyy"); // 23 Окт, 2015
+    }
+
+    public static boolean serviceIsRunning(Class<?> serviceClass) {
+        ActivityManager am = (ActivityManager) AppGlobal.appContext.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : am.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -99,21 +110,5 @@ public class AndroidUtils {
                 cm.getActiveNetworkInfo().isConnected());
     }
 
-    /**
-     * Warning! Using this method is a sin against the gods of programming!
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> T unsafeCast(Object o) {
-        return (T) o;
-    }
-
-    public static boolean isNumber(String value) {
-        try {
-            Integer.parseInt(value);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
 
 }

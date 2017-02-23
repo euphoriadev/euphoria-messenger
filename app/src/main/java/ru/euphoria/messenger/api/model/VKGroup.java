@@ -147,5 +147,13 @@ public class VKGroup extends VKModel implements Serializable {
         }
     }
 
+    /**
+     * Community cover
+     */
+    // TODO: add support for cover
+    public class Cover {
+        public boolean enabled;
+        // ...
+    }
 
 }

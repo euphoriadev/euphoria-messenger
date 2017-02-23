@@ -60,12 +60,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".WelcomeActivity"
             android:theme="@style/AppTheme.Light.Welcome" />
-
-
         <activity android:name=".MessagesActivity" />
         <activity android:name=".LoginActivity" />
         <activity
@@ -76,7 +73,10 @@
             android:name=".service.LongPollService"
             android:enabled="true"
             android:exported="true" />
-
+        <service
+            android:name=".service.OnlineService"
+            android:enabled="true"
+            android:exported="true"/>
     </application>
 
 </manifest>

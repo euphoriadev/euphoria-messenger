@@ -28,6 +28,7 @@ import ru.euphoria.messenger.R;
 import ru.euphoria.messenger.SettingsFragment;
 import ru.euphoria.messenger.api.model.VKAudio;
 import ru.euphoria.messenger.api.model.VKDoc;
+import ru.euphoria.messenger.api.model.VKLink;
 import ru.euphoria.messenger.api.model.VKMessage;
 import ru.euphoria.messenger.api.model.VKModel;
 import ru.euphoria.messenger.api.model.VKPhoto;
@@ -120,8 +121,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             holder.body.setVisibility(View.GONE);
         } else {
             holder.body.setVisibility(View.VISIBLE);
-            holder.body.setText(item.body);
         }
+        holder.body.setText(item.body);
 
         if (item.getTag() == null || ((int) item.getTag()) == SendStatus.SENT) {
             holder.indicator.setVisibility(View.GONE);
@@ -217,9 +218,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     private void showAttachments(VKMessage item, ViewHolder holder) {
         boolean onlyImages = true;
+
         for (int i = 0; i < item.attachments.size(); i++) {
             VKModel attach = item.attachments.get(i);
-            if (!(attach instanceof VKPhoto)) {
+            boolean isPhoto = attach instanceof VKPhoto;
+            if (!isPhoto) {
                 onlyImages = false;
                 break;
             }
@@ -235,6 +238,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 inflateSticker(holder, (VKSticker) attach);
             } else if (attach instanceof VKDoc) {
                 inflateDoc(holder, (VKDoc) attach);
+            } else if (attach instanceof VKLink) {
+                inflateLink(holder, (VKLink) attach);
             }
         }
     }
@@ -271,11 +276,29 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         holder.attachments.addView(view);
     }
 
+    private void inflateLink(ViewHolder holder, VKLink link) {
+        View view = inflater.inflate(R.layout.attach_doc, holder.attachments, false);
+
+        TextView title = (TextView) view.findViewById(R.id.docTitle);
+        TextView body = (TextView) view.findViewById(R.id.docBody);
+        ImageView icon = (ImageView) view.findViewById(R.id.docIcon);
+        icon.setImageResource(R.drawable.ic_vector_link_arrow);
+
+        title.setText(link.title);
+        if (!TextUtils.isEmpty(link.description)) {
+            body.setText(link.description);
+        } else {
+            body.setText(link.caption);
+        }
+
+        holder.attachments.addView(view);
+    }
+
     private void inflateDoc(ViewHolder holder, VKDoc doc) {
         View view = inflater.inflate(R.layout.attach_doc, holder.attachments, false);
 
         TextView title = (TextView) view.findViewById(R.id.docTitle);
-        TextView size = (TextView) view.findViewById(R.id.docSize);
+        TextView size = (TextView) view.findViewById(R.id.docBody);
         ImageView background = (ImageView) view.findViewById(R.id.docCircleBackground);
         ImageView icon = (ImageView) view.findViewById(R.id.docIcon);
 
@@ -308,10 +331,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
         }
         imagePhoto.setPadding(0, (int) AndroidUtils.px(4), 0, (int) AndroidUtils.px(1));
-
         if (onlyImages && TextUtils.isEmpty(holder.body.getText())) {
             holder.bubble.setVisibility(View.GONE);
-            System.out.println("GONE");
         }
         Picasso.with(context)
                 .load(photo.photo_75)

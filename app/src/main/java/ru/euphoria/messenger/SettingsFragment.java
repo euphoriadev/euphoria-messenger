@@ -50,6 +50,10 @@ public class SettingsFragment extends PreferenceFragment
     public static final String PREF_KEY_VERSION = "version";
     public static final String PREF_KEY_GROUP = "group";
 
+    public static final String PREF_KEY_OFFLINE = "offline";
+    public static final String PREF_KEY_NO_READING = "no_reading";
+    public static final String PREF_KEY_NO_TYPING = "no_typing";
+
     private AlertDialog dialog;
     private String[] gravity;
     private String[] blurs;
@@ -68,11 +72,12 @@ public class SettingsFragment extends PreferenceFragment
         addPreferencesFromResource(R.xml.pref_activity);
 
         findPreference(PREF_KEY_NIGHT_MODE).setOnPreferenceChangeListener(this);
-        findPreference(PREF_KEY_THEME_COLOR).setOnPreferenceClickListener(this);
         findPreference(PREF_KEY_RANDOM_THEME).setOnPreferenceChangeListener(this);
         findPreference(PREF_KEY_TRANSLUCENT_STATUS_BAR).setOnPreferenceChangeListener(this);
+        findPreference(PREF_KEY_OFFLINE).setOnPreferenceChangeListener(this);
         findPreference(PREF_KEY_GROUP).setOnPreferenceClickListener(this);
         findPreference(PREF_KEY_CHAT_BACKGROUND).setOnPreferenceClickListener(this);
+        findPreference(PREF_KEY_THEME_COLOR).setOnPreferenceClickListener(this);
 
         SwitchPreference randomTheme = (SwitchPreference) findPreference(PREF_KEY_RANDOM_THEME);
         Preference themeColor = findPreference(PREF_KEY_THEME_COLOR);
@@ -276,6 +281,12 @@ public class SettingsFragment extends PreferenceFragment
                     preference.setSummary(types[1]);
                 }
                 findPreference(PREF_KEY_BLUR_RADIUS).setEnabled(newValue.equals("blur"));
+                break;
+
+            case PREF_KEY_OFFLINE:
+                if ((Boolean) newValue) {
+                    VKApi.account().setOffline().execute(null, null);
+                }
                 break;
 
         }
