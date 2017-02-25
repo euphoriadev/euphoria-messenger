@@ -79,6 +79,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         switchFragment(new DialogsFragment());
 
         startService(new Intent(this, LongPollService.class));
+
     }
 
     @Override

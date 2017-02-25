@@ -50,6 +50,9 @@ public class VKAttachments {
     /** Attachment is a Sticker. */
     public static final String TYPE_STICKER = "sticker";
 
+    /** Attachment is a Gift. */
+    public static final String TYPE_GIFT = "gift";
+
     public static ArrayList<VKModel> parse(JsonArray array) {
         ArrayList<VKModel> attachments = new ArrayList<>(array.length());
 
@@ -66,6 +69,7 @@ public class VKAttachments {
                 case TYPE_DOC:   attachments.add(new VKDoc(object)); break;
                 case TYPE_STICKER:   attachments.add(new VKSticker(object)); break;
                 case TYPE_LINK:   attachments.add(new VKLink(object)); break;
+                case TYPE_GIFT:   attachments.add(new VKGift(object)); break;
             }
         }
 

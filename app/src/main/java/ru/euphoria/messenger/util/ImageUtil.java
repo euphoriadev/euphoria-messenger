@@ -1,7 +1,11 @@
 package ru.euphoria.messenger.util;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 
 /**
  * Created by Igor on 17.02.17.
@@ -267,6 +271,28 @@ public class ImageUtil {
 
         scaled.recycle();
         return pixel;
+    }
+
+    public static Bitmap asBitmap(Drawable source) {
+        if (source instanceof ColorDrawable) {
+            Bitmap bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+            bitmap.eraseColor(((ColorDrawable) source).getColor());
+            return bitmap;
+        }
+
+        if (source instanceof BitmapDrawable) {
+            return ((BitmapDrawable) source).getBitmap();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(
+                source.getIntrinsicWidth(),
+                source.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(bitmap);
+//        source.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        source.draw(canvas);
+
+        return bitmap;
     }
 
     private static void checkBitmap(Bitmap source) {

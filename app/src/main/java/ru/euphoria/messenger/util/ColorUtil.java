@@ -13,7 +13,6 @@ import android.support.annotation.NonNull;
  * @since 1.0
  */
 public class ColorUtil {
-
     private static final int MIN_ALPHA_SEARCH_MAX_ITERATIONS = 10;
     private static final int MIN_ALPHA_SEARCH_PRECISION = 1;
 

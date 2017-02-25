@@ -10,7 +10,9 @@ import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +21,16 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 
 import ru.euphoria.messenger.R;
@@ -40,7 +49,7 @@ import ru.euphoria.messenger.util.ThemeUtil;
  * Created by Igorek on 07.02.17.
  */
 
-public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder> {
+public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder>{
     public ArrayList<VKMessage> messages;
 
     private LayoutInflater inflater;
@@ -49,10 +58,10 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
     private Calendar calendar;
     private Date currentDate;
 
+    private Comparator<VKMessage> comparator;
     private ColorDrawable placeholder;
     private OnItemClickListener listener;
     private int position;
-    private String me;
 
     private int titleColor = -1;
     private int bodyColor = -1;
@@ -60,7 +69,6 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
 
     public DialogAdapter(Context context, ArrayList<VKMessage> messages) {
         this.messages = messages;
-        this.me = context.getResources().getString(R.string.me);
 
         this.context = context;
         this.inflater = LayoutInflater.from(context);
@@ -69,6 +77,51 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
 
         this.placeholder = new ColorDrawable(
                 ThemeManager.isNightMode() ? Color.DKGRAY : Color.GRAY);
+        comparator = new Comparator<VKMessage>() {
+            @Override
+            public int compare(VKMessage o1, VKMessage o2) {
+                long x = o1.date;
+                long y = o2.date;
+
+                return (x > y) ? -1 : ((x == y) ? 1 : 0);
+            }
+        };
+
+        EventBus.getDefault().register(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessage(VKMessage message) {
+        int index = searchMessageIndex(message.user_id, message.chat_id);
+        if (index >= 0) {
+            VKMessage current = messages.get(index);
+            current.id = message.id;
+            current.body = message.body;
+            current.title = message.title;
+            current.date = message.date;
+            current.user_id = message.user_id;
+            current.chat_id = message.chat_id;
+            current.read_state = message.read_state;
+            current.is_out = message.is_out;
+            current.unread++;
+            if (current.is_out) {
+                current.unread = 0;
+            }
+
+            Collections.sort(messages, comparator);
+            notifyDataSetChanged();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onRead(Integer id) {
+        VKMessage message = searchMessage(id);
+        if (message != null) {
+            message.read_state = true;
+            message.unread = 0;
+
+            notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -95,6 +148,13 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
         holder.title.setText(getTitle(msg, user, group));
         holder.body.setText(msg.body);
         holder.date.setText(AndroidUtils.parseDate(msg.date * 1000));
+
+        if (msg.isChat() && !msg.is_out) {
+            SpannableString span = new SpannableString(user.first_name.concat(": ").concat(msg.body));
+            span.setSpan(new ForegroundColorSpan(AppGlobal.colorPrimary), 0, user.first_name.length() + 1, 0);
+
+            holder.body.setText(span);
+        }
 
         if (msg.unread > 0) {
             holder.body.setTextColor(titleColor);
@@ -148,7 +208,6 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
     public int getCurrentPosition() {
         return position;
     }
-
 
     @Override
     public int getItemCount() {
@@ -215,6 +274,36 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
         return MemoryCache.getGroup(VKGroup.toGroupId(id));
     }
 
+    public int searchMessageIndex(int userId, int chatId) {
+        for (int i = 0; i < messages.size(); i++) {
+            VKMessage msg = messages.get(i);
+            if (msg.chat_id == chatId && chatId > 0) {
+                return i;
+            }
+
+            if (msg.user_id == userId && chatId == 0) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public VKMessage searchMessage(int id) {
+        for (int i = 0; i < messages.size(); i++) {
+            VKMessage msg = messages.get(i);
+            if (msg.id == id) {
+                return msg;
+            }
+        }
+        return null;
+    }
+
+    public void destroy() {
+        EventBus.getDefault().unregister(this);
+
+        messages.clear();
+        listener = null;
+    }
 
     private Drawable getOnlineIndicator(VKUser user) {
         int resource = R.drawable.ic_vector_smartphone;

@@ -12,7 +12,7 @@ import android.graphics.RectF;
 import com.squareup.picasso.Transformation;
 
 /**
- * Created by user on 20.02.17.
+ * Created by Igor on 20.02.17.
  */
 
 public class RoundTransform implements Transformation {
@@ -24,6 +24,10 @@ public class RoundTransform implements Transformation {
 
     @Override
     public Bitmap transform(Bitmap source) {
+        if (factor == 0) {
+            return source;
+        }
+
         final int width = source.getWidth();
         final int height = source.getHeight();
         Bitmap output = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);

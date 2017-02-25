@@ -6,11 +6,9 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 
-import java.util.concurrent.TimeUnit;
-
 import ru.euphoria.messenger.api.VKApi;
 
-public class OnlineService extends Service implements Runnable{
+public class OnlineService extends Service implements Runnable {
     private Handler handler;
 
     public OnlineService() {

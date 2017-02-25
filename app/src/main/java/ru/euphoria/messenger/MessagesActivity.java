@@ -26,6 +26,9 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -103,6 +106,15 @@ public class MessagesActivity extends BaseActivity implements View.OnClickListen
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (adapter != null) {
+            adapter.destroy();
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.messages_menu, menu);
         return super.onCreateOptionsMenu(menu);
@@ -146,7 +158,7 @@ public class MessagesActivity extends BaseActivity implements View.OnClickListen
             adapter.changeItems(messages);
             adapter.notifyDataSetChanged();
         } else {
-            adapter = new MessageAdapter(this, messages, chatId);
+            adapter = new MessageAdapter(this, messages, chatId, userId);
             recyclerView.setAdapter(adapter);
             recyclerView.scrollToPosition(adapter.getItemCount() - 1);
         }
@@ -157,7 +169,8 @@ public class MessagesActivity extends BaseActivity implements View.OnClickListen
             adapter.insert(messages);
             adapter.notifyDataSetChanged();
 
-            recyclerView.scrollToPosition(layoutManager.findFirstVisibleItemPosition() + messages.size());
+            recyclerView.scrollToPosition(layoutManager.findFirstVisibleItemPosition()
+                    + messages.size());
         }
     }
 

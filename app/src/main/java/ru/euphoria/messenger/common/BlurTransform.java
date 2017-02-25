@@ -10,7 +10,7 @@ import com.squareup.picasso.Transformation;
 import ru.euphoria.messenger.util.ImageUtil;
 
 /**
- * Created by user on 10.02.17.
+ * Created by Igor on 10.02.17.
  */
 
 public class BlurTransform implements Transformation {

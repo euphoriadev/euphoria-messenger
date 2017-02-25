@@ -2,19 +2,28 @@ package ru.euphoria.messenger.service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.IBinder;
 import android.util.Log;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashMap;
 
 import ru.euphoria.messenger.api.VKApi;
 import ru.euphoria.messenger.api.model.VKLongPollServer;
+import ru.euphoria.messenger.api.model.VKMessage;
 import ru.euphoria.messenger.concurrent.LowThread;
+import ru.euphoria.messenger.database.CacheStorage;
+import ru.euphoria.messenger.database.DatabaseHelper;
 import ru.euphoria.messenger.json.JsonArray;
 import ru.euphoria.messenger.json.JsonException;
 import ru.euphoria.messenger.json.JsonObject;
 import ru.euphoria.messenger.net.HttpRequest;
 import ru.euphoria.messenger.util.AndroidUtils;
+import ru.euphoria.messenger.util.ArrayUtil;
+
+import static ru.euphoria.messenger.database.DatabaseHelper.DIALOGS_TABLE;
 
 public class LongPollService extends Service {
     public static final String MOBILE_USER_AGENT = "Mozilla/5.0 (Linux; Android 4.4; Nexus 5 Build/_BuildID_) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36";
@@ -87,7 +96,12 @@ public class LongPollService extends Service {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    break;
+                    try {
+                        Thread.sleep(5_000);
+                        server = null;
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
                 }
 
             }
@@ -112,8 +126,39 @@ public class LongPollService extends Service {
             return new JsonObject(buffer.toString());
         }
 
-        private void process(JsonArray updates) {
+        private void messageEvent(JsonArray item) {
+            VKMessage message = VKMessage.parse(item);
+            EventBus.getDefault().postSticky(message);
+        }
 
+        private void messageClearFlags(int id, int mask) {
+            if (VKMessage.isUnread(mask)) {
+                EventBus.getDefault().post(id);
+            }
+        }
+
+        private void process(JsonArray updates) {
+            if (updates.length() == 0) {
+                return;
+            }
+
+            for (int i = 0; i < updates.length(); i++) {
+                JsonArray item = updates.optJsonArray(i);
+                int type = item.optInt(0);
+
+                switch (type) {
+                    case 3:
+                        int id = item.optInt(1);
+                        int mask = item.optInt(2);
+                        messageClearFlags(id, mask);
+                        break;
+
+                    case 4:
+                        messageEvent(item);
+                        break;
+
+                }
+            }
         }
 
     }

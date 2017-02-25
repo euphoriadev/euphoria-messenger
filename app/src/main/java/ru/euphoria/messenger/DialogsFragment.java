@@ -100,6 +100,15 @@ public class DialogsFragment extends Fragment
         return rootView;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (adapter != null) {
+            adapter.destroy();
+        }
+    }
+
     public void setTitle(int count) {
         String title = getResources().getString(R.string.item_messages);
         if (count > 0) {
@@ -316,13 +325,12 @@ public class DialogsFragment extends Fragment
                         .create();
                 dialog.show();
 
-                if (TextUtils.isEmpty(app.icon_50)) {
-                    dialog.setIcon(R.mipmap.ic_launcher);
+                if (TextUtils.isEmpty(app.icon_75)) {
                     return;
                 }
 
                 Picasso.with(getActivity())
-                        .load(app.icon_50)
+                        .load(app.icon_75)
                         .into(new Target() {
                             @Override
                             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {

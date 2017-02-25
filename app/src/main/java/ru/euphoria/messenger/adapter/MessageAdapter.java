@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,10 @@ import android.widget.TextView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -28,6 +33,7 @@ import ru.euphoria.messenger.R;
 import ru.euphoria.messenger.SettingsFragment;
 import ru.euphoria.messenger.api.model.VKAudio;
 import ru.euphoria.messenger.api.model.VKDoc;
+import ru.euphoria.messenger.api.model.VKGift;
 import ru.euphoria.messenger.api.model.VKLink;
 import ru.euphoria.messenger.api.model.VKMessage;
 import ru.euphoria.messenger.api.model.VKModel;
@@ -67,16 +73,18 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     private int bubbleColor, bubbleInColor, padding;
     private int chatId;
+    private int userId;
     private boolean chatBachround;
 
     public static int getDefaultBubbleColor() {
         return ThemeManager.isNightMode() ? BUBBLE_DARK_COLOR : BUBBLE_LIGHT_COLOR;
     }
 
-    public MessageAdapter(Context context, ArrayList<VKMessage> messages, int chatId) {
+    public MessageAdapter(Context context, ArrayList<VKMessage> messages, int chatId, int userId) {
         this.context = context;
         this.messages = messages;
         this.chatId = chatId;
+        this.userId = userId;
 
         this.inflater = LayoutInflater.from(context);
         this.bubbleColor = ThemeManager.getBubbleColor();
@@ -85,6 +93,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         String path = AppGlobal.preferences.getString(SettingsFragment.PREF_KEY_CHAT_BACKGROUND, "");
         chatBachround = !TextUtils.isEmpty(path);
+
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -131,7 +141,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         }
 
         holder.avatar.setVisibility(!item.is_out && chatId > 0 ? View.VISIBLE : View.GONE);
-        if (!item.is_out && chatId > 0) {
+        if (holder.avatar.getVisibility() == View.VISIBLE) {
             VKUser user = MemoryCache.getUser(item.user_id);
             if (user == null) {
                 return;
@@ -139,6 +149,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
             Picasso.with(context)
                     .load(user.photo_50)
+                    .placeholder(new ColorDrawable(Color.TRANSPARENT))
                     .into(holder.avatar);
         }
 
@@ -160,7 +171,22 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         if (!ArrayUtil.isEmpty(item.fws_messages)) {
             showForwardedMessages(item, holder);
         }
+    }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessage(VKMessage message) {
+        if (message.is_out) {
+            return;
+        }
+
+        if (message.chat_id == chatId && message.isChat() || message.user_id == userId) {
+            messages.add(message);
+            notifyDataSetChanged();
+        }
+    }
+
+    public void destroy() {
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -233,13 +259,15 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             if (attach instanceof VKAudio) {
                 inflateAudio(holder, (VKAudio) attach);
             } else if (attach instanceof VKPhoto) {
-                inflatePhoto(holder, (VKPhoto) attach, getTintColor(item), onlyImages);
+                inflatePhoto(holder, (VKPhoto) attach, onlyImages);
             } else if (attach instanceof VKSticker) {
                 inflateSticker(holder, (VKSticker) attach);
             } else if (attach instanceof VKDoc) {
                 inflateDoc(holder, (VKDoc) attach);
             } else if (attach instanceof VKLink) {
                 inflateLink(holder, (VKLink) attach);
+            } else if (attach instanceof VKGift) {
+                inflateGift(holder, (VKGift) attach);
             }
         }
     }
@@ -257,6 +285,64 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         userMessage.setText(message.body);
 
         holder.attachments.addView(v);
+    }
+
+    private void inflateGift(ViewHolder holder, final VKGift gift) {
+//        final int width = holder.bubble.getMaxWidth() - (holder.bubble.getMaxWidth() / 3);
+//        final ImageView imageGift = new ImageView(context);
+//        imageGift.setLayoutParams(new RecyclerView.LayoutParams(
+//                giftMaxWidth,
+//                getGiftHeight(gift, giftMaxWidth))
+//        );
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+//            imageGift.setAdjustViewBounds(true);
+//        } else {
+//            imageGift.setScaleType(ImageView.ScaleType.FIT_CENTER);
+//        }
+//        DrawableCompat.setTint(holder.bubble.getBackground(), ContextCompat.getColor(context, R.color.gift_background));
+//
+//        Picasso.with(context)
+//                .load(gift.thumb_48)
+//                .placeholder(new ColorDrawable(Color.TRANSPARENT))
+//                .config(Bitmap.Config.RGB_565)
+//                .into(imageGift, new Callback.EmptyCallback() {
+//                    @Override
+//                    public void onSuccess() {
+//                        Picasso.with(context)
+//                                .load(gift.thumb_256)
+//                                .placeholder(imageGift.getDrawable())
+//                                .config(Bitmap.Config.RGB_565)
+//                                .into(imageGift);
+//                    }
+//                });
+//
+//        LinearLayout giftContainer = new LinearLayout(context);
+//        giftContainer.setOrientation(LinearLayout.HORIZONTAL);
+//        giftContainer.setGravity(Gravity.CENTER);
+//        giftContainer.setLayoutParams(new RecyclerView.LayoutParams(
+//                giftMaxWidth,
+//                ViewGroup.LayoutParams.WRAP_CONTENT
+//        ));
+//        int padding = (int) AndroidUtils.px(16);
+//
+//        ImageView ivGiftVector = new ImageView(context);
+//        ivGiftVector.setImageResource(R.drawable.ic_vector_gift);
+//        ivGiftVector.setPadding(padding, padding, padding / 2, padding);
+//        giftContainer.addView(ivGiftVector);
+//
+//        TextView tvGiftText = new TextView(context);
+//        tvGiftText.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.body.getTextSize());
+//        tvGiftText.setGravity(Gravity.CENTER);
+//        tvGiftText.setPadding(0, padding, padding, padding);
+//        if (TextUtils.isEmpty(gift.message)) {
+//            tvGiftText.setText(TextUtils.isEmpty(holder.body.getText().toString()) ? "Gift" : holder.body.getText().toString());
+//        } else {
+//            tvGiftText.setText(gift.message);
+//        }
+//        giftContainer.addView(tvGiftText);
+//
+//        holder.attachments.addView(imageGift);
+//        holder.attachments.addView(giftContainer);
     }
 
     private void inflateAudio(ViewHolder holder, VKAudio audio) {
@@ -317,76 +403,61 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         holder.attachments.addView(view);
     }
 
-    private void inflatePhoto(ViewHolder holder, final VKPhoto photo, int tintColor, boolean onlyImages) {
-        int photoMaxWidth = holder.bubble.getMaxWidth() - (holder.bubble.getMaxWidth() / 10);
-
-        final ImageView imagePhoto = new ImageView(context);
-        imagePhoto.setLayoutParams(new RecyclerView.LayoutParams(
-                photoMaxWidth,
-                getPhotoHeight(photo, photoMaxWidth)));
+    private ImageView createImageView(int width, int height) {
+        ImageView image = new ImageView(context);
+        image.setLayoutParams(new RecyclerView.LayoutParams(width, height));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            imagePhoto.setAdjustViewBounds(true);
+            image.setAdjustViewBounds(true);
         } else {
-            imagePhoto.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            image.setScaleType(ImageView.ScaleType.FIT_CENTER);
         }
-        imagePhoto.setPadding(0, (int) AndroidUtils.px(4), 0, (int) AndroidUtils.px(1));
-        if (onlyImages && TextUtils.isEmpty(holder.body.getText())) {
-            holder.bubble.setVisibility(View.GONE);
-        }
+
+        image.setPadding(0, (int) AndroidUtils.px(4), 0, (int) AndroidUtils.px(1));
+        return image;
+    }
+
+    private void loadImage(final ImageView image, String smallSrc, final String normalSrc, final boolean round) {
         Picasso.with(context)
-                .load(photo.photo_75)
+                .load(smallSrc)
                 .config(Bitmap.Config.RGB_565)
                 .placeholder(new ColorDrawable(Color.TRANSPARENT))
                 .transform(new BlurTransform(4, true))
-                .transform(new RoundTransform(0.04f))
-                .into(imagePhoto, new Callback.EmptyCallback() {
+                .transform(new RoundTransform(round ? 0.04f : 0))
+                .into(image, new Callback.EmptyCallback() {
                     @Override
                     public void onSuccess() {
                         Picasso.with(context)
-                                .load(photo.photo_604)
-                                .placeholder(imagePhoto.getDrawable())
-                                .transform(new RoundTransform(0.03f))
-                                .into(imagePhoto);
+                                .load(normalSrc)
+                                .placeholder(image.getDrawable())
+                                .transform(new RoundTransform(round ? 0.04f : 0))
+                                .into(image);
                     }
                 });
-
-        holder.images.addView(imagePhoto);
     }
 
-    private void inflateSticker(ViewHolder holder, final VKSticker sticker) {
-        holder.bubble.setMaxWidth(AppGlobal.screenWidth / 2);
-        int stickerMaxWidth = holder.bubble.getMaxWidth() - (holder.bubble.getMaxWidth() / 10);
+    private void inflatePhoto(ViewHolder holder, final VKPhoto photo, boolean onlyImages) {
+        int width = holder.bubble.getMaxWidth() - (holder.bubble.getMaxWidth() / 10);
 
-        final ImageView imageSticker = new ImageView(context);
-        imageSticker.setLayoutParams(new RecyclerView.LayoutParams(
-                stickerMaxWidth,
-                getStickerHeight(sticker, stickerMaxWidth)
-        ));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            imageSticker.setAdjustViewBounds(true);
-        } else {
-            imageSticker.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        ImageView image = createImageView(width, getPhotoHeight(photo, width));
+        loadImage(image, photo.photo_75, photo.photo_604, true);
+
+        if (onlyImages && TextUtils.isEmpty(holder.body.getText())) {
+            holder.bubble.setVisibility(View.GONE);
         }
 
-        holder.bubble.setBackgroundDrawable(null);
-        Picasso.with(context)
-                .load(sticker.photo_64)
-                .placeholder(new ColorDrawable(Color.TRANSPARENT))
-                .config(Bitmap.Config.ARGB_8888)
+        holder.images.addView(image);
+    }
 
-                .into(imageSticker, new Callback.EmptyCallback() {
-                    @Override
-                    public void onSuccess() {
-                        Picasso.with(context)
-                                .load(sticker.photo_352)
-                                .placeholder(imageSticker.getDrawable())
-                                .config(Bitmap.Config.ARGB_8888)
-                                .into(imageSticker);
-                    }
-                });
+    private void inflateSticker(ViewHolder holder, VKSticker sticker) {
+        holder.bubble.setMaxWidth(AppGlobal.screenWidth / 2);
+        holder.bubble.setBackgroundColor(Color.TRANSPARENT);
+        int width = holder.bubble.getMaxWidth() - (holder.bubble.getMaxWidth() / 10);
 
-        holder.attachments.addView(imageSticker);
+        ImageView image = createImageView(width, getStickerHeight(sticker, width));
+        loadImage(image, sticker.photo_64, sticker.photo_352, true);
+
+        holder.attachments.addView(image);
     }
 
     private int getPhotoHeight(VKPhoto photo, int layoutMaxWidth) {
@@ -402,6 +473,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     private int getStickerHeight(VKSticker sticker, int layoutMaxWidth) {
         return getHeight((float) sticker.width, (float) sticker.height, layoutMaxWidth);
+    }
+
+    private int getGiftHeight(VKGift gift, int layoutMaxWidth) {
+        return getHeight(256f, 256f, layoutMaxWidth);
     }
 
     private int getTintColor(VKMessage item) {

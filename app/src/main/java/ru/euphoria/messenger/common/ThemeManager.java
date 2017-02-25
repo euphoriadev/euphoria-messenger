@@ -3,22 +3,25 @@ package ru.euphoria.messenger.common;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import java.util.Random;
-import java.util.prefs.Preferences;
 
+import ru.euphoria.messenger.BuildConfig;
 import ru.euphoria.messenger.MainActivity;
 import ru.euphoria.messenger.R;
 import ru.euphoria.messenger.SettingsFragment;
@@ -124,7 +127,6 @@ public class ThemeManager {
         return ContextCompat.getColor(AppGlobal.appContext, id);
     }
 
-
     private static int getStyle() {
         if (currentStyle != -1) {
             return currentStyle;
@@ -172,6 +174,7 @@ public class ThemeManager {
         return AppGlobal.preferences
                 .getBoolean(SettingsFragment.PREF_KEY_NIGHT_MODE, false);
     }
+
 
     /**
      * Apply theme to activity, without {@link Activity#recreate()}

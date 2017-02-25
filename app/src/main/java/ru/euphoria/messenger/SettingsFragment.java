@@ -1,7 +1,9 @@
 package ru.euphoria.messenger;
 
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
@@ -41,6 +43,7 @@ public class SettingsFragment extends PreferenceFragment
 
     public static final String PREF_KEY_NIGHT_MODE = "night_mode";
     public static final String PREF_KEY_THEME_COLOR = "theme_color";
+    public static final String PREF_KEY_ICON_COLOR = "icon_color";
     public static final String PREF_KEY_RANDOM_THEME = "random_theme";
     public static final String PREF_KEY_CHAT_BACKGROUND = "chat_background";
     public static final String PREF_KEY_DRAWER_GRAVITY = "drawer_gravity";
@@ -78,6 +81,7 @@ public class SettingsFragment extends PreferenceFragment
         findPreference(PREF_KEY_GROUP).setOnPreferenceClickListener(this);
         findPreference(PREF_KEY_CHAT_BACKGROUND).setOnPreferenceClickListener(this);
         findPreference(PREF_KEY_THEME_COLOR).setOnPreferenceClickListener(this);
+//        findPreference(PREF_KEY_ICON_COLOR).setOnPreferenceClickListener(this);
 
         SwitchPreference randomTheme = (SwitchPreference) findPreference(PREF_KEY_RANDOM_THEME);
         Preference themeColor = findPreference(PREF_KEY_THEME_COLOR);
@@ -239,7 +243,6 @@ public class SettingsFragment extends PreferenceFragment
                 });
 
         builder.show();
-
     }
 
     @Override
@@ -299,6 +302,10 @@ public class SettingsFragment extends PreferenceFragment
             case PREF_KEY_THEME_COLOR:
                 createColorPicker();
                 break;
+
+//            case PREF_KEY_ICON_COLOR:
+//                ThemeManager.changeIconColor();
+//                break;
 
             case PREF_KEY_VERSION:
                 if (Math.round(Math.random()) % 10 == 0) {

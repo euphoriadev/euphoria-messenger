@@ -28,10 +28,10 @@ public class CacheStorage {
     }
 
     private static Cursor selectCursor(String table, String column, Object value) {
-        return CursorBuilder.create()
-                .select().all().from(table)
-                .where(column, value)
-                .cursor(database);
+        return QueryBuilder.query()
+                .select("*").from(table)
+                .where(column.concat(" = ").concat(String.valueOf(value)))
+                .asCursor(database);
     }
 
     private static Cursor selectCursor(String table, String column, int... ids) {
@@ -50,16 +50,15 @@ public class CacheStorage {
     }
 
     private static Cursor selectCursor(String table, String where) {
-        return CursorBuilder.create()
-                .select().all().from(table)
-                .where(where)
-                .cursor(database);
+        return QueryBuilder.query()
+                .select("*").from(table).where(where)
+                .asCursor(database);
     }
 
     private static Cursor selectCursor(String table) {
-        return CursorBuilder.create()
-                .select().all().from(table)
-                .cursor(database);
+        return QueryBuilder.query()
+                .select("*").from(table)
+                .asCursor(database);
     }
 
     private static int getInt(Cursor cursor, String columnName) {
@@ -156,14 +155,24 @@ public class CacheStorage {
         return messages;
     }
 
-    public static void deleteMessages(int userId, int chatId) {
+    private static String dialogWhere(int userId, int chatId) {
         String where;
         if (chatId > 0) {
             where = String.format(Locale.US, "%s = %d", CHAT_ID, chatId);
         } else {
             where = String.format(Locale.US, "%s = 0 AND %s = %d", CHAT_ID, USER_ID, userId);
         }
+        return where;
+    }
+
+    public static void deleteMessages(int userId, int chatId) {
+        String where = dialogWhere(userId, chatId);
         delete(MESSAGES_TABLE, where);
+    }
+
+    public static void deleteDialog(int userId, int chatId) {
+        String where = dialogWhere(userId, chatId);
+        delete(DIALOGS_TABLE, where);
     }
 
     public static void insert(String table, ArrayList<? extends VKModel> values) {

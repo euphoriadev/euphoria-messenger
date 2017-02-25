@@ -15,9 +15,9 @@
             android:key="theme_color"
             android:title="@string/pref_theme_color_title" />
 
-        <Preference
-            android:key="icon_color"
-            android:title="@string/pref_icon_color_title" />
+        <!--<Preference-->
+            <!--android:key="icon_color"-->
+            <!--android:title="@string/pref_icon_color_title" />-->
 
         <Preference
             android:key="chat_background"

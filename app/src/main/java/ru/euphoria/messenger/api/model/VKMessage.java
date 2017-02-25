@@ -169,7 +169,7 @@ public class VKMessage extends VKModel implements Serializable {
     }
 
     // parse from long poll (update[])
-    public static VKMessage parse(JsonArray a) throws JsonException {
+    public static VKMessage parse(JsonArray a) {
         VKMessage m = new VKMessage();
         m.id = a.optInt(1);
         m.flags = a.optInt(2);

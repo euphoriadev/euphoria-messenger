@@ -9,6 +9,7 @@
     <color name="disabled_text_color_light">#9dffffff</color>
 
     <color name="dark_window_background">#FF202020</color>
+    <color name="gift_background">#f2e7c7</color>
 
     <!--Official VK Material Colors -->
     <color name="vk_official">#5281B9</color>

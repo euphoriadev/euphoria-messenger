@@ -20,7 +20,6 @@ public abstract class VKModel {
      * @param source the json source to parse
      */
     protected VKModel(JsonObject source) {
-
     }
 
     public void setTag(Object tag) {
