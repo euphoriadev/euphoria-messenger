@@ -7,6 +7,7 @@
         <item name="appbarStyle">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
         <item name="badgeTextColor">@android:color/white</item>
         <item name="onlineColor">@android:color/white</item>
+        <item name="fwdMessageColor">?android:textColorSecondary</item>
     </style>
 
     <style name="AppTheme.Light" parent="Theme.AppCompat.Light.NoActionBar">
@@ -16,6 +17,7 @@
         <item name="appbarStyle">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
         <item name="badgeTextColor">@android:color/white</item>
         <item name="onlineColor">@android:color/white</item>
+        <item name="fwdMessageColor">?colorPrimary</item>
     </style>
 
     <style name="AppTheme.Red">

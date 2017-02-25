@@ -38,6 +38,12 @@ public class MemoryCache {
         return group;
     }
 
+    public static void update(ArrayList<VKUser> users) {
+        for (VKUser user : users) {
+            append(user);
+        }
+    }
+
     public static void append(VKGroup value) {
         groups.append(value.id, value);
     }

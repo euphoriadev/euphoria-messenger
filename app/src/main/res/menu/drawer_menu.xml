@@ -7,10 +7,10 @@
             <!--android:id="@+id/navFriends"-->
             <!--android:icon="@drawable/ic_vector_person"-->
             <!--android:title="@string/item_friends"/>-->
-        <item
-            android:id="@+id/navMessages"
-            android:icon="@drawable/ic_vector_question_answer"
-            android:title="@string/item_messages"/>
+        <!--<item-->
+            <!--android:id="@+id/navMessages"-->
+            <!--android:icon="@drawable/ic_vector_question_answer"-->
+            <!--android:title="@string/item_messages"/>-->
         <!--<item-->
             <!--android:id="@+id/navAudios"-->
             <!--android:icon="@drawable/ic_vector_music_note"-->

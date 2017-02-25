@@ -16,6 +16,8 @@ import ru.euphoria.messenger.api.model.VKModel;
 import ru.euphoria.messenger.api.model.VKPhoto;
 import ru.euphoria.messenger.api.model.VKUser;
 import ru.euphoria.messenger.common.AppGlobal;
+import ru.euphoria.messenger.util.AndroidUtils;
+import ru.euphoria.messenger.util.ArrayUtil;
 
 import static ru.euphoria.messenger.common.AppGlobal.database;
 import static ru.euphoria.messenger.database.DatabaseHelper.*;
@@ -67,6 +69,10 @@ public class CacheStorage {
 
     private static String getString(Cursor cursor, String columnName) {
         return cursor.getString(cursor.getColumnIndex(columnName));
+    }
+
+    private static byte[] getBlob(Cursor cursor, String columnName) {
+        return cursor.getBlob(cursor.getColumnIndex(columnName));
     }
 
     public static VKUser getUser(int id) {
@@ -256,6 +262,7 @@ public class CacheStorage {
         return message;
     }
 
+    @SuppressWarnings("unchecked")
     public static VKMessage parseMessage(Cursor cursor) {
         VKMessage message = new VKMessage();
         message.id = getInt(cursor, MESSAGE_ID);
@@ -266,6 +273,8 @@ public class CacheStorage {
         message.read_state = getInt(cursor, READ_STATE) == 1;
         message.is_out = getInt(cursor, IS_OUT) == 1;
         message.is_important = getInt(cursor, IMPORTANT) == 1;
+        message.attachments = (ArrayList<VKModel>) AndroidUtils.deserialize(getBlob(cursor, ATTACHMENTS));
+        message.fws_messages = (ArrayList<VKMessage>) AndroidUtils.deserialize(getBlob(cursor, FWD_MESSAGES));
         return message;
     }
 
@@ -339,6 +348,12 @@ public class CacheStorage {
             values.put(PHOTO_100, dialog.photo_100);
         } else {
             values.put(IMPORTANT, dialog.is_important);
+            if (!ArrayUtil.isEmpty(dialog.attachments)) {
+                values.put(ATTACHMENTS, AndroidUtils.serialize(dialog.attachments));
+            }
+            if (!ArrayUtil.isEmpty(dialog.fws_messages)) {
+                values.put(FWD_MESSAGES, AndroidUtils.serialize(dialog.fws_messages));
+            }
         }
 
     }

@@ -15,4 +15,5 @@
     <attr name="appbarStyle" format="reference" />
     <attr name="badgeTextColor" format="reference" />
     <attr name="onlineColor" format="reference" />
+    <attr name="fwdMessageColor" format="reference" />
 </resources>

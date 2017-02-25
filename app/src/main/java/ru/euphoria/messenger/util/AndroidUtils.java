@@ -2,12 +2,19 @@ package ru.euphoria.messenger.util;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -27,6 +34,44 @@ public class AndroidUtils {
         dateFormatter = new SimpleDateFormat("HH:mm"); // 15:57
         dateMonthFormatter = new SimpleDateFormat("d MMM"); // 23 Окт
         dateYearFormatter = new SimpleDateFormat("d MMM, yyyy"); // 23 Окт, 2015
+    }
+
+    public static void copyText(String text) {
+        ClipboardManager cm = (ClipboardManager) AppGlobal.appContext.getSystemService(Context.CLIPBOARD_SERVICE);
+        cm.setPrimaryClip(ClipData.newPlainText(null, text));
+    }
+
+    public static byte[] serialize(Object source) {
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
+            ObjectOutputStream out = new ObjectOutputStream(bos);
+
+            out.writeObject(source);
+            out.close();
+            return bos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Object deserialize(byte[] source) {
+        if (ArrayUtil.isEmpty(source)) {
+            return null;
+        }
+
+        try {
+            ByteArrayInputStream bis = new ByteArrayInputStream(source);
+            ObjectInputStream in = new ObjectInputStream(bis);
+
+            Object o = in.readObject();
+
+            in.close();
+            return o;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static boolean serviceIsRunning(Class<?> serviceClass) {

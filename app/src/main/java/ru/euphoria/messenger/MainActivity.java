@@ -77,7 +77,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         initDrawer();
         switchFragment(new DialogsFragment());
-
         startService(new Intent(this, LongPollService.class));
 
     }
@@ -188,7 +187,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         toggle.syncState();
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setCheckedItem(R.id.navMessages);
+//        navigationView.setCheckedItem(R.id.navMessages);
         navigationView.setNavigationItemSelectedListener(this);
 
         changeDrawerGravity();

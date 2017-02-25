@@ -1,11 +1,13 @@
 package ru.euphoria.messenger.api.model;
 
+import java.io.Serializable;
+
 import ru.euphoria.messenger.json.JsonObject;
 
 /**
  * Base object model for VK.
  */
-public abstract class VKModel {
+public abstract class VKModel implements Serializable {
     private Object tag;
 
     /**

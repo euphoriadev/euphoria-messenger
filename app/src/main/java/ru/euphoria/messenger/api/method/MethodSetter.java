@@ -3,6 +3,8 @@ package ru.euphoria.messenger.api.method;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -104,6 +106,10 @@ public class MethodSetter {
 
     public MethodSetter userIds(int... ids) {
         return put("user_ids", ArrayUtil.toString(ids));
+    }
+
+    public MethodSetter userIds(Collection<Integer> ids) {
+        return put("user_ids", ArrayUtil.toString(ids.toArray()));
     }
 
     /** ID of the user or community, e.g. audios.get */

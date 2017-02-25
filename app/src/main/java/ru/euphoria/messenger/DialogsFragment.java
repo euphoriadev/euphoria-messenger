@@ -137,6 +137,7 @@ public class DialogsFragment extends Fragment
         intent.putExtra("members_count", item.isChat() ? item.users_count : -1);
 
         startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.side_left, R.anim.alpha_in);
     }
 
     @Override

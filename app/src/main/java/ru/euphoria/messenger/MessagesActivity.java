@@ -2,13 +2,10 @@ package ru.euphoria.messenger;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -24,23 +21,22 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Locale;
 
 import ru.euphoria.messenger.adapter.MessageAdapter;
 import ru.euphoria.messenger.api.VKApi;
+import ru.euphoria.messenger.api.model.VKGroup;
 import ru.euphoria.messenger.api.model.VKMessage;
 import ru.euphoria.messenger.api.model.VKUser;
 import ru.euphoria.messenger.common.AppGlobal;
 import ru.euphoria.messenger.common.BlurTransform;
 import ru.euphoria.messenger.common.ThemeManager;
+import ru.euphoria.messenger.concurrent.ThreadExecutor;
 import ru.euphoria.messenger.database.CacheStorage;
 import ru.euphoria.messenger.database.DatabaseHelper;
 import ru.euphoria.messenger.database.MemoryCache;
@@ -143,6 +139,13 @@ public class MessagesActivity extends BaseActivity implements View.OnClickListen
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        overridePendingTransition(0, R.anim.side_right);
+    }
+
     private void getIntentData() {
         Intent intent = getIntent();
 
@@ -224,6 +227,39 @@ public class MessagesActivity extends BaseActivity implements View.OnClickListen
         }
     }
 
+    private void getUserIds(HashSet<Integer> ids, ArrayList<VKMessage> messages) {
+        for (VKMessage msg : messages) {
+            if (!VKGroup.isGroupId(msg.user_id)) {
+                ids.add(msg.user_id);
+            }
+
+            if (!ArrayUtil.isEmpty(msg.fws_messages)) {
+                getUserIds(ids, msg.fws_messages);
+            }
+        }
+    }
+
+    private void getUsers(ArrayList<VKMessage> messages) {
+        final HashSet<Integer> ids = new HashSet<>();
+        getUserIds(ids, messages);
+
+        ThreadExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<VKUser> users = VKApi.users().get()
+                        .userIds(ids)
+                        .fields(VKUser.DEFAULT_FIELDS)
+                        .tryExecute(VKUser.class);
+
+                if (ArrayUtil.isEmpty(users)) {
+                    return;
+                }
+                CacheStorage.insert(DatabaseHelper.USERS_TABLE, users);
+                MemoryCache.update(users);
+            }
+        });
+    }
+
     private void getMessages(final int offset) {
         loading = true;
         VKApi.messages().getHistory()
@@ -242,6 +278,9 @@ public class MessagesActivity extends BaseActivity implements View.OnClickListen
                             insertMessages(messages);
                         }
                         loading = messages.isEmpty();
+                        if (!messages.isEmpty()) {
+                            getUsers(messages);
+                        }
                     }
 
                     @Override

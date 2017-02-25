@@ -52,6 +52,8 @@ public class AppGlobal extends Application {
 
         screenWidth = AndroidUtils.getDisplayWidth(this);
         screenHeight = AndroidUtils.getDisplayHeight(this);
+
+        CrashManager.init();
     }
 
 }

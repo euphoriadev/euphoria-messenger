@@ -12,7 +12,7 @@ import ru.euphoria.messenger.common.AppGlobal;
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String LOG_TAG = "Euphoria.Database";
 
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
     private static final String DATABASE_NAME = "cache.db";
 
     /** Tables */
@@ -48,6 +48,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String INCOMING_COUNT = "incoming_count";
     public static final String OUTGOING_COUNT = "outgoing_count";
     public static final String IMPORTANT = "important";
+    public static final String ATTACHMENTS = "attachments";
+    public static final String FWD_MESSAGES = "fwd_messages";
     public static final String USERS_COUNT = "users_count";
     public static final String IS_OUT = "is_out";
     public static final String READ_STATE = "read_state";
@@ -141,7 +143,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             " [" + DATE + "] INTEGER, " +
             " [" + READ_STATE + "] INTEGER, " +
             " [" + IS_OUT + "] INTEGER, " +
-            " [" + IMPORTANT + "] INTEGER" +
+            " [" + IMPORTANT + "] INTEGER, " +
+            " [" + ATTACHMENTS + "] BLOB, " +
+            " [" + FWD_MESSAGES + "] BLOB" +
             ");";
 
 
