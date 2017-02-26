@@ -83,43 +83,6 @@ public class EasyStreams {
     }
 
     /**
-     * Reads the first line from specified {@link InputStream},
-     * with using UTF-8 Charset.
-     *
-     * @param from     the reader object to read from
-     * @throws IOException IOException if an I/O error occurs reading from the source
-     */
-    public static String readFirstLine(InputStream from) throws IOException {
-        return read(new InputStreamReader(from, UTF_8));
-    }
-
-    /**
-     * Reads the first line from specified {@link InputStream}.
-     *
-     * @param from     the reader object to read from
-     * @param encoding the encoding to convert byte into char
-     * @throws IOException IOException if an I/O error occurs reading from the source
-     */
-    public static String readFirstLine(InputStream from, Charset encoding) throws IOException {
-        return read(new InputStreamReader(from, encoding));
-    }
-
-    /**
-     * Reads the first line from specified {@link Reader}.
-     *
-     * @param from the reader object to read from
-     * @throws IOException IOException if an I/O error occurs reading from the source
-     */
-    public static String readFirstLine(Reader from) throws IOException {
-        try {
-            BufferedReader reader = buffer(from);
-            return reader.readLine();
-        } finally {
-            close(from);
-        }
-    }
-
-    /**
      * Read all bytes from specified {@link InputStream} into a byte array.
      *
      * @param from the input stream object to read from
@@ -133,64 +96,6 @@ public class EasyStreams {
             close(from);
         }
         return output.toByteArray();
-    }
-
-    /**
-     * Read all characters from specified {@link InputStream} into a char array,
-     * With using UTF-8 Charset.
-     *
-     * @param from the input stream object to read from
-     * @throws IOException if an I/O error occurs reading from the stream
-     */
-    public static char[] readChars(InputStream from) throws IOException {
-        return readChars(from, UTF_8);
-    }
-
-    /**
-     * Read all characters from specified {@link InputStream} into a char array.
-     *
-     * @param from     the input stream object to read from
-     * @param encoding the encoding to convert byte into char
-     * @throws IOException if an I/O error occurs reading from the stream
-     */
-    public static char[] readChars(InputStream from, Charset encoding) throws IOException {
-        return readChars(new InputStreamReader(from, encoding));
-    }
-
-    /**
-     * Read all characters from specified {@link Reader} into a char array.
-     *
-     * @param from the input stream object to read from
-     * @throws IOException if an I/O error occurs reading from the stream
-     */
-    public static char[] readChars(Reader from) throws IOException {
-        CharArrayWriter output = new CharArrayWriter(CHAR_BUFFER_SIZE);
-        try {
-            copy(from, output);
-            return output.toCharArray();
-        } finally {
-            close(from);
-        }
-    }
-
-    /**
-     * Reads all characters separated by lines from specified {@link InputStream}
-     *
-     * @param from the input stream object to read from
-     * @throws IOException if an I/O error occurs reading from the stream
-     */
-    public static String[] readLines(InputStream from) throws IOException {
-        return read(from).split(lineSeparator());
-    }
-
-    /**
-     * Reads all characters separated by lines from specified {@link Reader}
-     *
-     * @param from the reader object to read from
-     * @throws IOException if an I/O error occurs reading from the stream
-     */
-    public static String[] readLines(Reader from) throws IOException {
-        return read(from).split(lineSeparator());
     }
 
     /**
@@ -291,48 +196,6 @@ public class EasyStreams {
             to.write(buffer, 0, read);
             total += read;
         }
-        return total;
-    }
-
-    /**
-     * Returns the total number of bytes read. Reads and discards data
-     * from specified {@link InputStream} until the end of the stream is reached.
-     *
-     * Don't recommend for longer data streams, e.g. 2GB > file.
-     *
-     * @param input the input stream to read
-     * @throws IOException if an I/O error occurs
-     */
-    public static long exhaust(InputStream input) throws IOException {
-        byte[] buffer = new byte[BUFFER_SIZE];
-        int read;
-        long total = 0;
-
-        while ((read = input.read(buffer)) != -1) {
-            total += read;
-        }
-        close(input);
-        return total;
-    }
-
-    /**
-     * Returns the total number of bytes read. Reads and discards chars
-     * from specified {@link Reader} until the end of the reader is reached.
-     *
-     * Don't recommend for longer data streams, e.g. 2GB > file.
-     *
-     * @param input the input reader to read
-     * @throws IOException if an I/O error occurs
-     */
-    public static long exhaust(Reader input) throws IOException {
-        char[] buffer = new char[CHAR_BUFFER_SIZE];
-        int read;
-        long total = 0;
-
-        while ((read = input.read(buffer)) != -1) {
-            total += read;
-        }
-        close(input);
         return total;
     }
 
@@ -478,42 +341,6 @@ public class EasyStreams {
         if (c != null) {
             try {
                 c.close();
-                return true;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Closes the specified {@link URLConnection} object without throws {@link Exception}.
-     *
-     * @param c the object to close, may me null or already closed
-     * @return true if object is closed, false otherwise
-     */
-    public static boolean close(URLConnection c) {
-        if (c != null && c instanceof HttpURLConnection) {
-            try {
-                ((HttpURLConnection) c).disconnect();
-                return true;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Flushes the specified {@link Flushable} object without throws {@link Exception}.
-     *
-     * @param f the object to flush, may me null or already closed
-     * @return true if object is flushes, false otherwise
-     */
-    public static boolean flush(Flushable f) {
-        if (f != null) {
-            try {
-                f.flush();
                 return true;
             } catch (IOException e) {
                 e.printStackTrace();

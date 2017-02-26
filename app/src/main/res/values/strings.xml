@@ -50,8 +50,8 @@
     <!--Invisible Mode Settings -->
     <string name="pref_category_invisible_title">Режим невидимки</string>
     <string name="pref_offline_title">Оффлайн</string>
-    <string name="pref_no_reading_title">Нечиталка</string>
-    <string name="pref_no_typing_title">Непизделка</string>
+    <string name="pref_no_reading_title">Не читать сообщения</string>
+    <string name="pref_no_typing_title">Отключить статус тайпинга</string>
 
     <!--Notifications Settings -->
     <string name="pref_category_notifications">Уведомления</string>

@@ -45,19 +45,14 @@ public class VKApi {
         if (BuildConfig.DEBUG) {
             Log.w(TAG, "url: " + url);
         }
-        StringBuilder buffer = new StringBuilder();
 
-        HttpRequest.get(url)
-                .acceptGzipEncoding()
-                .uncompress(true)
-                .receive(buffer)
-                .disconnect();
+        String buffer = HttpRequest.get(url).asString();
 
         if (BuildConfig.DEBUG) {
-            Log.i(TAG, "json: " + buffer.toString());
+            Log.i(TAG, "json: " + buffer);
         }
 
-        JsonObject json = new JsonObject(buffer.toString());
+        JsonObject json = new JsonObject(buffer);
         checkError(json, url);
 
         if (cls == null) {

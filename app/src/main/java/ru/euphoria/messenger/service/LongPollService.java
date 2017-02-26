@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.IBinder;
+import android.support.v4.util.ArrayMap;
 import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
@@ -107,23 +108,17 @@ public class LongPollService extends Service {
             }
         }
 
-        public JsonObject getResponse(VKLongPollServer server) throws JsonException {
-            StringBuilder buffer = new StringBuilder();
+        public JsonObject getResponse(VKLongPollServer server) throws Exception {
 
-            HashMap<String, String> params = new HashMap<>();
+            ArrayMap<String, String> params = new ArrayMap<>();
             params.put("act", "a_check");
             params.put("key", server.key);
             params.put("ts", String.valueOf(server.ts));
             params.put("wait", "25");
             params.put("mode", "2");;
 
-            HttpRequest.get("https://" + server.server, params, false)
-                    .acceptGzipEncoding()
-                    .uncompress(true)
-                    .userAgent(MOBILE_USER_AGENT)
-                    .receive(buffer)
-                    .disconnect();
-            return new JsonObject(buffer.toString());
+            String buffer = HttpRequest.get("https://" + server.server, params).asString();
+            return new JsonObject(buffer);
         }
 
         private void messageEvent(JsonArray item) {

@@ -73,35 +73,6 @@ public class FileStreams {
         return EasyStreams.read(reader(from));
     }
 
-    /**
-     * Reads all characters from specified file
-     *
-     * @param from the file to read from
-     * @throws IOException if an I/O error occurs reading from the stream
-     */
-    public static char[] readChars(File from) throws IOException {
-        return EasyStreams.readChars(reader(from));
-    }
-
-    /**
-     * Read all bytes from specified file.
-     *
-     * @param from the file to read from
-     * @throws IOException if an I/O error occurs reading from the stream
-     */
-    public static byte[] readBytes(File from) throws IOException {
-        return EasyStreams.readBytes(new FileInputStream(from));
-    }
-
-    /**
-     * Reads all characters separated by lines from specified {@link File}
-     *
-     * @param from the file to read from
-     * @throws IOException if an I/O error occurs reading from the stream
-     */
-    public static String[] readLines(File from) throws IOException {
-        return read(from).split(lineSeparator());
-    }
 
     /**
      * Writes text data into specified file.
@@ -158,38 +129,6 @@ public class FileStreams {
         EasyStreams.write(from instanceof String
                 ? ((String) from)
                 : from.toString(), new FileWriter(to, true));
-    }
-
-    /**
-     * Copies all bytes data from one file to another
-     *
-     * @param from the source file to read from
-     * @param to   the destination file to write
-     * @throws IOException if an I/O error occurs
-     */
-    public static void copy(File from, File to) throws IOException {
-        write(readBytes(from), to);
-    }
-
-    /**
-     * Moves a file from one path to another. This method try to rename the file.
-     * In case of failure copies a file from one path to another
-     * with the subsequent deleting of the one.
-     *
-     * @param from the source file to read from
-     * @param to   the destination file to write
-     * @throws IOException if an I/O error occurs
-     */
-    public static void move(File from, File to) throws IOException {
-        boolean success = from.renameTo(to);
-        if (!success) {
-            // can't rename file. try to copy
-            copy(from, to);
-            // copy was successful
-            if (!from.delete()) {
-                throw new IOException("Unable to delete file: " + to);
-            }
-        }
     }
 
     /**
