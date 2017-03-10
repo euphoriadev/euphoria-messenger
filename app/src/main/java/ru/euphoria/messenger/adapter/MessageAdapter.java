@@ -1,16 +1,19 @@
 package ru.euphoria.messenger.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -29,8 +33,10 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import ru.euphoria.messenger.ImageViewActivity;
 import ru.euphoria.messenger.R;
 import ru.euphoria.messenger.SettingsFragment;
+import ru.euphoria.messenger.api.VKApi;
 import ru.euphoria.messenger.api.model.VKAudio;
 import ru.euphoria.messenger.api.model.VKDoc;
 import ru.euphoria.messenger.api.model.VKGift;
@@ -74,7 +80,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     private int bubbleColor, bubbleInColor, padding;
     private int chatId;
     private int userId;
-    private boolean chatBachround;
+    private boolean chatBg;
 
     public static int getDefaultBubbleColor() {
         return ThemeManager.isNightMode() ? BUBBLE_DARK_COLOR : BUBBLE_LIGHT_COLOR;
@@ -92,7 +98,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         this.padding = (int) AndroidUtils.px(64);
 
         String path = AppGlobal.preferences.getString(SettingsFragment.PREF_KEY_CHAT_BACKGROUND, "");
-        chatBachround = !TextUtils.isEmpty(path);
+        chatBg = !TextUtils.isEmpty(path);
 
         EventBus.getDefault().register(this);
     }
@@ -108,12 +114,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         if (holder.isFooter()) {
             return;
         }
 
-        VKMessage item = messages.get(position);
+        final VKMessage item = messages.get(position);
 
         holder.root.setGravity(item.is_out ? Gravity.END : Gravity.START);
 
@@ -147,6 +153,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 return;
             }
 
+            onAvatarClick(holder.avatar, user);
             Picasso.with(context)
                     .load(user.photo_50)
                     .placeholder(new ColorDrawable(Color.TRANSPARENT))
@@ -171,10 +178,17 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         if (!ArrayUtil.isEmpty(item.fws_messages)) {
             showForwardedMessages(item, holder);
         }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onMessageClick(holder, MemoryCache.getUser(item.user_id), item);
+            }
+        });
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessage(VKMessage message) {
+    public void onNewMessage(VKMessage message) {
         if (message.is_out) {
             return;
         }
@@ -234,6 +248,53 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 return;
             }
         }
+    }
+
+    private void onMessageClick(final ViewHolder holder, VKUser user, final VKMessage item) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(user + " - Сообщение");
+
+        builder.setItems(context.getResources().getStringArray(R.array.message_options),
+                new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        AndroidUtils.copyText(holder.body.getText().toString());
+                        break;
+
+                    case 1:
+                        VKApi.messages()
+                                .markAsImportant()
+                                .messageIds(item.id)
+                                .important(!item.is_important)
+                                .execute(null, null);
+                        break;
+
+                    case 2:
+                        VKApi.messages()
+                                .delete()
+                                .messageIds(item.id)
+                                .execute(null, null);
+                        break;
+                }
+            }
+        });
+
+        builder.show();
+    }
+
+
+    private void onAvatarClick(ImageView avatar, final VKUser user) {
+        avatar.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast toast = Toast.makeText(context, user.toString(), Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+                return true;
+            }
+        });
     }
 
     private void showForwardedMessages(VKMessage item, ViewHolder holder) {
@@ -380,7 +441,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         holder.attachments.addView(view);
     }
 
-    private void inflateDoc(ViewHolder holder, VKDoc doc) {
+    private void inflateDoc(ViewHolder holder, final VKDoc doc) {
         View view = inflater.inflate(R.layout.attach_doc, holder.attachments, false);
 
         TextView title = (TextView) view.findViewById(R.id.docTitle);
@@ -400,6 +461,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         } else {
             icon.setVisibility(View.VISIBLE);
         }
+
         holder.attachments.addView(view);
     }
 
@@ -439,12 +501,21 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     private void inflatePhoto(ViewHolder holder, final VKPhoto photo, boolean onlyImages) {
         int width = holder.bubble.getMaxWidth() - (holder.bubble.getMaxWidth() / 10);
 
-        ImageView image = createImageView(width, getPhotoHeight(photo, width));
+        final ImageView image = createImageView(width, getPhotoHeight(photo, width));
         loadImage(image, photo.photo_75, photo.photo_604, true);
 
         if (onlyImages && TextUtils.isEmpty(holder.body.getText())) {
             holder.bubble.setVisibility(View.GONE);
         }
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ImageViewActivity.class);
+                intent.putExtra("photo", photo);
+                intent.putExtra("bitmap", AndroidUtils.serializeImage(((BitmapDrawable) image.getDrawable()).getBitmap()));
+                context.startActivity(intent);
+            }
+        });
 
         holder.images.addView(image);
     }
@@ -481,7 +552,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     private int getTintColor(VKMessage item) {
         int tintColor = item.is_out ? bubbleColor : bubbleInColor;
-        if (chatBachround) {
+        if (chatBg) {
             tintColor = ColorUtil.alphaColor(tintColor, 0.8f);
         }
         return tintColor;

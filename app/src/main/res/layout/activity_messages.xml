@@ -55,7 +55,7 @@
             app:elevation="4dp"
             app:fabSize="mini"
             app:pressedTranslationZ="6dp"
-            app:srcCompat="@drawable/ic_vector_keyboard_arrow_right" />
+            app:srcCompat="@drawable/ic_vector_plus" />
     </LinearLayout>
 
 

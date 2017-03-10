@@ -81,7 +81,7 @@
             android:title="@string/pref_version_title" />
         <Preference
             android:summary="@string/pref_devs_title"
-            android:title="Авторы" />
+            android:title="@string/pref_authors_title" />
 
         <Preference
             android:key="group"

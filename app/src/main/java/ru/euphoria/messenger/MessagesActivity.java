@@ -12,7 +12,9 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,7 +49,8 @@ import ru.euphoria.messenger.util.ArrayUtil;
  * Created by Igor on 13.02.17.
  */
 
-public class MessagesActivity extends BaseActivity implements View.OnClickListener {
+public class MessagesActivity extends BaseActivity
+        implements View.OnClickListener, TextWatcher {
     private RecyclerView recyclerView;
     private EditText editMessage;
     private FloatingActionButton fabSend;
@@ -89,6 +92,7 @@ public class MessagesActivity extends BaseActivity implements View.OnClickListen
         fabSend.setOnClickListener(this);
 
         editMessage = (EditText) findViewById(R.id.editMessage);
+        editMessage.addTextChangedListener(this);
         DrawableCompat.setTint(editMessage.getBackground(), MessageAdapter.getDefaultBubbleColor());
 
         getCachedMessages();
@@ -142,8 +146,27 @@ public class MessagesActivity extends BaseActivity implements View.OnClickListen
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
         overridePendingTransition(0, R.anim.side_right);
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+        if (s.length() == 0) {
+            // show microphone to send audio messages
+            fabSend.setImageResource(R.drawable.ic_vector_plus);
+        } else {
+            fabSend.setImageResource(R.drawable.ic_vector_keyboard_arrow_right);
+        }
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+
     }
 
     private void getIntentData() {

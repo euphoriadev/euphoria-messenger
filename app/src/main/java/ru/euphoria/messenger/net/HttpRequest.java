@@ -61,9 +61,7 @@ public class HttpRequest {
      * @throws IOException if an I/O error occurs reading from the stream
      */
     public String asString() throws IOException {
-        connection = createConnection();
-        InputStream input = getStream(connection);
-
+        InputStream input = getStream();
         String content = EasyStreams.read(input);
 
         connection.disconnect();
@@ -76,24 +74,25 @@ public class HttpRequest {
      * @throws IOException if an I/O error occurs reading from the stream
      */
     public byte[] asBytes() throws IOException {
-        connection = createConnection();
-        InputStream input = getStream(connection);
-
+        InputStream input = getStream();
         byte[] content = EasyStreams.readBytes(input);
 
         connection.disconnect();
         return content;
     }
 
+
     /**
      * Returns an input stream that reads from this open connection.
      * And wraps connection into {@link GZIPInputStream}
      * if "content-encoding" is "gzip"
      *
-     * @param connection the connection to get stream
      * @throws IOException if an I/O error occurs reading from the connection stream
      */
-    private InputStream getStream(HttpURLConnection connection) throws IOException {
+    public InputStream getStream() throws IOException {
+        if (connection == null) {
+            connection = createConnection();
+        }
         InputStream input = connection.getInputStream();
 
         String encoding = connection.getHeaderField("Content-Encoding");

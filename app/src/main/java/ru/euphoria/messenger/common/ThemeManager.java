@@ -247,13 +247,10 @@ public class ThemeManager {
         ((ViewGroup) decorView).addView(view);
     }
 
-    public static void changeStatusBarColor(Activity activity, boolean animate) {
+    public static void changeStatusBarColor(Activity activity, int color, boolean animate) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             return;
         }
-        int color = PrefManager.getTranslucentStatusBar() ?
-                getThemeColorDark(activity)
-                : Color.BLACK;
 
         if (animate) {
             tintSystemBar(activity, color);
@@ -272,6 +269,14 @@ public class ThemeManager {
         }
     }
 
+    public static void changeStatusBarColor(Activity activity, boolean animate) {
+        int color = PrefManager.getTranslucentStatusBar() ?
+                getThemeColorDark(activity)
+                : Color.BLACK;
+
+        changeStatusBarColor(activity, color, animate);
+    }
+
     private static int getStatusBarColor(Activity activity) {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? activity.getWindow().getStatusBarColor() : getThemeColor(activity);
     }
@@ -284,9 +289,6 @@ public class ThemeManager {
         // Initial colors of each system bar.
         final int statusBarColor = getStatusBarColor(activity);
 
-        // Desired final colors of each bar.
-        final int statusBarToColor = color;
-
         ValueAnimator anim = ValueAnimator.ofFloat(0, 1);
         anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -295,7 +297,7 @@ public class ThemeManager {
                 float position = animation.getAnimatedFraction();
 
                 // Apply blended color to the status bar.
-                int blended = blendColors(statusBarColor, statusBarToColor, position);
+                int blended = blendColors(statusBarColor, color, position);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     activity.getWindow().setStatusBarColor(blended);
                 } else {
@@ -335,9 +337,9 @@ public class ThemeManager {
     private static int blendColors(int from, int to, float ratio) {
         final float inverseRatio = 1f - ratio;
 
-        final float r = Color.red(to) * ratio + Color.red(from) * inverseRatio;
-        final float g = Color.green(to) * ratio + Color.green(from) * inverseRatio;
-        final float b = Color.blue(to) * ratio + Color.blue(from) * inverseRatio;
+        float r = Color.red(to) * ratio + Color.red(from) * inverseRatio;
+        float g = Color.green(to) * ratio + Color.green(from) * inverseRatio;
+        float b = Color.blue(to) * ratio + Color.blue(from) * inverseRatio;
 
         return Color.rgb((int) r, (int) g, (int) b);
     }

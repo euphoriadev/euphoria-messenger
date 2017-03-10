@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.1"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         applicationId 'ru.euphoria.messenger'
         minSdkVersion 14
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 20
         versionName "2.0"
 
@@ -42,12 +42,9 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
 
-    // Google Cloud Messaging
-//    compile 'com.google.android.gms:play-services-gcm:8.3.0'
-
     // Google Support
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'com.android.support:design:24.2.1'
+    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support:design:25.0.0'
 
     // Square's Image Loader
     compile 'com.squareup.picasso:picasso:2.5.2'

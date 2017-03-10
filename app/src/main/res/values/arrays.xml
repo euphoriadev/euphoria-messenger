@@ -10,6 +10,12 @@
         <item>Удалить диалог</item>
     </string-array>
 
+    <string-array name="message_options">
+        <item>Скопировать текст</item>
+        <item>Пометить как важное</item>
+        <item>Удалить</item>
+    </string-array>
+
     <string-array name="chat_background_options">
         <item>Изменить</item>
         <item>Удалить</item>
@@ -42,10 +48,12 @@
     <string-array name="pref_header_type">
         <item>Сплошной фон</item>
         <item>Рзамытый аватар</item>
+        <item>Изображение</item>
     </string-array>
 
     <string-array name="pref_header_type_keys">
         <item>solid</item>
         <item>blur</item>
+        <item>wallpaper</item>
     </string-array>
 </resources>

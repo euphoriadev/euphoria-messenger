@@ -24,6 +24,9 @@ public class BlurTransform implements Transformation {
 
     @Override
     public Bitmap transform(Bitmap source) {
+        if (radius <= 0) {
+            return source;
+        }
         Bitmap copy = source.copy(Bitmap.Config.ARGB_8888, true);
         if (copy != source) {
             source.recycle();

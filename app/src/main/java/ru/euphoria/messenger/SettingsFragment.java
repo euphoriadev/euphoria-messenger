@@ -1,9 +1,7 @@
 package ru.euphoria.messenger;
 
-import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
@@ -26,7 +24,6 @@ import java.util.HashSet;
 
 import ru.euphoria.messenger.api.VKApi;
 import ru.euphoria.messenger.common.AppGlobal;
-import ru.euphoria.messenger.common.PrefManager;
 import ru.euphoria.messenger.common.ThemeManager;
 import ru.euphoria.messenger.util.AndroidUtils;
 import ru.euphoria.messenger.view.ColorPickerPalette;
@@ -40,6 +37,8 @@ import static android.app.Activity.RESULT_OK;
 public class SettingsFragment extends PreferenceFragment
         implements Preference.OnPreferenceChangeListener,
         Preference.OnPreferenceClickListener {
+    private static final int REQUEST_CODE_HEADER = 100;
+    private static final int REQUEST_CODE_CHAT = 200;
 
     public static final String PREF_KEY_NIGHT_MODE = "night_mode";
     public static final String PREF_KEY_THEME_COLOR = "theme_color";
@@ -48,6 +47,7 @@ public class SettingsFragment extends PreferenceFragment
     public static final String PREF_KEY_CHAT_BACKGROUND = "chat_background";
     public static final String PREF_KEY_DRAWER_GRAVITY = "drawer_gravity";
     public static final String PREF_KEY_HEADER_TYPE = "header_type";
+    public static final String PREF_KEY_HEADER_BACKGROUND = "header_background";
     public static final String PREF_KEY_BLUR_RADIUS = "blur_radius";
     public static final String PREF_KEY_TRANSLUCENT_STATUS_BAR = "translucent_status_bar";
     public static final String PREF_KEY_VERSION = "version";
@@ -97,15 +97,15 @@ public class SettingsFragment extends PreferenceFragment
 
         ListPreference headerType = (ListPreference) findPreference(PREF_KEY_HEADER_TYPE);
         headerType.setOnPreferenceChangeListener(this);
-        if (headerType.getValue().equals("solid")) {
-            headerType.setSummary(types[0]);
-        } else {
-            headerType.setSummary(types[1]);
+        switch (headerType.getValue()) {
+            case "solid": headerType.setSummary(types[0]); break;
+            case "blur": headerType.setSummary(types[1]); break;
+            case "wallpaper": headerType.setSummary(types[2]); break;
         }
 
         ListPreference blurRadius = (ListPreference) findPreference(PREF_KEY_BLUR_RADIUS);
         blurRadius.setSummary(blurs[Integer.parseInt(blurRadius.getValue())]);
-        blurRadius.setEnabled(headerType.getValue().equals("blur"));
+        blurRadius.setEnabled(!headerType.getValue().equals("blur"));
         blurRadius.setOnPreferenceChangeListener(this);
 
         Preference version = findPreference(PREF_KEY_VERSION);
@@ -130,8 +130,14 @@ public class SettingsFragment extends PreferenceFragment
             String filePath = cursor.getString(columnIndex);
             cursor.close();
 
+            String key = "";
+            switch (requestCode) {
+                case REQUEST_CODE_CHAT:   key = PREF_KEY_CHAT_BACKGROUND; break;
+                case REQUEST_CODE_HEADER: key = PREF_KEY_HEADER_BACKGROUND; break;
+            }
+
             AppGlobal.preferences.edit()
-                    .putString(SettingsFragment.PREF_KEY_CHAT_BACKGROUND, filePath)
+                    .putString(key, filePath)
                     .apply();
 
             Log.w("SettingsFragment", "image path is " + filePath);
@@ -220,20 +226,20 @@ public class SettingsFragment extends PreferenceFragment
                 });
     }
 
-    private void pickImageFromGallery() {
+    private void pickImageFromGallery(int code) {
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
-        startActivityForResult(photoPickerIntent, 100);
+        startActivityForResult(photoPickerIntent, code);
     }
 
-    private void createChangeDialog() {
+    private void createChatBackgroundDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.pref_chat_background)
                 .setItems(getResources().getStringArray(R.array.chat_background_options), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
-                            case 0: pickImageFromGallery(); break;
+                            case 0: pickImageFromGallery(REQUEST_CODE_CHAT); break;
                             case 1: AppGlobal.preferences.edit()
                                     .remove(SettingsFragment.PREF_KEY_CHAT_BACKGROUND)
                                     .apply();
@@ -260,7 +266,8 @@ public class SettingsFragment extends PreferenceFragment
                 break;
 
             case PREF_KEY_TRANSLUCENT_STATUS_BAR:
-                ThemeManager.changeStatusBarColor(getActivity(), true);
+                int color = ((Boolean) newValue) ? AppGlobal.colorPrimaryDark : Color.BLACK;
+                ThemeManager.changeStatusBarColor(getActivity(), color, true);
                 break;
 
             case PREF_KEY_RANDOM_THEME:
@@ -278,10 +285,13 @@ public class SettingsFragment extends PreferenceFragment
                 break;
 
             case PREF_KEY_HEADER_TYPE:
-                if (newValue.equals("solid")) {
-                    preference.setSummary(types[0]);
-                } else {
-                    preference.setSummary(types[1]);
+                switch (newValue.toString()) {
+                    case "solid": preference.setSummary(types[0]); break;
+                    case "blur": preference.setSummary(types[1]); break;
+                    case "wallpaper": preference.setSummary(types[2]); break;
+                }
+                if (newValue.equals("wallpaper")) {
+                    pickImageFromGallery(REQUEST_CODE_HEADER);
                 }
                 findPreference(PREF_KEY_BLUR_RADIUS).setEnabled(newValue.equals("blur"));
                 break;
@@ -316,10 +326,10 @@ public class SettingsFragment extends PreferenceFragment
             case PREF_KEY_CHAT_BACKGROUND:
                 String path = AppGlobal.preferences.getString(SettingsFragment.PREF_KEY_CHAT_BACKGROUND, "");
                 if (!TextUtils.isEmpty(path)) {
-                    createChangeDialog();
+                    createChatBackgroundDialog();
                     break;
                 }
-                pickImageFromGallery();
+                pickImageFromGallery(REQUEST_CODE_CHAT);
                 break;
 
             case PREF_KEY_GROUP:

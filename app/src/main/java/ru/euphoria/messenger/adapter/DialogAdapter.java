@@ -91,7 +91,7 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessage(VKMessage message) {
+    public void onNewMessage(VKMessage message) {
         int index = searchMessageIndex(message.user_id, message.chat_id);
         if (index >= 0) {
             VKMessage current = messages.get(index);
@@ -114,7 +114,7 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onRead(Integer id) {
+    public void onReadMessage(Integer id) {
         VKMessage message = searchMessage(id);
         if (message != null) {
             message.read_state = true;
@@ -133,7 +133,7 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         this.position = position;
-        initListeners(holder.v, position);
+        initListeners(holder.itemView, position);
 
         if (dateColor == -1) {
             dateColor = holder.date.getCurrentTextColor();
@@ -371,8 +371,6 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        private View v;
-
         private ImageView avatar;
         private ImageView online;
         private View done;
@@ -384,7 +382,6 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
 
         public ViewHolder(View v) {
             super(v);
-            this.v = v;
 
             this.done = v.findViewById(R.id.viewDone);
             this.avatar = (ImageView) v.findViewById(R.id.dialogPhoto);

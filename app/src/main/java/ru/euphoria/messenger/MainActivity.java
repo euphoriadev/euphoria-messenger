@@ -13,10 +13,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,6 +28,7 @@ import com.squareup.picasso.Picasso;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.io.File;
 import java.util.HashSet;
 
 import ru.euphoria.messenger.api.UserConfig;
@@ -118,6 +121,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             switch (key) {
                 case SettingsFragment.PREF_KEY_HEADER_TYPE:
                 case SettingsFragment.PREF_KEY_BLUR_RADIUS:
+                case SettingsFragment.PREF_KEY_HEADER_BACKGROUND:
                     View header = navigationView.getHeaderView(0);
                     ImageView drawerBackground = (ImageView) header.findViewById(R.id.drawerBackground);
                     loadBackground(drawerBackground);
@@ -251,10 +255,27 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }
     }
 
-    private void loadBackground(ImageView drawerBackground) {
+    private void loadBackground(final ImageView drawerBackground) {
         if (AppGlobal.preferences.getString(SettingsFragment.PREF_KEY_HEADER_TYPE, "solid").equals("solid")) {
             drawerBackground.setBackgroundColor(ThemeUtil.getThemeAttrColor(this, R.attr.colorPrimary));
             drawerBackground.invalidate();
+            return;
+        }
+        final String header = PrefManager.getHeaderBackground();
+        if (!TextUtils.isEmpty(header)) {
+            // for get width and height of drawer header
+            drawerBackground.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    Picasso.with(MainActivity.this)
+                            .load(new File(header))
+                            .resize(drawerBackground.getWidth(), drawerBackground.getHeight())
+                            .centerCrop()
+                            .into(drawerBackground);
+                    drawerBackground.getViewTreeObserver().removeOnPreDrawListener(this);
+                    return false;
+                }
+            });
             return;
         }
 

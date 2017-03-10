@@ -16,6 +16,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -47,7 +48,6 @@ import ru.euphoria.messenger.database.DatabaseHelper;
 import ru.euphoria.messenger.database.MemoryCache;
 import ru.euphoria.messenger.util.AndroidUtils;
 import ru.euphoria.messenger.util.ArrayUtil;
-import ru.euphoria.messenger.adapter.DividerItemDecoration;
 
 /**
  * Created by Igorek on 06.02.17.
@@ -75,8 +75,8 @@ public class DialogsFragment extends Fragment
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(v, "Hello", Snackbar.LENGTH_LONG)
-                        .show();
+                startActivity(new Intent(getActivity(), FriendsActivity.class));
+                getActivity().overridePendingTransition(R.anim.side_left, R.anim.alpha_in);
             }
         });
 
@@ -87,7 +87,7 @@ public class DialogsFragment extends Fragment
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), layoutManager.getOrientation()));
         recyclerView.addOnScrollListener(new UpDownOnScrollListener());
 
         refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefresh);

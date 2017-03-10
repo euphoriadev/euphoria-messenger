@@ -67,6 +67,8 @@
             android:theme="@style/AppTheme.Light.Welcome" />
         <activity android:name=".MessagesActivity" />
         <activity android:name=".LoginActivity" />
+        <activity android:name=".ImageViewActivity" />
+        <activity android:name=".FriendsActivity" />
         <activity
             android:name=".SettingsActivity"
             android:label="@string/item_settings" />

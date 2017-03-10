@@ -42,7 +42,7 @@ public class LoginActivity extends Activity {
         if (TextUtils.isEmpty(url)) return;
 
         try {
-            if (url.startsWith(Auth.redirect_url) && !url.contains("error=")) {
+            if (url.startsWith(Auth.REDIRECT_URL) && !url.contains("error=")) {
                 String[] auth = Auth.parseRedirectUrl(url);
                 Intent intent = new Intent();
                 intent.putExtra("token", auth[0]);

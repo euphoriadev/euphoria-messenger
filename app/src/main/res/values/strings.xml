@@ -17,6 +17,8 @@
     <string name="item_settings">Настройки</string>
     <string name="item_exit">Выход из аккаунта</string>
 
+    <string name="item_search">Search</string>
+
     <string name="auth">Авторизация</string>
     <string name="login_with_token">Вход через токен</string>
 
@@ -67,8 +69,9 @@
     <!--About Settings-->
     <string name="pref_about">О приложении</string>
     <string name="pref_version_title">Версия</string>
-    <string name="pref_devs_title">Игорь Морозкин (<b>Разраб</b>),
-        \nВиктор Гардетский (<b>Дизайнер</b>),
-        \nАлександр Белоусов (<b>Дизайнер</b>)</string>
-
+    <string name="pref_authors_title">Авторы</string>
+    <string name="pref_devs_title">Игорь Морозкин (<b>Developer</b>),
+        \nВиктор Гардетский (<b>Designer</b>),
+        \nАлександр Белоусов (<b>Designer</b>),
+        \nДенис Якут (<b>Vector Designer</b>)</string>
 </resources>

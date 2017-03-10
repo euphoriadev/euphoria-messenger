@@ -6,6 +6,8 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
@@ -36,9 +38,21 @@ public class AndroidUtils {
         dateYearFormatter = new SimpleDateFormat("d MMM, yyyy"); // 23 Окт, 2015
     }
 
+
     public static void copyText(String text) {
         ClipboardManager cm = (ClipboardManager) AppGlobal.appContext.getSystemService(Context.CLIPBOARD_SERVICE);
         cm.setPrimaryClip(ClipData.newPlainText(null, text));
+    }
+
+    public static byte[] serializeImage(Bitmap source) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(source.getByteCount());
+        source.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+
+        return bos.toByteArray();
+    }
+
+    public static Bitmap deserializeImage(byte[] array) {
+        return BitmapFactory.decodeByteArray(array, 0, array.length);
     }
 
     public static byte[] serialize(Object source) {

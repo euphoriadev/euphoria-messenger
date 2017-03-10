@@ -16,37 +16,17 @@
 package ru.euphoria.messenger.view;
 
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.BitmapShader;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Shader;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
-import android.support.annotation.DrawableRes;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.AttributeSet;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
-import ru.euphoria.messenger.R;
-import ru.euphoria.messenger.util.ImageUtil;
-
 public class CircleImageView extends ImageView {
     private static final ScaleType SCALE_TYPE = ScaleType.CENTER_CROP;
     private Path path;
+    private RectF rect;
 
     public CircleImageView(Context context) {
         super(context);
@@ -63,26 +43,32 @@ public class CircleImageView extends ImageView {
         init(context);
     }
 
+    @Override
+    protected void onDraw(Canvas canvas) {
+        if (rect.right == 0 || rect.bottom == 0) {
+            createRect(canvas.getWidth(), canvas.getHeight());
+        }
+
+        canvas.clipPath(path);
+        super.onDraw(canvas);
+    }
+
     private void init(Context context) {
         setScaleType(SCALE_TYPE);
 
         getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
-                RectF rect = new RectF(0, 0, getWidth(), getHeight());
-                path = new Path();
-                path.addRoundRect(rect, getWidth() / 2, getWidth() / 2, Path.Direction.CW);
-
+                createRect(getWidth(), getHeight());
                 getViewTreeObserver().removeOnPreDrawListener(this);
                 return false;
             }
         });
     }
 
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        canvas.clipPath(path);
-        super.onDraw(canvas);
+    private void createRect(int width, int height) {
+        rect = new RectF(0, 0, width, height);
+        path = new Path();
+        path.addRoundRect(rect, width / 2, height / 2, Path.Direction.CW);
     }
 }

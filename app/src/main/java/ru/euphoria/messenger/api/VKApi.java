@@ -189,7 +189,6 @@ public class VKApi {
         return new VKAccounts();
     }
 
-
     public static class VKUsers {
         private VKUsers() {
 

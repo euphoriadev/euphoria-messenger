@@ -16,7 +16,6 @@ import android.widget.FrameLayout;
 
 import ru.euphoria.messenger.common.ThemeManager;
 import ru.euphoria.messenger.database.CacheStorage;
-import ru.euphoria.messenger.view.SwipeBackLayout;
 
 /**
  * Created by Igorek on 05.02.17.
