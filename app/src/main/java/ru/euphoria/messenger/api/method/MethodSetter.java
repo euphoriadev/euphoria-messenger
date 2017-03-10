@@ -141,8 +141,14 @@ public class MethodSetter {
     }
 
     /** Sort order. */
-    public MethodSetter sortOrder(int value) {
+    public MethodSetter sort(int value) {
         put("sort", value);
+        return this;
+    }
+
+    /** Order to return a list */
+    public MethodSetter order(String value) {
+        put("order", value);
         return this;
     }
 

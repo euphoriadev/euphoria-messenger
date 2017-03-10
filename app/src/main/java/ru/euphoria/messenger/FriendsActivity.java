@@ -1,8 +1,8 @@
 package ru.euphoria.messenger;
 
-import android.app.SearchManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,16 +10,18 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
+import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import ru.euphoria.messenger.adapter.FriendsAdapter;
 import ru.euphoria.messenger.api.VKApi;
 import ru.euphoria.messenger.api.model.VKUser;
+import ru.euphoria.messenger.common.AppGlobal;
 import ru.euphoria.messenger.database.CacheStorage;
 import ru.euphoria.messenger.database.DatabaseHelper;
+import ru.euphoria.messenger.util.AndroidUtils;
+import ru.euphoria.messenger.util.ArrayUtil;
 
 /**
  * Created by user on 09.03.17.
@@ -93,10 +95,52 @@ public class FriendsActivity extends BaseActivity {
         overridePendingTransition(0, R.anim.side_right);
     }
 
-    private void getFriends() {
-        ArrayList<VKUser> users = CacheStorage.getUsers();
+    private void createAdapter(ArrayList<VKUser> friends) {
+        if (ArrayUtil.isEmpty(friends)) {
+            return;
+        }
 
-        adapter = new FriendsAdapter(this, users);
-        recycler.setAdapter(adapter);
+        if (adapter == null) {
+            adapter = new FriendsAdapter(this, friends);
+            recycler.setAdapter(adapter);
+        } else {
+            adapter.getValues().clear();
+            adapter.getValues().addAll(friends);
+
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    private void getFriends() {
+        ArrayList<VKUser> friends = CacheStorage.getFriends(VKApi.config.userId);
+        createAdapter(friends);
+
+        if (!AndroidUtils.hasConnection()) {
+            Snackbar.make((ViewGroup) recycler.getParent(), R.string.check_connection, Snackbar.LENGTH_LONG)
+                    .show();
+            return;
+        }
+
+        VKApi.friends()
+                .get()
+                .order("hints")
+                .fields(VKUser.DEFAULT_FIELDS)
+                .execute(VKUser.class, new VKApi.OnResponseListener<VKUser>() {
+                    @Override
+                    public void onSuccess(ArrayList<VKUser> friends) {
+                        createAdapter(friends);
+
+                        CacheStorage.delete(DatabaseHelper.FRIENDS_TABLE,
+                                String.format(AppGlobal.locale, "%s = %d",
+                                        DatabaseHelper.USER_ID, VKApi.config.userId));
+                        CacheStorage.insert(DatabaseHelper.FRIENDS_TABLE, friends);
+                        CacheStorage.insert(DatabaseHelper.USERS_TABLE, friends);
+                    }
+
+                    @Override
+                    public void onError(Exception ex) {
+
+                    }
+                });
     }
 }

@@ -5,10 +5,12 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.nio.IntBuffer;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import ru.euphoria.messenger.api.VKApi;
 import ru.euphoria.messenger.api.model.VKAudio;
 import ru.euphoria.messenger.api.model.VKGroup;
 import ru.euphoria.messenger.api.model.VKMessage;
@@ -103,8 +105,8 @@ public class CacheStorage {
         return null;
     }
 
-    public static ArrayList<VKUser> getUsers() {
-        Cursor cursor = selectCursor(USERS_TABLE);
+    public static ArrayList<VKUser> getUsers(int... ids) {
+        Cursor cursor = selectCursor(USERS_TABLE, USER_ID, ids);
 
         ArrayList<VKUser> users = new ArrayList<>(cursor.getCount());
         while (cursor.moveToNext()) {
@@ -115,15 +117,21 @@ public class CacheStorage {
         return users;
     }
 
-    public static ArrayList<VKUser> getUsers(int... ids) {
-        Cursor cursor = selectCursor(USERS_TABLE, USER_ID, ids);
+    public static ArrayList<VKUser> getFriends(int userId) {
+        Cursor cursor = QueryBuilder.query()
+                .select("*")
+                .from(FRIENDS_TABLE)
+                .leftJoin(USERS_TABLE)
+                .on("friends.friend_id = users.user_id")
+                .where("friends.user_id = " + userId)
+                .asCursor(database);
 
         ArrayList<VKUser> users = new ArrayList<>(cursor.getCount());
         while (cursor.moveToNext()) {
             users.add(parseUser(cursor));
         }
-
         cursor.close();
+
         return users;
     }
 
@@ -193,6 +201,7 @@ public class CacheStorage {
         delete(DIALOGS_TABLE, where);
     }
 
+
     public static void insert(String table, ArrayList<? extends VKModel> values) {
         database.beginTransaction();
 
@@ -201,7 +210,11 @@ public class CacheStorage {
             VKModel item = values.get(i);
             switch (table) {
                 case USERS_TABLE:
-                    putValues(cv, (VKUser) item);
+                    putValues(cv, (VKUser) item, false);
+                    break;
+
+                case FRIENDS_TABLE:
+                    putValues(cv, (VKUser) item, true);
                     break;
 
                 case DIALOGS_TABLE:
@@ -327,7 +340,13 @@ public class CacheStorage {
         return photo;
     }
 
-    private static void putValues(ContentValues values, VKUser user) {
+    private static void putValues(ContentValues values, VKUser user, boolean friends) {
+        if (friends) {
+            values.put(USER_ID, VKApi.config.userId);
+            values.put(FRIEND_ID, user.id);
+            return;
+        }
+
         values.put(USER_ID, user.id);
         values.put(FIRST_NAME, user.first_name);
         values.put(LAST_NAME, user.last_name);

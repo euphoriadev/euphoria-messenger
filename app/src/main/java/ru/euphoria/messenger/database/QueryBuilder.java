@@ -60,6 +60,20 @@ public class QueryBuilder {
         return this;
     }
 
+    public QueryBuilder leftJoin(String table) {
+        this.buffer.append("LEFT JOIN ")
+                .append(table)
+                .append(" ");
+        return this;
+    }
+
+    public QueryBuilder on(String where) {
+        this.buffer.append("ON ")
+                .append(where)
+                .append(" ");
+        return this;
+    }
+
     /**
      * A logic operator AND
      */

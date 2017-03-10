@@ -73,4 +73,8 @@ public class BaseAdapter<T, VH extends RecyclerView.ViewHolder>
     public boolean onQueryItem(T item, String lowerQuery) {
         return false;
     }
+
+    public ArrayList<T> getValues() {
+        return values;
+    }
 }

@@ -169,6 +169,11 @@ public class VKApi {
         return new VKUsers();
     }
 
+    /** Methods for friends */
+    public static VKFriends friends() {
+        return new VKFriends();
+    }
+
     /** Methods for messages */
     public static VKMessages messages() {
         return new VKMessages();
@@ -187,6 +192,16 @@ public class VKApi {
     /** Methods for account */
     public static VKAccounts account() {
         return new VKAccounts();
+    }
+
+    public static class VKFriends {
+        private VKFriends() {
+
+        }
+
+        public MethodSetter get() {
+            return new MethodSetter("friends.get");
+        }
     }
 
     public static class VKUsers {
