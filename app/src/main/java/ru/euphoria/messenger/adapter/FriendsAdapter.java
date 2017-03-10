@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -60,8 +61,11 @@ public class FriendsAdapter extends BaseAdapter<VKUser, FriendsAdapter.ViewHolde
         holder.name.setText(user.toString());
         holder.status.setTextColor(user.online ? AppGlobal.colorPrimary : bodyColor);
         if (user.online) {
+            holder.indicator.setVisibility(View.VISIBLE);
+            holder.indicator.setImageDrawable(DialogAdapter.getOnlineIndicator(context, user));
             holder.status.setText(online);
         } else {
+            holder.indicator.setVisibility(View.GONE);
             holder.status.setText(String.format(
                     AppGlobal.locale, lastSeen,
                     AndroidUtils.parseDate(user.last_seen * 1000)));
@@ -89,6 +93,10 @@ public class FriendsAdapter extends BaseAdapter<VKUser, FriendsAdapter.ViewHolde
 
     @Override
     public boolean onQueryItem(VKUser item, String lowerQuery) {
+        if (lowerQuery.charAt(0) == '@') {
+            return item.screen_name.contains(lowerQuery.substring(1));
+        }
+
         String name = (String) item.getTag();
         if (name == null) {
             name = item.toString().toLowerCase();
@@ -99,14 +107,16 @@ public class FriendsAdapter extends BaseAdapter<VKUser, FriendsAdapter.ViewHolde
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        public CircleImageView avatar;
+        public ImageView avatar;
+        public ImageView indicator;
         public TextView name;
         public TextView status;
 
         public ViewHolder(View v) {
             super(v);
 
-            this.avatar = (CircleImageView) v.findViewById(R.id.friendAvatar);
+            this.avatar = (ImageView) v.findViewById(R.id.friendAvatar);
+            this.indicator = (ImageView) v.findViewById(R.id.friendIndicator);
             this.name = (TextView) v.findViewById(R.id.friendName);
             this.status = (TextView) v.findViewById(R.id.friendStatus);
         }

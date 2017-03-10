@@ -16,7 +16,6 @@
     <string name="item_notes">Заметки</string>
     <string name="item_settings">Настройки</string>
     <string name="item_exit">Выход из аккаунта</string>
-
     <string name="item_search">Search</string>
 
     <string name="auth">Авторизация</string>
@@ -35,6 +34,7 @@
     <string name="subtitle_chat">%d участников</string>
 
     <string name="refresh">Обновить</string>
+    <string name="open_dialog">Открыть диалог</string>
 
     <!-- General Settings -->
     <string name="pref_category_general">Внешний вид</string>

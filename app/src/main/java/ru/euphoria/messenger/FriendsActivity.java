@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import ru.euphoria.messenger.adapter.FriendsAdapter;
 import ru.euphoria.messenger.api.VKApi;
+import ru.euphoria.messenger.api.model.VKMessage;
 import ru.euphoria.messenger.api.model.VKUser;
 import ru.euphoria.messenger.common.AppGlobal;
 import ru.euphoria.messenger.database.CacheStorage;
@@ -41,7 +42,7 @@ public class FriendsActivity extends BaseActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setTitle("Open Dialog");
+        getSupportActionBar().setTitle(R.string.open_dialog);
 
         layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);

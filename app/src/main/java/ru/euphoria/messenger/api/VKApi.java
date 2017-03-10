@@ -87,7 +87,9 @@ public class VKApi {
                 models.add((T) new VKUser(array.optJsonObject(i)));
             }
         } else if (cls == VKMessage.class) {
-            VKMessage.count = json.optJsonObject("response").optInt("count");
+            if (url.contains("messages.getDialogs")) {
+                VKMessage.count = json.optJsonObject("response").optInt("count");
+            }
             for (int i = 0; i < array.length(); i++) {
                 JsonObject source = array.optJsonObject(i);
                 int unread = source.optInt("unread");
