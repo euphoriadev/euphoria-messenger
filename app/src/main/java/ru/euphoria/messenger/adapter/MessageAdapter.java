@@ -169,7 +169,7 @@ public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHo
         }
 
         if (!ArrayUtil.isEmpty(item.fws_messages)) {
-            showForwardedMessages(item, holder);
+            showForwardedMessages(item, holder.attachments);
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -290,9 +290,9 @@ public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHo
         });
     }
 
-    private void showForwardedMessages(VKMessage item, ViewHolder holder) {
+    private void showForwardedMessages(VKMessage item, ViewGroup parent) {
         for (int i = 0; i < item.fws_messages.size(); i++) {
-            inflateMessage(holder, item.fws_messages.get(i));
+            attacher.message(parent, item.fws_messages.get(i));
         }
     }
 
@@ -311,42 +311,29 @@ public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHo
             }
         }
 
-        for (int i = 0; i < item.attachments.size(); i++) {
-            VKModel attach = item.attachments.get(i);
+        inflateAttachments(holder.attachments, holder.images,
+                item.attachments, holder.bubble, holder.bubble.getMaxWidth());
+    }
+
+    private void inflateAttachments(ViewGroup parent, ViewGroup images, ArrayList<VKModel> attachments, BoundedLinearLayout bubble, int maxWidth) {
+        for (int i = 0; i < attachments.size(); i++) {
+            VKModel attach = attachments.get(i);
             if (attach instanceof VKAudio) {
-                attacher.audio(holder.attachments, (VKAudio) attach);
+                attacher.audio(parent, (VKAudio) attach);
             } else if (attach instanceof VKPhoto) {
-                attacher.photo(holder.images, (VKPhoto) attach, holder.bubble.getMaxWidth());
+                attacher.photo(images, (VKPhoto) attach, maxWidth);
             } else if (attach instanceof VKSticker) {
-                holder.bubble.setBackgroundColor(Color.TRANSPARENT);
-                attacher.sticker(holder.attachments, (VKSticker) attach, holder.bubble.getMaxWidth());
+                if (bubble != null) {
+                    bubble.setBackgroundColor(Color.TRANSPARENT);
+                }
+                attacher.sticker(parent, (VKSticker) attach, maxWidth);
             } else if (attach instanceof VKDoc) {
-                attacher.doc(holder.attachments, (VKDoc) attach);
+                attacher.doc(parent, (VKDoc) attach);
             } else if (attach instanceof VKLink) {
-                attacher.link(holder.attachments, (VKLink) attach);
+                attacher.link(parent, (VKLink) attach);
             }
         }
     }
-
-    private void inflateMessage(ViewHolder holder, VKMessage message) {
-        View v = inflater.inflate(R.layout.attach_message, holder.attachments, false);
-
-        TextView userName = (TextView) v.findViewById(R.id.userName);
-        TextView userMessage = (TextView) v.findViewById(R.id.userMessage);
-
-        VKUser user = MemoryCache.getUser(message.user_id);
-        if (user != null) {
-            userName.setText(user.toString());
-        }
-        userMessage.setText(message.body);
-
-        holder.attachments.addView(v);
-        if (!ArrayUtil.isEmpty(message.attachments)) {
-
-            showAttachments(message, holder);
-        }
-    }
-
 
     private int getTintColor(VKMessage item) {
         int tintColor = item.is_out ? bubbleColor : bubbleInColor;
@@ -356,7 +343,7 @@ public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHo
         return tintColor;
     }
 
-    static class FooterViewHolder extends ViewHolder {
+    private static class FooterViewHolder extends ViewHolder {
         View footer;
 
         public FooterViewHolder(View v) {
@@ -399,7 +386,7 @@ public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHo
 
             this.root = (LinearLayout) v.findViewById(R.id.msgRoot);
             this.bubble = (BoundedLinearLayout) v.findViewById(R.id.msgBubble);
-            this.attachments = (LinearLayout) v.findViewById(R.id.magAttachments);
+            this.attachments = (LinearLayout) v.findViewById(R.id.msgAttachments);
             this.images = (LinearLayout) v.findViewById(R.id.msgImages);
             this.body = (TextView) v.findViewById(R.id.msgBody);
             this.indicator = (ImageView) v.findViewById(R.id.msgIndicator);
@@ -438,6 +425,11 @@ public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHo
         }
 
         private LinearLayout.LayoutParams getParams(float sw, float sh, int layoutWidth) {
+            if (layoutWidth == -1) {
+                return new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT);
+            }
             return new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     getHeight(sw, sh, layoutWidth)
@@ -470,6 +462,36 @@ public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHo
 
             loadImage(image, source.photo_75, source.photo_604, true);
             parent.addView(image);
+        }
+
+        public void message(ViewGroup parent, VKMessage source) {
+            View v = inflater.inflate(R.layout.attach_message, parent, false);
+
+            TextView userName = (TextView) v.findViewById(R.id.userName);
+            TextView userMessage = (TextView) v.findViewById(R.id.userMessage);
+
+            VKUser user = MemoryCache.getUser(source.user_id);
+            if (user == null) {
+                user = VKUser.EMPTY;
+            }
+
+            userName.setText(user.toString());
+            if (TextUtils.isEmpty(source.body)) {
+                userMessage.setVisibility(View.GONE);
+            } else {
+                userMessage.setText(source.body);
+            }
+            if (!ArrayUtil.isEmpty(source.attachments)) {
+                LinearLayout container = (LinearLayout) v.findViewById(R.id.msgAttachments);
+                inflateAttachments(container, container, source.attachments, null, -1);
+            }
+
+            if (!ArrayUtil.isEmpty(source.fws_messages)) {
+                LinearLayout container = (LinearLayout) v.findViewById(R.id.msgAttachments);
+                showForwardedMessages(source, container);
+            }
+
+            parent.addView(v);
         }
 
         public void audio(ViewGroup parent, VKAudio source) {

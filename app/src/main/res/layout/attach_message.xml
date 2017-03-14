@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/msgRoot"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
@@ -37,20 +38,13 @@
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="?android:textColorPrimary" />
 
+        <LinearLayout
+            android:id="@+id/msgAttachments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/magAttachments"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"/>
-
-    <LinearLayout
-        android:layout_marginLeft="14dp"
-        android:id="@+id/msgImages"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"/>
 
 </LinearLayout>
 

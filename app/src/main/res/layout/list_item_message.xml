@@ -52,7 +52,7 @@
                 android:textSize="16sp" />
 
             <LinearLayout
-                android:id="@+id/magAttachments"
+                android:id="@+id/msgAttachments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
