@@ -26,8 +26,9 @@
         app:srcCompat="@drawable/ic_vector_access_time" />
 
     <LinearLayout
+        android:layout_weight="1"
         android:orientation="vertical"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content">
 
         <ru.euphoria.messenger.view.BoundedLinearLayout

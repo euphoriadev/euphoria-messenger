@@ -30,6 +30,10 @@ public class PrefManager {
         putBoolean(PREF_KEY_TRANSLUCENT_STATUS_BAR, value);
     }
 
+    public static String getCharBackground() {
+        return getString(PREF_KEY_CHAT_BACKGROUND);
+    }
+
     public static String getHeaderBackground() {
         return getString(PREF_KEY_HEADER_BACKGROUND, "");
     }

@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingRight="6dp"
     android:paddingBottom="4dp"
+    android:paddingRight="6dp"
     android:paddingTop="4dp">
 
     <FrameLayout
-        android:layout_marginRight="8dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp">
 
         <ru.euphoria.messenger.view.CircleImageView
             android:id="@+id/docCircleBackground"
@@ -44,10 +45,10 @@
             android:layout_height="wrap_content"
             android:maxLines="1"
             android:singleLine="true"
-            android:text="Euphoria.apk"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="?android:textColorPrimary"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:text="Euphoria.apk" />
 
         <TextView
             android:id="@+id/docBody"
@@ -55,10 +56,9 @@
             android:layout_height="wrap_content"
             android:maxLines="1"
             android:singleLine="true"
-            android:text="3.8mb"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="?android:textColorSecondary" />
+            android:textColor="?android:textColorSecondary"
+            tools:text="3.8mb" />
 
     </LinearLayout>
-
 </LinearLayout>

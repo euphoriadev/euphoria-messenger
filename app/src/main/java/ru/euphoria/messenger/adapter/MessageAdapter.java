@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AlertDialog;
@@ -39,7 +38,6 @@ import ru.euphoria.messenger.SettingsFragment;
 import ru.euphoria.messenger.api.VKApi;
 import ru.euphoria.messenger.api.model.VKAudio;
 import ru.euphoria.messenger.api.model.VKDoc;
-import ru.euphoria.messenger.api.model.VKGift;
 import ru.euphoria.messenger.api.model.VKLink;
 import ru.euphoria.messenger.api.model.VKMessage;
 import ru.euphoria.messenger.api.model.VKModel;
@@ -60,7 +58,7 @@ import ru.euphoria.messenger.view.BoundedLinearLayout;
  * Created by Igor on 13.02.17.
  */
 
-public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
+public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHolder>{
     public static final int BUBBLE_LIGHT_COLOR = Color.WHITE;
     public static final int BUBBLE_DARK_COLOR = ContextCompat.getColor(AppGlobal.appContext, R.color.md_grey_800);
 
@@ -73,10 +71,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         public static final int SENT = 1;
     }
 
-    private Context context;
-    private LayoutInflater inflater;
-    private ArrayList<VKMessage> messages;
-
+    private AttachmentInflater attacher;
     private int bubbleColor, bubbleInColor, padding;
     private int chatId;
     private int userId;
@@ -87,8 +82,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     }
 
     public MessageAdapter(Context context, ArrayList<VKMessage> messages, int chatId, int userId) {
-        this.context = context;
-        this.messages = messages;
+        super(context, messages);
         this.chatId = chatId;
         this.userId = userId;
 
@@ -96,6 +90,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         this.bubbleColor = ThemeManager.getBubbleColor();
         this.bubbleInColor = getDefaultBubbleColor();
         this.padding = (int) AndroidUtils.px(64);
+        this.attacher = new AttachmentInflater();
 
         String path = AppGlobal.preferences.getString(SettingsFragment.PREF_KEY_CHAT_BACKGROUND, "");
         chatBg = !TextUtils.isEmpty(path);
@@ -119,9 +114,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             return;
         }
 
-        final VKMessage item = messages.get(position);
+        final VKMessage item = getItem(position);
 
         holder.root.setGravity(item.is_out ? Gravity.END : Gravity.START);
+        ((LinearLayout) holder.bubble.getParent()).setGravity(item.is_out ? Gravity.END : Gravity.START);
 
         holder.bubble.setVisibility(View.VISIBLE);
         holder.bubble.setMaxWidth(AppGlobal.screenWidth - (AppGlobal.screenWidth / 4));
@@ -133,11 +129,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         DrawableCompat.setTintMode(holder.bubble.getBackground(), PorterDuff.Mode.MULTIPLY);
         DrawableCompat.setTint(holder.bubble.getBackground(), tintColor);
 
-        if (TextUtils.isEmpty(item.body)) {
-            holder.body.setVisibility(View.GONE);
-        } else {
-            holder.body.setVisibility(View.VISIBLE);
-        }
+
+        holder.body.setVisibility(TextUtils.isEmpty(item.body) ? View.GONE : View.VISIBLE);
         holder.body.setText(item.body);
 
         if (item.getTag() == null || ((int) item.getTag()) == SendStatus.SENT) {
@@ -194,7 +187,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         }
 
         if (message.chat_id == chatId && message.isChat() || message.user_id == userId) {
-            messages.add(message);
+            getValues().add(message);
             notifyDataSetChanged();
         }
     }
@@ -205,12 +198,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return messages.size() + 1;
+        return super.getItemCount() + 1;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (messages.size() == position) {
+        if (getValues().size() == position) {
             return TYPE_FOOTER;
         } else {
             return TYPE_NORMAL;
@@ -218,32 +211,32 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     }
 
     public int getMessagesCount() {
-        return messages.size();
+        return getValues().size();
     }
 
     public void changeItems(ArrayList<VKMessage> messages) {
         if (!ArrayUtil.isEmpty(messages)) {
-            this.messages.clear();
-            this.messages.addAll(messages);
+            this.getValues().clear();
+            this.getValues().addAll(messages);
         }
     }
 
     public void add(VKMessage message, boolean anim) {
-        messages.add(message);
+        getValues().add(message);
         if (anim) {
-            notifyItemInserted(messages.size() - 1);
+            notifyItemInserted(getValues().size() - 1);
         } else {
             notifyDataSetChanged();
         }
     }
 
     public void insert(ArrayList<VKMessage> messages) {
-        this.messages.addAll(0, messages);
+        this.getValues().addAll(0, messages);
     }
 
     public void change(VKMessage message) {
-        for (int i = 0; i < messages.size(); i++) {
-            if (messages.get(i).date == message.date) {
+        for (int i = 0; i < getValues().size(); i++) {
+            if (getValues().get(i).date == message.date) {
                 notifyItemChanged(i);
                 return;
             }
@@ -256,30 +249,30 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         builder.setItems(context.getResources().getStringArray(R.array.message_options),
                 new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case 0:
-                        AndroidUtils.copyText(holder.body.getText().toString());
-                        break;
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                AndroidUtils.copyText(holder.body.getText().toString());
+                                break;
 
-                    case 1:
-                        VKApi.messages()
-                                .markAsImportant()
-                                .messageIds(item.id)
-                                .important(!item.is_important)
-                                .execute(null, null);
-                        break;
+                            case 1:
+                                VKApi.messages()
+                                        .markAsImportant()
+                                        .messageIds(item.id)
+                                        .important(!item.is_important)
+                                        .execute(null, null);
+                                break;
 
-                    case 2:
-                        VKApi.messages()
-                                .delete()
-                                .messageIds(item.id)
-                                .execute(null, null);
-                        break;
-                }
-            }
-        });
+                            case 2:
+                                VKApi.messages()
+                                        .delete()
+                                        .messageIds(item.id)
+                                        .execute(null, null);
+                                break;
+                        }
+                    }
+                });
 
         builder.show();
     }
@@ -304,31 +297,33 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     }
 
     private void showAttachments(VKMessage item, ViewHolder holder) {
-        boolean onlyImages = true;
-
-        for (int i = 0; i < item.attachments.size(); i++) {
-            VKModel attach = item.attachments.get(i);
-            boolean isPhoto = attach instanceof VKPhoto;
-            if (!isPhoto) {
-                onlyImages = false;
-                break;
+        boolean onlyPhotos = true;
+        if (TextUtils.isEmpty(item.body)) {
+            for (VKModel attach : item.attachments) {
+                boolean isPhoto = attach instanceof VKPhoto;
+                if (!isPhoto) {
+                    onlyPhotos = false;
+                    break;
+                }
+            }
+            if (onlyPhotos) {
+                holder.bubble.setVisibility(View.GONE);
             }
         }
 
         for (int i = 0; i < item.attachments.size(); i++) {
             VKModel attach = item.attachments.get(i);
             if (attach instanceof VKAudio) {
-                inflateAudio(holder, (VKAudio) attach);
+                attacher.audio(holder.attachments, (VKAudio) attach);
             } else if (attach instanceof VKPhoto) {
-                inflatePhoto(holder, (VKPhoto) attach, onlyImages);
+                attacher.photo(holder.images, (VKPhoto) attach, holder.bubble.getMaxWidth());
             } else if (attach instanceof VKSticker) {
-                inflateSticker(holder, (VKSticker) attach);
+                holder.bubble.setBackgroundColor(Color.TRANSPARENT);
+                attacher.sticker(holder.attachments, (VKSticker) attach, holder.bubble.getMaxWidth());
             } else if (attach instanceof VKDoc) {
-                inflateDoc(holder, (VKDoc) attach);
+                attacher.doc(holder.attachments, (VKDoc) attach);
             } else if (attach instanceof VKLink) {
-                inflateLink(holder, (VKLink) attach);
-            } else if (attach instanceof VKGift) {
-                inflateGift(holder, (VKGift) attach);
+                attacher.link(holder.attachments, (VKLink) attach);
             }
         }
     }
@@ -346,209 +341,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         userMessage.setText(message.body);
 
         holder.attachments.addView(v);
-    }
+        if (!ArrayUtil.isEmpty(message.attachments)) {
 
-    private void inflateGift(ViewHolder holder, final VKGift gift) {
-//        final int width = holder.bubble.getMaxWidth() - (holder.bubble.getMaxWidth() / 3);
-//        final ImageView imageGift = new ImageView(context);
-//        imageGift.setLayoutParams(new RecyclerView.LayoutParams(
-//                giftMaxWidth,
-//                getGiftHeight(gift, giftMaxWidth))
-//        );
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-//            imageGift.setAdjustViewBounds(true);
-//        } else {
-//            imageGift.setScaleType(ImageView.ScaleType.FIT_CENTER);
-//        }
-//        DrawableCompat.setTint(holder.bubble.getBackground(), ContextCompat.getColor(context, R.color.gift_background));
-//
-//        Picasso.with(context)
-//                .load(gift.thumb_48)
-//                .placeholder(new ColorDrawable(Color.TRANSPARENT))
-//                .config(Bitmap.Config.RGB_565)
-//                .into(imageGift, new Callback.EmptyCallback() {
-//                    @Override
-//                    public void onSuccess() {
-//                        Picasso.with(context)
-//                                .load(gift.thumb_256)
-//                                .placeholder(imageGift.getDrawable())
-//                                .config(Bitmap.Config.RGB_565)
-//                                .into(imageGift);
-//                    }
-//                });
-//
-//        LinearLayout giftContainer = new LinearLayout(context);
-//        giftContainer.setOrientation(LinearLayout.HORIZONTAL);
-//        giftContainer.setGravity(Gravity.CENTER);
-//        giftContainer.setLayoutParams(new RecyclerView.LayoutParams(
-//                giftMaxWidth,
-//                ViewGroup.LayoutParams.WRAP_CONTENT
-//        ));
-//        int padding = (int) AndroidUtils.px(16);
-//
-//        ImageView ivGiftVector = new ImageView(context);
-//        ivGiftVector.setImageResource(R.drawable.ic_vector_gift);
-//        ivGiftVector.setPadding(padding, padding, padding / 2, padding);
-//        giftContainer.addView(ivGiftVector);
-//
-//        TextView tvGiftText = new TextView(context);
-//        tvGiftText.setTextSize(TypedValue.COMPLEX_UNIT_PX, holder.body.getTextSize());
-//        tvGiftText.setGravity(Gravity.CENTER);
-//        tvGiftText.setPadding(0, padding, padding, padding);
-//        if (TextUtils.isEmpty(gift.message)) {
-//            tvGiftText.setText(TextUtils.isEmpty(holder.body.getText().toString()) ? "Gift" : holder.body.getText().toString());
-//        } else {
-//            tvGiftText.setText(gift.message);
-//        }
-//        giftContainer.addView(tvGiftText);
-//
-//        holder.attachments.addView(imageGift);
-//        holder.attachments.addView(giftContainer);
-    }
-
-    private void inflateAudio(ViewHolder holder, VKAudio audio) {
-        View view = inflater.inflate(R.layout.attach_audio, holder.attachments, false);
-
-        TextView title = (TextView) view.findViewById(R.id.audioTitle);
-        TextView body = (TextView) view.findViewById(R.id.audioBody);
-        TextView time = (TextView) view.findViewById(R.id.audioDuration);
-
-        String duration = AndroidUtils.dateFormatter.format(
-                TimeUnit.SECONDS.toMillis(audio.duration));
-
-        title.setText(audio.title);
-        body.setText(audio.artist);
-        time.setText(duration);
-
-        holder.attachments.addView(view);
-    }
-
-    private void inflateLink(ViewHolder holder, VKLink link) {
-        View view = inflater.inflate(R.layout.attach_doc, holder.attachments, false);
-
-        TextView title = (TextView) view.findViewById(R.id.docTitle);
-        TextView body = (TextView) view.findViewById(R.id.docBody);
-        ImageView icon = (ImageView) view.findViewById(R.id.docIcon);
-        icon.setImageResource(R.drawable.ic_vector_link_arrow);
-
-        title.setText(link.title);
-        if (!TextUtils.isEmpty(link.description)) {
-            body.setText(link.description);
-        } else {
-            body.setText(link.caption);
+            showAttachments(message, holder);
         }
-
-        holder.attachments.addView(view);
     }
 
-    private void inflateDoc(ViewHolder holder, final VKDoc doc) {
-        View view = inflater.inflate(R.layout.attach_doc, holder.attachments, false);
-
-        TextView title = (TextView) view.findViewById(R.id.docTitle);
-        TextView size = (TextView) view.findViewById(R.id.docBody);
-        ImageView background = (ImageView) view.findViewById(R.id.docCircleBackground);
-        ImageView icon = (ImageView) view.findViewById(R.id.docIcon);
-
-        title.setText(doc.title);
-        size.setText(AndroidUtils.parseSize(doc.size));
-
-        if (doc.photo_sizes != null && doc.photo_sizes.forType('s') != null) {
-            icon.setVisibility(View.GONE);
-
-            Picasso.with(context)
-                    .load(doc.photo_sizes.forType('s').src)
-                    .into(background);
-        } else {
-            icon.setVisibility(View.VISIBLE);
-        }
-
-        holder.attachments.addView(view);
-    }
-
-    private ImageView createImageView(int width, int height) {
-        ImageView image = new ImageView(context);
-        image.setLayoutParams(new RecyclerView.LayoutParams(width, height));
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            image.setAdjustViewBounds(true);
-        } else {
-            image.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        }
-
-        image.setPadding(0, (int) AndroidUtils.px(4), 0, (int) AndroidUtils.px(1));
-        return image;
-    }
-
-    private void loadImage(final ImageView image, String smallSrc, final String normalSrc, final boolean round) {
-        Picasso.with(context)
-                .load(smallSrc)
-                .config(Bitmap.Config.RGB_565)
-                .placeholder(new ColorDrawable(Color.TRANSPARENT))
-                .transform(new BlurTransform(4, true))
-                .transform(new RoundTransform(round ? 0.04f : 0))
-                .into(image, new Callback.EmptyCallback() {
-                    @Override
-                    public void onSuccess() {
-                        Picasso.with(context)
-                                .load(normalSrc)
-                                .placeholder(image.getDrawable())
-                                .transform(new RoundTransform(round ? 0.04f : 0))
-                                .into(image);
-                    }
-                });
-    }
-
-    private void inflatePhoto(ViewHolder holder, final VKPhoto photo, boolean onlyImages) {
-        int width = holder.bubble.getMaxWidth() - (holder.bubble.getMaxWidth() / 10);
-
-        final ImageView image = createImageView(width, getPhotoHeight(photo, width));
-        loadImage(image, photo.photo_75, photo.photo_604, true);
-
-        if (onlyImages && TextUtils.isEmpty(holder.body.getText())) {
-            holder.bubble.setVisibility(View.GONE);
-        }
-        image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, ImageViewActivity.class);
-                intent.putExtra("photo", photo);
-                intent.putExtra("bitmap", AndroidUtils.serializeImage(((BitmapDrawable) image.getDrawable()).getBitmap()));
-                context.startActivity(intent);
-            }
-        });
-
-        holder.images.addView(image);
-    }
-
-    private void inflateSticker(ViewHolder holder, VKSticker sticker) {
-        holder.bubble.setMaxWidth(AppGlobal.screenWidth / 2);
-        holder.bubble.setBackgroundColor(Color.TRANSPARENT);
-        int width = holder.bubble.getMaxWidth() - (holder.bubble.getMaxWidth() / 10);
-
-        ImageView image = createImageView(width, getStickerHeight(sticker, width));
-        loadImage(image, sticker.photo_64, sticker.photo_352, true);
-
-        holder.attachments.addView(image);
-    }
-
-    private int getPhotoHeight(VKPhoto photo, int layoutMaxWidth) {
-        return getHeight((float) photo.width, (float) photo.height, layoutMaxWidth);
-    }
-
-    // don't touch, it's magic
-    private int getHeight(float width, float height, int layoutMaxWidth) {
-        float scaleFactor = Math.max(width, layoutMaxWidth) /
-                Math.min(width, layoutMaxWidth);
-        return Math.round(width < layoutMaxWidth ? height * scaleFactor : height / scaleFactor);
-    }
-
-    private int getStickerHeight(VKSticker sticker, int layoutMaxWidth) {
-        return getHeight((float) sticker.width, (float) sticker.height, layoutMaxWidth);
-    }
-
-    private int getGiftHeight(VKGift gift, int layoutMaxWidth) {
-        return getHeight(256f, 256f, layoutMaxWidth);
-    }
 
     private int getTintColor(VKMessage item) {
         int tintColor = item.is_out ? bubbleColor : bubbleInColor;
@@ -558,7 +356,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         return tintColor;
     }
 
-    private static class FooterViewHolder extends ViewHolder {
+    static class FooterViewHolder extends ViewHolder {
         View footer;
 
         public FooterViewHolder(View v) {
@@ -610,6 +408,123 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         public boolean isFooter() {
             return false;
+        }
+    }
+
+    private class AttachmentInflater {
+        private void loadImage(final ImageView image, String smallSrc, final String normalSrc, final boolean round) {
+            Picasso.with(context)
+                    .load(smallSrc)
+                    .config(Bitmap.Config.RGB_565)
+                    .placeholder(new ColorDrawable(Color.TRANSPARENT))
+                    .transform(new BlurTransform(4, true))
+                    .transform(new RoundTransform(round ? 0.04f : 0))
+                    .into(image, new Callback.EmptyCallback() {
+                        @Override
+                        public void onSuccess() {
+                            Picasso.with(context)
+                                    .load(normalSrc)
+                                    .placeholder(image.getDrawable())
+                                    .transform(new RoundTransform(round ? 0.04f : 0))
+                                    .into(image);
+                        }
+                    });
+        }
+
+        private int getHeight(float width, float height, int layoutMaxWidth) {
+            float scale = Math.max(width, layoutMaxWidth) /
+                    Math.min(width, layoutMaxWidth);
+            return Math.round(width < layoutMaxWidth ? height * scale : height / scale);
+        }
+
+        private LinearLayout.LayoutParams getParams(float sw, float sh, int layoutWidth) {
+            return new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    getHeight(sw, sh, layoutWidth)
+            );
+        }
+
+        public void sticker(ViewGroup parent, VKSticker source, int width) {
+            final ImageView image = (ImageView)
+                    inflater.inflate(R.layout.attach_photo, parent, false);
+
+            image.setLayoutParams(getParams(256f, 256f, width));
+            loadImage(image, source.photo_64, source.photo_256, false);
+            parent.addView(image);
+        }
+
+        public void photo(ViewGroup parent, final VKPhoto source, int width) {
+            final ImageView image = (ImageView)
+                    inflater.inflate(R.layout.attach_photo, parent, false);
+
+            image.setLayoutParams(getParams(source.width, source.height, width));
+            image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, ImageViewActivity.class);
+                    intent.putExtra("photo", source);
+                    intent.putExtra("bitmap", AndroidUtils.serializeImage(((BitmapDrawable) image.getDrawable()).getBitmap()));
+                    context.startActivity(intent);
+                }
+            });
+
+            loadImage(image, source.photo_75, source.photo_604, true);
+            parent.addView(image);
+        }
+
+        public void audio(ViewGroup parent, VKAudio source) {
+            View v = inflater.inflate(R.layout.attach_audio, parent, false);
+
+            TextView title = (TextView) v.findViewById(R.id.audioTitle);
+            TextView body = (TextView) v.findViewById(R.id.audioBody);
+            TextView time = (TextView) v.findViewById(R.id.audioDuration);
+
+            String duration = AndroidUtils.dateFormatter.format(
+                    TimeUnit.SECONDS.toMillis(source.duration));
+
+            title.setText(source.title);
+            body.setText(source.artist);
+            time.setText(duration);
+
+            parent.addView(v);
+        }
+
+        public void link(ViewGroup parent, VKLink source) {
+            View v = inflater.inflate(R.layout.attach_doc, parent, false);
+
+            TextView title = (TextView) v.findViewById(R.id.docTitle);
+            TextView body = (TextView) v.findViewById(R.id.docBody);
+            ImageView icon = (ImageView) v.findViewById(R.id.docIcon);
+
+            icon.setImageResource(R.drawable.ic_vector_link_arrow);
+            title.setText(source.title);
+            body.setText(TextUtils.isEmpty(source.description)
+                    ? source.caption
+                    : source.description);
+
+            parent.addView(v);
+        }
+
+        public void doc(ViewGroup parent, VKDoc source) {
+            View v = inflater.inflate(R.layout.attach_doc, parent, false);
+
+            TextView title = (TextView) v.findViewById(R.id.docTitle);
+            TextView size = (TextView) v.findViewById(R.id.docBody);
+            ImageView background = (ImageView) v.findViewById(R.id.docCircleBackground);
+            ImageView icon = (ImageView) v.findViewById(R.id.docIcon);
+
+            title.setText(source.title);
+            size.setText(AndroidUtils.parseSize(source.size));
+
+            boolean hasPhoto = source.photo_sizes != null && source.photo_sizes.forType('s') != null;
+            icon.setVisibility(hasPhoto ? View.GONE : View.VISIBLE);
+            if (hasPhoto) {
+                Picasso.with(context)
+                        .load(source.photo_sizes.forType('s').src)
+                        .into(background);
+            }
+
+            parent.addView(v);
         }
     }
 }

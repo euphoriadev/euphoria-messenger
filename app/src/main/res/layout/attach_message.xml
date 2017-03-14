@@ -39,5 +39,18 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/magAttachments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"/>
+
+    <LinearLayout
+        android:layout_marginLeft="14dp"
+        android:id="@+id/msgImages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"/>
+
 </LinearLayout>
 
