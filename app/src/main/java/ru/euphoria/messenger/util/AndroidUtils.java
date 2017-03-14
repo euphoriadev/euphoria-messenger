@@ -5,15 +5,17 @@ import android.app.ActivityManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.PermissionChecker;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -36,6 +38,38 @@ public class AndroidUtils {
         dateFormatter = new SimpleDateFormat("HH:mm"); // 15:57
         dateMonthFormatter = new SimpleDateFormat("d MMM"); // 23 Окт
         dateYearFormatter = new SimpleDateFormat("d MMM, yyyy"); // 23 Окт, 2015
+    }
+
+    public static void cleanFolder(File directory) {
+        File[] files = directory.listFiles();
+        if (!ArrayUtil.isEmpty(files)) {
+            for (File file : files) {
+                if (file.isFile()) {
+                    file.delete();
+                } else {
+                    cleanFolder(file);
+                }
+            }
+        }
+    }
+
+    public static long folderSize(File directory) {
+        long size = 0;
+        for (File file : directory.listFiles()) {
+            if (file.isFile()) {
+                size += file.length();
+            } else {
+                size = folderSize(file);
+            }
+        }
+
+        return size;
+    }
+
+    public static void checkPermission(Activity activity, String permission) {
+        if (PermissionChecker.checkSelfPermission(activity, permission) != PermissionChecker.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity, new String[]{permission}, 0);
+        }
     }
 
 
@@ -101,7 +135,7 @@ public class AndroidUtils {
     /**
      * Magic, don't to touch
      */
-    public static String parseBytes(long sizeInBytes) {
+    public static String parseSize(long sizeInBytes) {
         long unit = 1024;
         if (sizeInBytes < unit) return sizeInBytes + " B";
         int exp = (int) (Math.log(sizeInBytes) / Math.log(unit));

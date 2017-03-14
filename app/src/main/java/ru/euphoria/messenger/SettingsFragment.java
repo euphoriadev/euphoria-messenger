@@ -1,10 +1,12 @@
 package ru.euphoria.messenger;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -19,12 +21,14 @@ import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 
 import ru.euphoria.messenger.api.VKApi;
 import ru.euphoria.messenger.common.AppGlobal;
 import ru.euphoria.messenger.common.ThemeManager;
+import ru.euphoria.messenger.database.DatabaseHelper;
 import ru.euphoria.messenger.util.AndroidUtils;
 import ru.euphoria.messenger.view.ColorPickerPalette;
 import ru.euphoria.messenger.view.ColorPickerSwatch;
@@ -57,6 +61,9 @@ public class SettingsFragment extends PreferenceFragment
     public static final String PREF_KEY_NO_READING = "no_reading";
     public static final String PREF_KEY_NO_TYPING = "no_typing";
 
+    public static final String PREF_KET_CLEAR_CACHE = "clear_cache";
+    public static final String PREF_KET_CLEAR_IMAGES = "clear_images";
+
     private AlertDialog dialog;
     private String[] gravity;
     private String[] blurs;
@@ -81,6 +88,8 @@ public class SettingsFragment extends PreferenceFragment
         findPreference(PREF_KEY_GROUP).setOnPreferenceClickListener(this);
         findPreference(PREF_KEY_CHAT_BACKGROUND).setOnPreferenceClickListener(this);
         findPreference(PREF_KEY_THEME_COLOR).setOnPreferenceClickListener(this);
+        findPreference(PREF_KET_CLEAR_CACHE).setOnPreferenceClickListener(this);
+        findPreference(PREF_KET_CLEAR_IMAGES).setOnPreferenceClickListener(this);
 //        findPreference(PREF_KEY_ICON_COLOR).setOnPreferenceClickListener(this);
 
         SwitchPreference randomTheme = (SwitchPreference) findPreference(PREF_KEY_RANDOM_THEME);
@@ -112,6 +121,12 @@ public class SettingsFragment extends PreferenceFragment
         version.setSummary(BuildConfig.VERSION_NAME);
         version.setOnPreferenceClickListener(this);
 
+        Preference clearCache = findPreference(PREF_KET_CLEAR_CACHE);
+        clearCache.setSummary(getCacheSummary());
+
+        Preference clearImages = findPreference(PREF_KET_CLEAR_IMAGES);
+        clearImages.setSummary(getImagesSummary());
+
     }
 
     @Override
@@ -142,6 +157,18 @@ public class SettingsFragment extends PreferenceFragment
 
             Log.w("SettingsFragment", "image path is " + filePath);
         }
+    }
+
+    private String getCacheSummary() {
+        File db = new File(AppGlobal.database.getPath());
+        String size = getString(R.string.pref_size_format);
+        return String.format(size, AndroidUtils.parseSize(db.length()));
+    }
+
+    private String getImagesSummary() {
+        File cache = getActivity().getCacheDir();
+        String size = getString(R.string.pref_size_format);
+        return String.format(size, AndroidUtils.parseSize(AndroidUtils.folderSize(cache)));
     }
 
     private void restartScreen() {
@@ -227,6 +254,10 @@ public class SettingsFragment extends PreferenceFragment
     }
 
     private void pickImageFromGallery(int code) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            AndroidUtils.checkPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
         startActivityForResult(photoPickerIntent, code);
@@ -334,6 +365,17 @@ public class SettingsFragment extends PreferenceFragment
 
             case PREF_KEY_GROUP:
                 joinToGroup();
+                break;
+
+            case PREF_KET_CLEAR_CACHE:
+                DatabaseHelper.getInstance().dropTables(AppGlobal.database);
+                DatabaseHelper.getInstance().onCreate(AppGlobal.database);
+                preference.setSummary(getCacheSummary());
+                break;
+
+            case PREF_KET_CLEAR_IMAGES:
+                AndroidUtils.cleanFolder(getActivity().getCacheDir());
+                preference.setSummary(getImagesSummary());
                 break;
         }
         return true;

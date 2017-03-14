@@ -450,7 +450,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         ImageView icon = (ImageView) view.findViewById(R.id.docIcon);
 
         title.setText(doc.title);
-        size.setText(AndroidUtils.parseBytes(doc.size));
+        size.setText(AndroidUtils.parseSize(doc.size));
 
         if (doc.photo_sizes != null && doc.photo_sizes.forType('s') != null) {
             icon.setVisibility(View.GONE);

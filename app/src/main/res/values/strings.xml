@@ -38,22 +38,22 @@
 
     <!-- General Settings -->
     <string name="pref_category_general">Внешний вид</string>
-    <string name="pref_night_mode_title">Ночной режим</string>
-    <string name="pref_theme_color_title">Цветовая схема</string>
-    <string name="pref_random_theme_title">Случайная тема</string>
-    <string name="pref_icon_color_title">Цвет значка</string>
+    <string name="pref_night_mode">Ночной режим</string>
+    <string name="pref_theme_color">Цветовая схема</string>
+    <string name="pref_random_theme">Случайная тема</string>
+    <string name="pref_icon_color">Цвет значка</string>
     <string name="pref_chat_background">Фон сообщений</string>
     <string name="pick_color">Выберите цвет</string>
 
     <!--System Panels Settings -->
-    <string name="pref_category_system_panels_title">Системные панели</string>
-    <string name="pref_translucent_status_bar_title">Прозрачный статус бар</string>
+    <string name="pref_category_system_panels">Системные панели</string>
+    <string name="pref_translucent_status_bar">Прозрачный статус бар</string>
 
     <!--Invisible Mode Settings -->
-    <string name="pref_category_invisible_title">Режим невидимки</string>
-    <string name="pref_offline_title">Оффлайн</string>
-    <string name="pref_no_reading_title">Не читать сообщения</string>
-    <string name="pref_no_typing_title">Отключить статус тайпинга</string>
+    <string name="pref_category_invisible">Режим невидимки</string>
+    <string name="pref_offline">Оффлайн</string>
+    <string name="pref_no_reading">Не читать сообщения</string>
+    <string name="pref_no_typing">Отключить статус тайпинга</string>
 
     <!--Notifications Settings -->
     <string name="pref_category_notifications">Уведомления</string>
@@ -62,9 +62,15 @@
 
     <!-- Navigation Drawer Settings -->
     <string name="pref_category_drawer">Боковое шторка</string>
-    <string name="pref_drawer_gravity_title">Расположение</string>
-    <string name="pref_header_type_title">Заголовок</string>
-    <string name="pref_header_blur_radius">Радиус размытия заголовка</string>
+    <string name="pref_drawer_gravity">Расположение</string>
+    <string name="pref_header_type">Заголовок</string>
+    <string name="pref_header_blur">Радиус размытия заголовка</string>
+
+    <!--Cache Settings-->
+    <string name="pref_category_cache">Память</string>
+    <string name="pref_clear_cache">Очистить кэш данных</string>
+    <string name="pref_clear_images">Очистить кэш изображений</string>
+    <string name="pref_size_format">Размер: %s</string>
 
     <!--About Settings-->
     <string name="pref_about">О приложении</string>

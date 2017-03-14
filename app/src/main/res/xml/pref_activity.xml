@@ -5,15 +5,15 @@
         <SwitchPreference
             android:defaultValue="false"
             android:key="night_mode"
-            android:title="@string/pref_night_mode_title" />
+            android:title="@string/pref_night_mode" />
 
         <SwitchPreference
             android:defaultValue="false"
             android:key="random_theme"
-            android:title="@string/pref_random_theme_title" />
+            android:title="@string/pref_random_theme" />
         <Preference
             android:key="theme_color"
-            android:title="@string/pref_theme_color_title" />
+            android:title="@string/pref_theme_color" />
 
         <!--<Preference-->
             <!--android:key="icon_color"-->
@@ -24,10 +24,10 @@
             android:title="@string/pref_chat_background" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_category_system_panels_title">
+    <PreferenceCategory android:title="@string/pref_category_system_panels">
         <SwitchPreference
             android:key="translucent_status_bar"
-            android:title="@string/pref_translucent_status_bar_title" />
+            android:title="@string/pref_translucent_status_bar" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_category_drawer">
@@ -36,36 +36,36 @@
             android:entries="@array/pref_drawer_gravity"
             android:entryValues="@array/pref_drawer_gravity_keys"
             android:key="drawer_gravity"
-            android:title="@string/pref_drawer_gravity_title" />
+            android:title="@string/pref_drawer_gravity" />
 
         <ListPreference
             android:defaultValue="solid"
             android:entries="@array/pref_header_type"
             android:entryValues="@array/pref_header_type_keys"
             android:key="header_type"
-            android:title="@string/pref_header_type_title" />
+            android:title="@string/pref_header_type" />
 
         <ListPreference
             android:defaultValue="2"
             android:entries="@array/pref_drawer_blur_radius"
             android:entryValues="@array/pref_drawer_blur_radius_keys"
             android:key="blur_radius"
-            android:title="@string/pref_header_blur_radius" />
+            android:title="@string/pref_header_blur" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_category_invisible_title">
+    <PreferenceCategory android:title="@string/pref_category_invisible">
         <SwitchPreference
             android:defaultValue="true"
             android:key="offline"
-            android:title="@string/pref_offline_title" />
+            android:title="@string/pref_offline" />
         <SwitchPreference
             android:defaultValue="true"
             android:key="no_reading"
-            android:title="@string/pref_no_reading_title" />
+            android:title="@string/pref_no_reading" />
         <SwitchPreference
             android:defaultValue="false"
             android:key="no_typing"
-            android:title="@string/pref_no_typing_title" />
+            android:title="@string/pref_no_typing" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_category_notifications">
@@ -73,6 +73,15 @@
         <SwitchPreference android:title="@string/pref_led_enable" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/pref_category_cache">
+        <Preference
+            android:key="clear_cache"
+            android:title="@string/pref_clear_cache" />
+
+        <Preference
+            android:key="clear_images"
+            android:title="@string/pref_clear_images" />
+    </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_about">
 
