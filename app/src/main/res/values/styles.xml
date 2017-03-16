@@ -8,6 +8,7 @@
         <item name="badgeTextColor">@android:color/white</item>
         <item name="onlineColor">@android:color/white</item>
         <item name="fwdMessageColor">?android:textColorSecondary</item>
+        <item name="textColorSecondary">@color/secondary_text_color_light</item>
     </style>
 
     <style name="AppTheme.Light" parent="Theme.AppCompat.Light.NoActionBar">
@@ -18,6 +19,7 @@
         <item name="badgeTextColor">@android:color/white</item>
         <item name="onlineColor">@android:color/white</item>
         <item name="fwdMessageColor">?colorPrimary</item>
+        <item name="textColorSecondary">@color/secondary_text_color</item>
     </style>
 
     <style name="AppTheme.Red">

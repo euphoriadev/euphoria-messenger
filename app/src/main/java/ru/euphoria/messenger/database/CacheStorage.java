@@ -117,7 +117,7 @@ public class CacheStorage {
         return users;
     }
 
-    public static ArrayList<VKUser> getFriends(int userId) {
+    public static ArrayList<VKUser> getFriends(int userId, boolean onlyOnline) {
         Cursor cursor = QueryBuilder.query()
                 .select("*")
                 .from(FRIENDS_TABLE)
@@ -128,7 +128,13 @@ public class CacheStorage {
 
         ArrayList<VKUser> users = new ArrayList<>(cursor.getCount());
         while (cursor.moveToNext()) {
-            users.add(parseUser(cursor));
+            boolean userOnline = getInt(cursor, ONLINE) == 1;
+            if (onlyOnline && !userOnline) {
+                continue;
+            }
+
+            VKUser user = parseUser(cursor);
+            users.add(user);
         }
         cursor.close();
 
@@ -265,6 +271,8 @@ public class CacheStorage {
         user.online = getInt(cursor, ONLINE) == 1;
         user.online_mobile = getInt(cursor, ONLINE_MOBILE) == 1;
         user.online_app = getInt(cursor, ONLINE_APP);
+        user.deactivated = getString(cursor, DEACTIVATED);
+        user.sex = getInt(cursor, SEX);
         return user;
     }
 
@@ -360,6 +368,8 @@ public class CacheStorage {
         values.put(PHOTO_100, user.photo_100);
         values.put(PHOTO_200, user.photo_200);
         values.put(PHOTO_200, user.photo_200);
+        values.put(DEACTIVATED, user.deactivated);
+        values.put(SEX, user.sex);
     }
 
     private static void putValues(ContentValues values, VKMessage dialog, boolean isDialog) {

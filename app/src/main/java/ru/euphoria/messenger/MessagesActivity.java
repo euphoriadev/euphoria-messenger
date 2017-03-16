@@ -3,6 +3,8 @@ package ru.euphoria.messenger;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -77,8 +79,6 @@ public class MessagesActivity extends BaseActivity
         getSupportActionBar().setTitle(title);
         getSupportActionBar().setSubtitle(getSubtitleStatus());
 
-        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
-        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP);
 
         layoutManager = new LinearLayoutManager(this);
         layoutManager.setStackFromEnd(true);
@@ -93,7 +93,13 @@ public class MessagesActivity extends BaseActivity
 
         editMessage = (EditText) findViewById(R.id.editMessage);
         editMessage.addTextChangedListener(this);
-        DrawableCompat.setTint(editMessage.getBackground(), MessageAdapter.getDefaultBubbleColor());
+
+        Drawable background = editMessage.getBackground();
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            background = DrawableCompat.wrap(background);
+        }
+
+        DrawableCompat.setTint(background, MessageAdapter.getDefaultBubbleColor());
 
         getCachedMessages();
         if (AndroidUtils.hasConnection()) {

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/videoImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop" />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/videoPlay"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:background="@drawable/play_circle"
+        android:padding="8dp"
+        app:srcCompat="@drawable/ic_vector_play_arrow" />
+
+    <TextView
+        android:id="@+id/videoTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:background="@drawable/message_drop_shadow_dark"
+        android:maxLines="1"
+        android:padding="4dp"
+        android:singleLine="true"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textColor="@color/primary_text_color_light"
+        tools:text="Подробный обзор Android N" />
+
+    <TextView
+        android:id="@+id/videoTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:background="#4f000000"
+        android:padding="4dp"
+        android:singleLine="true"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:textColor="@color/primary_text_color_light"
+        tools:text="06:25" />
+</FrameLayout>

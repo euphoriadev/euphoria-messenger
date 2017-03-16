@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="76dp"
     android:background="?selectableItemBackground"
@@ -61,9 +62,9 @@
                 android:layout_weight="1"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="Ali Connors"
                 android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="?android:textColorPrimary" />
+                android:textColor="?android:textColorPrimary"
+                tools:text="Ali Connors" />
 
             <View
                 android:id="@+id/viewDone"
@@ -82,10 +83,10 @@
                 android:layout_marginLeft="8dp"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="16:00"
                 android:textAppearance="?android:textAppearanceSmall"
                 android:textColor="?android:textColorSecondary"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                tools:text="16:00" />
         </LinearLayout>
 
         <LinearLayout
@@ -100,9 +101,9 @@
                 android:layout_weight="1"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="Good day! today I'm going for a walk"
                 android:textAppearance="?android:textAppearanceSmall"
-                android:textColor="?android:textColorSecondary" />
+                android:textColor="?android:textColorSecondary"
+                tools:text="Good day! today I'm going for a walk" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/textUnread"
@@ -113,10 +114,10 @@
                 android:background="@drawable/unread_indicator"
                 android:gravity="center"
                 android:padding="2dp"
-                android:text="6"
                 android:textAppearance="?android:textAppearanceSmall"
                 android:textColor="?badgeTextColor"
-                app:backgroundTint="?colorAccent" />
+                app:backgroundTint="?colorAccent"
+                tools:text="6" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

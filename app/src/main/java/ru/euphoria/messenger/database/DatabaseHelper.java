@@ -74,10 +74,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String PHOTO_1280 = "photo_1280";
     public static final String PHOTO_2560 = "photo_2560";
     public static final String PHOTO_MAX = "photo_max";
+    public static final String DEACTIVATED = "deactivated";
     public static final String WIDTH = "width";
     public static final String HEIGHT = "height";
-    public static final String POSITION_DECIMAL = "position";
     public static final String LAST_SEEN = "last_seen";
+    public static final String SEX = "sex";
     public static final String ARTIST = "artist";
     public static final String DURATION = "duration";
     public static final String URL = "url";
@@ -109,7 +110,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             " [" + PHOTO_200 + "] VARCHAR(255), " +
             " [" + PHOTO_400 + "] VARCHAR(255), " +
             " [" + PHOTO_MAX + "] VARCHAR(255), " +
-            " [" + POSITION_DECIMAL + "] DECIMAL" +
+            " [" + DEACTIVATED + "] VARCHAR(255), " +
+            " [" + SEX + "] INTEGER" +
             ");";
 
     private static final String SQL_CREATE_TABLE_FRIENDS = "CREATE TABLE " + FRIENDS_TABLE +

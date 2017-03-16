@@ -30,11 +30,17 @@
 
     <string name="subtitle_online">в сети</string>
     <string name="subtitle_last_seen">заходил(а) %s</string>
+    <string name="subtitle_last_seen_male">заходил %s</string>
+    <string name="subtitle_last_seen_female">заходила %s</string>
     <string name="subtitle_community">сообщество</string>
     <string name="subtitle_chat">%d участников</string>
 
     <string name="refresh">Обновить</string>
     <string name="open_dialog">Открыть диалог</string>
+    <string name="banned">забанен(а)</string>
+    <string name="deleted">удален(а)</string>
+    <string name="friends_tab_all">%s Друзей</string>
+    <string name="friends_tab_online">%s В сети</string>
 
     <!-- General Settings -->
     <string name="pref_category_general">Внешний вид</string>

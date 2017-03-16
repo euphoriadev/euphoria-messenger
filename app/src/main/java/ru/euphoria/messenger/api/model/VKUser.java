@@ -14,7 +14,7 @@ import ru.euphoria.messenger.json.JsonObject;
 public class VKUser extends VKModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    public static final String DEFAULT_FIELDS = "photo_50, photo_100, photo_200, status, screen_name, online, online_mobile, last_seen, verified";
+    public static final String DEFAULT_FIELDS = "photo_50, photo_100, photo_200, status, screen_name, online, online_mobile, last_seen, verified, sex";
 
     /** User object with empty name; */
     public static final VKUser EMPTY = new VKUser() {
@@ -63,6 +63,11 @@ public class VKUser extends VKModel implements Serializable {
     /** True if the profile is verified, false if not */
     public boolean verified;
 
+    public String deactivated;
+
+    /** User sex (1 — female, 2 — male, 0 — not specified) */
+    public int sex;
+
     public static ArrayList<VKUser> parse(JsonArray array) {
         ArrayList<VKUser> users = new ArrayList<>(array.length());
         for (Object value : array) {
@@ -96,6 +101,8 @@ public class VKUser extends VKModel implements Serializable {
         this.status = source.optString("status");
         this.online_mobile = source.optInt("online_mobile") == 1;
         this.verified = source.optInt("verified") == 1;
+        this.deactivated = source.optString("deactivated");
+        this.sex = source.optInt("sex");
         if (this.online_mobile) {
             this.online_app = source.optInt("online_app");
         }
@@ -108,6 +115,12 @@ public class VKUser extends VKModel implements Serializable {
     @Override
     public String toString() {
         return first_name + " " + last_name;
+    }
+
+    public static class Sex {
+        public static final int NONE = 0;
+        public static final int FEMALE = 1;
+        public static final int MALE = 2;
     }
 }
 

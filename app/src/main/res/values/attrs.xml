@@ -16,4 +16,6 @@
     <attr name="badgeTextColor" format="reference" />
     <attr name="onlineColor" format="reference" />
     <attr name="fwdMessageColor" format="reference" />
+    <attr name="textColorSecondary" format="color" />
+
 </resources>

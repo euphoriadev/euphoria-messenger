@@ -8,6 +8,8 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AlertDialog;
@@ -17,6 +19,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -44,6 +47,7 @@ import ru.euphoria.messenger.api.model.VKModel;
 import ru.euphoria.messenger.api.model.VKPhoto;
 import ru.euphoria.messenger.api.model.VKSticker;
 import ru.euphoria.messenger.api.model.VKUser;
+import ru.euphoria.messenger.api.model.VKVideo;
 import ru.euphoria.messenger.common.AppGlobal;
 import ru.euphoria.messenger.common.BlurTransform;
 import ru.euphoria.messenger.common.RoundTransform;
@@ -126,9 +130,13 @@ public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHo
 
         int tintColor = getTintColor(item);
 
-        DrawableCompat.setTintMode(holder.bubble.getBackground(), PorterDuff.Mode.MULTIPLY);
-        DrawableCompat.setTint(holder.bubble.getBackground(), tintColor);
+        Drawable background = holder.bubble.getBackground();
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            background = DrawableCompat.wrap(background);
+        }
 
+        DrawableCompat.setTintMode(background, PorterDuff.Mode.MULTIPLY);
+        DrawableCompat.setTint(background, tintColor);
 
         holder.body.setVisibility(TextUtils.isEmpty(item.body) ? View.GONE : View.VISIBLE);
         holder.body.setText(item.body);
@@ -137,6 +145,7 @@ public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHo
             holder.indicator.setVisibility(View.GONE);
         } else {
             holder.indicator.setVisibility(View.VISIBLE);
+
         }
 
         holder.avatar.setVisibility(!item.is_out && chatId > 0 ? View.VISIBLE : View.GONE);
@@ -331,6 +340,8 @@ public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHo
                 attacher.doc(parent, (VKDoc) attach);
             } else if (attach instanceof VKLink) {
                 attacher.link(parent, (VKLink) attach);
+            } else if (attach instanceof VKVideo) {
+                attacher.video(parent, (VKVideo) attach, maxWidth);
             }
         }
     }
@@ -436,6 +447,18 @@ public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHo
             );
         }
 
+        private FrameLayout.LayoutParams getFrameParams(float sw, float sh, int layoutWidth) {
+            if (layoutWidth == -1) {
+                return new FrameLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT);
+            }
+            return new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    getHeight(sw, sh, layoutWidth)
+            );
+        }
+
         public void sticker(ViewGroup parent, VKSticker source, int width) {
             final ImageView image = (ImageView)
                     inflater.inflate(R.layout.attach_photo, parent, false);
@@ -443,6 +466,24 @@ public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHo
             image.setLayoutParams(getParams(256f, 256f, width));
             loadImage(image, source.photo_64, source.photo_256, false);
             parent.addView(image);
+        }
+
+        public void video(ViewGroup parent, VKVideo source, int width) {
+            View v = inflater.inflate(R.layout.attach_video, parent, false);
+
+            ImageView image = (ImageView) v.findViewById(R.id.videoImage);
+            TextView title = (TextView) v.findViewById(R.id.videoTitle);
+            TextView time = (TextView) v.findViewById(R.id.videoTime);
+
+            String duration = AndroidUtils.dateFormatter.format(
+                    TimeUnit.SECONDS.toMillis(source.duration));
+
+            title.setText(source.title);
+            time.setText(duration);
+            image.setLayoutParams(getFrameParams(320f, 240f, width));
+
+            loadImage(image, source.photo_130, source.photo_320, false);
+            parent.addView(v);
         }
 
         public void photo(ViewGroup parent, final VKPhoto source, int width) {

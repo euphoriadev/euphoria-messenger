@@ -19,6 +19,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
@@ -29,6 +31,7 @@ import ru.euphoria.messenger.api.VKApi;
 import ru.euphoria.messenger.common.AppGlobal;
 import ru.euphoria.messenger.common.ThemeManager;
 import ru.euphoria.messenger.database.DatabaseHelper;
+import ru.euphoria.messenger.database.MemoryCache;
 import ru.euphoria.messenger.util.AndroidUtils;
 import ru.euphoria.messenger.view.ColorPickerPalette;
 import ru.euphoria.messenger.view.ColorPickerSwatch;
@@ -371,11 +374,15 @@ public class SettingsFragment extends PreferenceFragment
                 DatabaseHelper.getInstance().dropTables(AppGlobal.database);
                 DatabaseHelper.getInstance().onCreate(AppGlobal.database);
                 preference.setSummary(getCacheSummary());
+
+                MemoryCache.clear();
                 break;
 
             case PREF_KET_CLEAR_IMAGES:
                 AndroidUtils.cleanFolder(getActivity().getCacheDir());
                 preference.setSummary(getImagesSummary());
+
+                AndroidUtils.clearCache(Picasso.with(getActivity()));
                 break;
         }
         return true;

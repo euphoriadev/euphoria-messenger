@@ -13,12 +13,17 @@ import android.support.v4.content.PermissionChecker;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
+import com.squareup.picasso.Cache;
+import com.squareup.picasso.Picasso;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -38,6 +43,18 @@ public class AndroidUtils {
         dateFormatter = new SimpleDateFormat("HH:mm"); // 15:57
         dateMonthFormatter = new SimpleDateFormat("d MMM"); // 23 Окт
         dateYearFormatter = new SimpleDateFormat("d MMM, yyyy"); // 23 Окт, 2015
+    }
+
+    public static void clearCache(Picasso p) {
+        try {
+            Field field = p.getClass().getDeclaredField("cache");
+            field.setAccessible(true);
+
+            Cache cache = (Cache) field.get(p);
+            cache.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void cleanFolder(File directory) {
