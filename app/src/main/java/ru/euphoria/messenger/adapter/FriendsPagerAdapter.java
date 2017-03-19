@@ -19,6 +19,9 @@ import ru.euphoria.messenger.common.AppGlobal;
  */
 
 public class FriendsPagerAdapter extends FragmentPagerAdapter {
+    public static final int POSITION_ALL = 0;
+    public static final int POSITION_ONLINE = 1;
+
     private FriendsFragment[] fragments;
 
     public FriendsPagerAdapter(FragmentManager fm) {
@@ -40,8 +43,8 @@ public class FriendsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         switch (position) {
-            case 0: return AppGlobal.appContext.getString(R.string.friends_tab_all);
-            case 1: return AppGlobal.appContext.getString(R.string.friends_tab_online);
+            case POSITION_ALL: return AppGlobal.appContext.getString(R.string.friends_tab_all);
+            case POSITION_ONLINE: return AppGlobal.appContext.getString(R.string.friends_tab_online);
         }
         return "";
     }

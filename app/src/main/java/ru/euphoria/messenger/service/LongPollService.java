@@ -3,6 +3,7 @@ package ru.euphoria.messenger.service;
 import android.app.Service;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.support.v4.util.ArrayMap;
 import android.util.Log;
@@ -27,7 +28,6 @@ import ru.euphoria.messenger.util.ArrayUtil;
 import static ru.euphoria.messenger.database.DatabaseHelper.DIALOGS_TABLE;
 
 public class LongPollService extends Service {
-    public static final String MOBILE_USER_AGENT = "Mozilla/5.0 (Linux; Android 4.4; Nexus 5 Build/_BuildID_) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36";
     private static final String TAG = "LongPollService";
     private Thread updateThread;
     private boolean isRunning;

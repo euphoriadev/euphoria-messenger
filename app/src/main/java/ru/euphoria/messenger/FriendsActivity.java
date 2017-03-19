@@ -20,6 +20,8 @@ import ru.euphoria.messenger.adapter.FriendsPagerAdapter;
 import ru.euphoria.messenger.api.VKApi;
 import ru.euphoria.messenger.api.model.VKUser;
 import ru.euphoria.messenger.common.AppGlobal;
+import ru.euphoria.messenger.concurrent.AsyncCallback;
+import ru.euphoria.messenger.concurrent.ThreadExecutor;
 import ru.euphoria.messenger.database.CacheStorage;
 import ru.euphoria.messenger.database.DatabaseHelper;
 import ru.euphoria.messenger.util.AndroidUtils;
@@ -132,30 +134,36 @@ public class FriendsActivity extends BaseActivity
             return;
         }
 
-        swipeRefresh.setRefreshing(true);
-        VKApi.friends()
-                .get()
-                .order("hints")
-                .fields(VKUser.DEFAULT_FIELDS)
-                .execute(VKUser.class, new VKApi.OnResponseListener<VKUser>() {
-                    @Override
-                    public void onSuccess(ArrayList<VKUser> friends) {
-                        CacheStorage.delete(DatabaseHelper.FRIENDS_TABLE,
-                                String.format(AppGlobal.locale, "%s = %d",
-                                        DatabaseHelper.USER_ID, VKApi.config.userId));
-                        CacheStorage.insert(DatabaseHelper.FRIENDS_TABLE, friends);
-                        CacheStorage.insert(DatabaseHelper.USERS_TABLE, friends);
+        ThreadExecutor.execute(new AsyncCallback(this) {
+            @Override
+            public void ready() throws Exception {
+                ArrayList<VKUser> friends = VKApi.friends()
+                        .get()
+                        .order("hints")
+                        .fields(VKUser.DEFAULT_FIELDS)
+                        .execute(VKUser.class);
 
-                        swipeRefresh.setRefreshing(false);
-                        pagerAdapter.getCachedFriends();
-                    }
+                CacheStorage.delete(DatabaseHelper.FRIENDS_TABLE,
+                        String.format(AppGlobal.locale, "%s = %d",
+                                DatabaseHelper.USER_ID, VKApi.config.userId));
+                CacheStorage.insert(DatabaseHelper.FRIENDS_TABLE, friends);
+                CacheStorage.insert(DatabaseHelper.USERS_TABLE, friends);
+            }
 
-                    @Override
-                    public void onError(Exception ex) {
-                        Snackbar.make((ViewGroup) viewPager.getParent(), ex.getMessage(), Snackbar.LENGTH_LONG)
-                                .show();
-                        swipeRefresh.setRefreshing(false);
-                    }
-                });
+            @Override
+            public void done() {
+                swipeRefresh.setRefreshing(false);
+                pagerAdapter.getCachedFriends();
+            }
+
+            @Override
+            public void error(Exception e) {
+                super.error(e);
+
+                Snackbar.make((ViewGroup) viewPager.getParent(), e.getMessage(), Snackbar.LENGTH_LONG)
+                        .show();
+                swipeRefresh.setRefreshing(false);
+            }
+        });
     }
 }

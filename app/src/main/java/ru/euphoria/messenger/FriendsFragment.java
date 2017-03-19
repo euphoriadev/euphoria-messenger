@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import ru.euphoria.messenger.adapter.FriendsAdapter;
+import ru.euphoria.messenger.adapter.FriendsPagerAdapter;
 import ru.euphoria.messenger.api.VKApi;
 import ru.euphoria.messenger.api.model.VKUser;
 import ru.euphoria.messenger.common.AppGlobal;
@@ -72,8 +73,8 @@ public class FriendsFragment extends Fragment {
         FriendsActivity activity = (FriendsActivity) getActivity();
         int resource = 0;
         switch (position) {
-            case 0: resource = R.string.friends_tab_all; break;
-            case 1: resource = R.string.friends_tab_online; break;
+            case FriendsPagerAdapter.POSITION_ALL: resource = R.string.friends_tab_all; break;
+            case FriendsPagerAdapter.POSITION_ONLINE: resource = R.string.friends_tab_online; break;
         }
         activity.setTabText(position, getString(resource, adapter.getValues().size()));
     }

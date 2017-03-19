@@ -4,6 +4,7 @@ package ru.euphoria.messenger.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 
 import java.nio.IntBuffer;
 import java.text.MessageFormat;
@@ -127,6 +128,7 @@ public class CacheStorage {
                 .asCursor(database);
 
         ArrayList<VKUser> users = new ArrayList<>(cursor.getCount());
+
         while (cursor.moveToNext()) {
             boolean userOnline = getInt(cursor, ONLINE) == 1;
             if (onlyOnline && !userOnline) {
@@ -210,6 +212,7 @@ public class CacheStorage {
 
     public static void insert(String table, ArrayList<? extends VKModel> values) {
         database.beginTransaction();
+        database.setTransactionSuccessful();
 
         ContentValues cv = new ContentValues();
         for (int i = 0; i < values.size(); i++) {
@@ -243,7 +246,7 @@ public class CacheStorage {
             database.insert(table, null, cv);
             cv.clear();
         }
-        database.setTransactionSuccessful();
+
         database.endTransaction();
     }
 
@@ -298,6 +301,7 @@ public class CacheStorage {
     @SuppressWarnings("unchecked")
     public static VKMessage parseMessage(Cursor cursor) {
         VKMessage message = new VKMessage();
+
         message.id = getInt(cursor, MESSAGE_ID);
         message.user_id = getInt(cursor, USER_ID);
         message.chat_id = getInt(cursor, CHAT_ID);
