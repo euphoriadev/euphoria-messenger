@@ -1,9 +1,6 @@
 package ru.euphoria.messenger.common;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Build;
-import android.util.Log;
 
 import com.squareup.picasso.Transformation;
 

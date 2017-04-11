@@ -3,11 +3,7 @@ package ru.euphoria.messenger.database;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 
-import java.nio.IntBuffer;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -23,7 +19,63 @@ import ru.euphoria.messenger.util.AndroidUtils;
 import ru.euphoria.messenger.util.ArrayUtil;
 
 import static ru.euphoria.messenger.common.AppGlobal.database;
-import static ru.euphoria.messenger.database.DatabaseHelper.*;
+import static ru.euphoria.messenger.database.DatabaseHelper.ADMIN_LEVER;
+import static ru.euphoria.messenger.database.DatabaseHelper.ALBUM_ID;
+import static ru.euphoria.messenger.database.DatabaseHelper.ARTIST;
+import static ru.euphoria.messenger.database.DatabaseHelper.ATTACHMENTS;
+import static ru.euphoria.messenger.database.DatabaseHelper.AUDIO_ID;
+import static ru.euphoria.messenger.database.DatabaseHelper.BODY;
+import static ru.euphoria.messenger.database.DatabaseHelper.CHAT_ID;
+import static ru.euphoria.messenger.database.DatabaseHelper.DATE;
+import static ru.euphoria.messenger.database.DatabaseHelper.DEACTIVATED;
+import static ru.euphoria.messenger.database.DatabaseHelper.DESCRIPTION;
+import static ru.euphoria.messenger.database.DatabaseHelper.DIALOGS_TABLE;
+import static ru.euphoria.messenger.database.DatabaseHelper.DURATION;
+import static ru.euphoria.messenger.database.DatabaseHelper.FIRST_NAME;
+import static ru.euphoria.messenger.database.DatabaseHelper.FRIENDS_TABLE;
+import static ru.euphoria.messenger.database.DatabaseHelper.FRIEND_ID;
+import static ru.euphoria.messenger.database.DatabaseHelper.FWD_MESSAGES;
+import static ru.euphoria.messenger.database.DatabaseHelper.GROUPS_TABLE;
+import static ru.euphoria.messenger.database.DatabaseHelper.GROUP_ID;
+import static ru.euphoria.messenger.database.DatabaseHelper.HEIGHT;
+import static ru.euphoria.messenger.database.DatabaseHelper.IMPORTANT;
+import static ru.euphoria.messenger.database.DatabaseHelper.IS_ADMIN;
+import static ru.euphoria.messenger.database.DatabaseHelper.IS_CLOSED;
+import static ru.euphoria.messenger.database.DatabaseHelper.IS_OUT;
+import static ru.euphoria.messenger.database.DatabaseHelper.LAST_NAME;
+import static ru.euphoria.messenger.database.DatabaseHelper.LAST_SEEN;
+import static ru.euphoria.messenger.database.DatabaseHelper.MEMBERS_COUNT;
+import static ru.euphoria.messenger.database.DatabaseHelper.MESSAGES_TABLE;
+import static ru.euphoria.messenger.database.DatabaseHelper.MESSAGE_ID;
+import static ru.euphoria.messenger.database.DatabaseHelper.NAME;
+import static ru.euphoria.messenger.database.DatabaseHelper.ONLINE;
+import static ru.euphoria.messenger.database.DatabaseHelper.ONLINE_APP;
+import static ru.euphoria.messenger.database.DatabaseHelper.ONLINE_MOBILE;
+import static ru.euphoria.messenger.database.DatabaseHelper.OWNER_ID;
+import static ru.euphoria.messenger.database.DatabaseHelper.PHOTOS_TABLE;
+import static ru.euphoria.messenger.database.DatabaseHelper.PHOTO_100;
+import static ru.euphoria.messenger.database.DatabaseHelper.PHOTO_1280;
+import static ru.euphoria.messenger.database.DatabaseHelper.PHOTO_130;
+import static ru.euphoria.messenger.database.DatabaseHelper.PHOTO_200;
+import static ru.euphoria.messenger.database.DatabaseHelper.PHOTO_2560;
+import static ru.euphoria.messenger.database.DatabaseHelper.PHOTO_50;
+import static ru.euphoria.messenger.database.DatabaseHelper.PHOTO_604;
+import static ru.euphoria.messenger.database.DatabaseHelper.PHOTO_75;
+import static ru.euphoria.messenger.database.DatabaseHelper.PHOTO_807;
+import static ru.euphoria.messenger.database.DatabaseHelper.READ_STATE;
+import static ru.euphoria.messenger.database.DatabaseHelper.SCREEN_NAME;
+import static ru.euphoria.messenger.database.DatabaseHelper.SEX;
+import static ru.euphoria.messenger.database.DatabaseHelper.STATUS;
+import static ru.euphoria.messenger.database.DatabaseHelper.TEXT;
+import static ru.euphoria.messenger.database.DatabaseHelper.TITLE;
+import static ru.euphoria.messenger.database.DatabaseHelper.TYPE;
+import static ru.euphoria.messenger.database.DatabaseHelper.UNREAD_COUNT;
+import static ru.euphoria.messenger.database.DatabaseHelper.URL;
+import static ru.euphoria.messenger.database.DatabaseHelper.USERS_COUNT;
+import static ru.euphoria.messenger.database.DatabaseHelper.USERS_TABLE;
+import static ru.euphoria.messenger.database.DatabaseHelper.USER_ID;
+import static ru.euphoria.messenger.database.DatabaseHelper.WIDTH;
+import static ru.euphoria.messenger.database.DatabaseHelper._ID;
 
 public class CacheStorage {
     public static void checkOpen() {
@@ -212,7 +264,6 @@ public class CacheStorage {
 
     public static void insert(String table, ArrayList<? extends VKModel> values) {
         database.beginTransaction();
-        database.setTransactionSuccessful();
 
         ContentValues cv = new ContentValues();
         for (int i = 0; i < values.size(); i++) {
@@ -247,6 +298,7 @@ public class CacheStorage {
             cv.clear();
         }
 
+        database.setTransactionSuccessful();
         database.endTransaction();
     }
 

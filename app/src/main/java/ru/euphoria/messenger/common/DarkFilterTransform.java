@@ -2,17 +2,12 @@ package ru.euphoria.messenger.common;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.util.Log;
 
-import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
-
-import ru.euphoria.messenger.util.ColorUtil;
 
 /**
  * Created by user on 10.02.17.

@@ -2,20 +2,14 @@ package ru.euphoria.messenger;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import ru.euphoria.messenger.api.model.VKPhoto;
 import ru.euphoria.messenger.util.AndroidUtils;
-import ru.euphoria.messenger.view.ZoomImageView;
 
 /**
  * Created by Igor on 07.03.17.
@@ -23,7 +17,7 @@ import ru.euphoria.messenger.view.ZoomImageView;
 
 public class ImageViewActivity extends Activity {
     private boolean hidden;
-    private ZoomImageView view;
+    private ImageView view;
     private VKPhoto photo;
     private Bitmap bitmap;
 
@@ -32,13 +26,13 @@ public class ImageViewActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_view);
 
-        view = (ZoomImageView) findViewById(R.id.imageView);
-        view.setOnTouchListener(view);
-
+        view = (ImageView) findViewById(R.id.imageView);
         photo = (VKPhoto) getIntent().getSerializableExtra("photo");
-        bitmap = AndroidUtils.deserializeImage(getIntent().getByteArrayExtra("bitmap"));
 
-        view.setImageBitmap(bitmap);
+        Picasso.with(this)
+                .load(photo.photo_604)
+                .noFade()
+                .into(view);
     }
 
 

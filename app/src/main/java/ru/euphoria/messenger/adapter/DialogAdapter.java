@@ -6,14 +6,10 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,8 +22,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -50,7 +44,7 @@ import ru.euphoria.messenger.util.ThemeUtil;
  * Created by Igorek on 07.02.17.
  */
 
-public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder>{
+public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder> {
     public ArrayList<VKMessage> messages;
 
     private LayoutInflater inflater;

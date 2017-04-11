@@ -5,6 +5,8 @@ import java.io.Serializable;
 import ru.euphoria.messenger.json.JsonObject;
 
 public class VKLongPollServer extends VKModel implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     public String key;
     public String server;
     public long ts;

@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="attachment_tabs">
+        <item>Изображения</item>
+        <item>Видео</item>
+        <item>Аудио</item>
+        <item>Документы</item>
+        <item>Ссылки</item>
+    </string-array>
+
+    <string-array name="friend_tabs">
+        <item>%s Друзей</item>
+        <item>%s В сети</item>
+    </string-array>
 
     <string-array name="dialog_options">
         <item>Удалить диалог</item>

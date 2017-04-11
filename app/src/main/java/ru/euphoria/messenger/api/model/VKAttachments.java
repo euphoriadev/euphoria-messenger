@@ -1,7 +1,5 @@
 package ru.euphoria.messenger.api.model;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 
 import ru.euphoria.messenger.json.JsonArray;
@@ -58,18 +56,35 @@ public class VKAttachments {
 
         for (int i = 0; i < array.length(); i++) {
             JsonObject attach = array.optJsonObject(i);
+            if (attach.has("attachment")) {
+                attach = attach.optJsonObject("attachment");
+            }
 
             String type = attach.optString("type");
             JsonObject object = attach.optJsonObject(type);
 
             switch (type) {
-                case TYPE_PHOTO: attachments.add(new VKPhoto(object)); break;
-                case TYPE_AUDIO: attachments.add(new VKAudio(object)); break;
-                case TYPE_VIDEO: attachments.add(new VKVideo(object)); break;
-                case TYPE_DOC:   attachments.add(new VKDoc(object)); break;
-                case TYPE_STICKER:   attachments.add(new VKSticker(object)); break;
-                case TYPE_LINK:   attachments.add(new VKLink(object)); break;
-                case TYPE_GIFT:   attachments.add(new VKGift(object)); break;
+                case TYPE_PHOTO:
+                    attachments.add(new VKPhoto(object));
+                    break;
+                case TYPE_AUDIO:
+                    attachments.add(new VKAudio(object));
+                    break;
+                case TYPE_VIDEO:
+                    attachments.add(new VKVideo(object));
+                    break;
+                case TYPE_DOC:
+                    attachments.add(new VKDoc(object));
+                    break;
+                case TYPE_STICKER:
+                    attachments.add(new VKSticker(object));
+                    break;
+                case TYPE_LINK:
+                    attachments.add(new VKLink(object));
+                    break;
+                case TYPE_GIFT:
+                    attachments.add(new VKGift(object));
+                    break;
             }
         }
 

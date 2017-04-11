@@ -14,6 +14,7 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
 
+
     buildTypes {
         release {
             minifyEnabled false
@@ -41,14 +42,11 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-
     // Google Support
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.android.support:design:25.0.0'
-
     // Square's Image Loader
     compile 'com.squareup.picasso:picasso:2.5.2'
-
     // EventBus by GreenRoot
     compile 'org.greenrobot:eventbus:3.0.0'
 }

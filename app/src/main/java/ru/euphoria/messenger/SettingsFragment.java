@@ -14,9 +14,9 @@ import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.provider.MediaStore;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
@@ -71,6 +71,7 @@ public class SettingsFragment extends PreferenceFragment
     private String[] gravity;
     private String[] blurs;
     private String[] types;
+    private int lastCode;
 
     private HashSet<String> values;
 
@@ -110,9 +111,15 @@ public class SettingsFragment extends PreferenceFragment
         ListPreference headerType = (ListPreference) findPreference(PREF_KEY_HEADER_TYPE);
         headerType.setOnPreferenceChangeListener(this);
         switch (headerType.getValue()) {
-            case "solid": headerType.setSummary(types[0]); break;
-            case "blur": headerType.setSummary(types[1]); break;
-            case "wallpaper": headerType.setSummary(types[2]); break;
+            case "solid":
+                headerType.setSummary(types[0]);
+                break;
+            case "blur":
+                headerType.setSummary(types[1]);
+                break;
+            case "wallpaper":
+                headerType.setSummary(types[2]);
+                break;
         }
 
         ListPreference blurRadius = (ListPreference) findPreference(PREF_KEY_BLUR_RADIUS);
@@ -130,6 +137,9 @@ public class SettingsFragment extends PreferenceFragment
         Preference clearImages = findPreference(PREF_KET_CLEAR_IMAGES);
         clearImages.setSummary(getImagesSummary());
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getPreferenceScreen().removePreference(findPreference("system_panels"));
+        }
     }
 
     @Override
@@ -150,15 +160,26 @@ public class SettingsFragment extends PreferenceFragment
 
             String key = "";
             switch (requestCode) {
-                case REQUEST_CODE_CHAT:   key = PREF_KEY_CHAT_BACKGROUND; break;
-                case REQUEST_CODE_HEADER: key = PREF_KEY_HEADER_BACKGROUND; break;
+                case REQUEST_CODE_CHAT:
+                    key = PREF_KEY_CHAT_BACKGROUND;
+                    break;
+                case REQUEST_CODE_HEADER:
+                    key = PREF_KEY_HEADER_BACKGROUND;
+                    break;
             }
 
             AppGlobal.preferences.edit()
                     .putString(key, filePath)
                     .apply();
+        }
+    }
 
-            Log.w("SettingsFragment", "image path is " + filePath);
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == 0 && grantResults[0] == PermissionChecker.PERMISSION_GRANTED) {
+            pickImageFromGallery(lastCode);
         }
     }
 
@@ -257,13 +278,16 @@ public class SettingsFragment extends PreferenceFragment
     }
 
     private void pickImageFromGallery(int code) {
+        lastCode = code;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            AndroidUtils.checkPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE);
+            if (!AndroidUtils.checkPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                return;
+            }
         }
 
-        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-        photoPickerIntent.setType("image/*");
-        startActivityForResult(photoPickerIntent, code);
+        Intent picker = new Intent(Intent.ACTION_PICK);
+        picker.setType("image/*");
+        startActivityForResult(picker, code);
     }
 
     private void createChatBackgroundDialog() {
@@ -273,10 +297,13 @@ public class SettingsFragment extends PreferenceFragment
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
-                            case 0: pickImageFromGallery(REQUEST_CODE_CHAT); break;
-                            case 1: AppGlobal.preferences.edit()
-                                    .remove(SettingsFragment.PREF_KEY_CHAT_BACKGROUND)
-                                    .apply();
+                            case 0:
+                                pickImageFromGallery(REQUEST_CODE_CHAT);
+                                break;
+                            case 1:
+                                AppGlobal.preferences.edit()
+                                        .remove(SettingsFragment.PREF_KEY_CHAT_BACKGROUND)
+                                        .apply();
                                 break;
                         }
                     }
@@ -320,9 +347,15 @@ public class SettingsFragment extends PreferenceFragment
 
             case PREF_KEY_HEADER_TYPE:
                 switch (newValue.toString()) {
-                    case "solid": preference.setSummary(types[0]); break;
-                    case "blur": preference.setSummary(types[1]); break;
-                    case "wallpaper": preference.setSummary(types[2]); break;
+                    case "solid":
+                        preference.setSummary(types[0]);
+                        break;
+                    case "blur":
+                        preference.setSummary(types[1]);
+                        break;
+                    case "wallpaper":
+                        preference.setSummary(types[2]);
+                        break;
                 }
                 if (newValue.equals("wallpaper")) {
                     pickImageFromGallery(REQUEST_CODE_HEADER);

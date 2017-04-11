@@ -39,7 +39,9 @@ public class UserMethodSetter extends MethodSetter {
         return this;
     }
 
-    /** Comment describing the complaint */
+    /**
+     * Comment describing the complaint
+     */
     public UserMethodSetter comment(String comment) {
         put("comment", comment);
         return this;
@@ -66,7 +68,9 @@ public class UserMethodSetter extends MethodSetter {
         return this;
     }
 
-    /** Current location accuracy in meters */
+    /**
+     * Current location accuracy in meters
+     */
     public UserMethodSetter accuracy(int accuracy) {
         put("accuracy", accuracy);
         return this;

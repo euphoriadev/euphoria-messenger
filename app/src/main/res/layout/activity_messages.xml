@@ -55,8 +55,7 @@
             app:elevation="4dp"
             app:fabSize="mini"
             app:pressedTranslationZ="6dp"
-            app:srcCompat="@drawable/ic_vector_plus" />
+            app:srcCompat="@drawable/ic_vector_keyboard_arrow_right" />
     </LinearLayout>
-
 
 </android.support.design.widget.CoordinatorLayout>

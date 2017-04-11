@@ -4,4 +4,8 @@
     <item
         android:id="@+id/itemRefresh"
         android:title="@string/refresh" />
+
+    <item
+        android:id="@+id/itemAttachments"
+        android:title="@string/attachments" />
 </menu>

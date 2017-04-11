@@ -44,8 +44,8 @@ public class JsonArray implements Iterable<Object>, Serializable {
      * collection.
      *
      * @param from a collection whose values are of supported types.
-     *                 Unsupported values are not permitted and will yield an array in an
-     *                 inconsistent state.
+     *             Unsupported values are not permitted and will yield an array in an
+     *             inconsistent state.
      */
     /* Accept a raw type for API compatibility */
     public JsonArray(Collection from) {
@@ -62,7 +62,7 @@ public class JsonArray implements Iterable<Object>, Serializable {
      * parser.
      *
      * @param from a tokener whose nextValue() method will yield a
-     *                 {@code JsonArray}.
+     *             {@code JsonArray}.
      * @throws JsonException if the parse fails or doesn't yield a
      *                       {@code JsonArray}.
      */

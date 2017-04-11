@@ -24,7 +24,7 @@ public class Auth {
         if (TextUtils.isEmpty(user_id) || TextUtils.isEmpty(access_token)) {
             throw new Exception("Failed to parse redirect url " + url);
         }
-        return new String[] {access_token, user_id};
+        return new String[]{access_token, user_id};
     }
 
     private static String extractPattern(String string, String pattern) {

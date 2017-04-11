@@ -5,9 +5,11 @@ import android.app.ActivityManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.PermissionChecker;
 import android.util.DisplayMetrics;
@@ -23,12 +25,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 import ru.euphoria.messenger.common.AppGlobal;
+import ru.euphoria.messenger.io.BytesOutputStream;
 
 /**
  * Created by user on 05.02.17.
@@ -43,6 +45,25 @@ public class AndroidUtils {
         dateFormatter = new SimpleDateFormat("HH:mm"); // 15:57
         dateMonthFormatter = new SimpleDateFormat("d MMM"); // 23 Окт
         dateYearFormatter = new SimpleDateFormat("d MMM, yyyy"); // 23 Окт, 2015
+    }
+
+    public static void openLink(Context context, String url) {
+        Intent view = new Intent();
+        view.setAction(Intent.ACTION_VIEW);
+        view.setData(Uri.parse(url));
+
+        context.startActivity(view);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <E> E unsafeCast(Object object) {
+        return (E) object;
+    }
+
+    public static long getPeerId(int userId, int chatId, int groupId) {
+        return groupId > 0 ? (-groupId)
+                : chatId > 0 ? (2_000_000_000 + chatId)
+                : userId;
     }
 
     public static void clearCache(Picasso p) {
@@ -83,10 +104,13 @@ public class AndroidUtils {
         return size;
     }
 
-    public static void checkPermission(Activity activity, String permission) {
-        if (PermissionChecker.checkSelfPermission(activity, permission) != PermissionChecker.PERMISSION_GRANTED) {
+    public static boolean checkPermission(Activity activity, String permission) {
+        boolean notGranted = PermissionChecker.checkSelfPermission(activity, permission)
+                != PermissionChecker.PERMISSION_GRANTED;
+        if (notGranted) {
             ActivityCompat.requestPermissions(activity, new String[]{permission}, 0);
         }
+        return !notGranted;
     }
 
 
@@ -96,8 +120,8 @@ public class AndroidUtils {
     }
 
     public static byte[] serializeImage(Bitmap source) {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(source.getByteCount());
-        source.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(8192);
+        source.compress(Bitmap.CompressFormat.PNG, 100, bos);
 
         return bos.toByteArray();
     }
@@ -108,12 +132,12 @@ public class AndroidUtils {
 
     public static byte[] serialize(Object source) {
         try {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
+            BytesOutputStream bos = new BytesOutputStream();
             ObjectOutputStream out = new ObjectOutputStream(bos);
 
             out.writeObject(source);
             out.close();
-            return bos.toByteArray();
+            return bos.getByteArray();
         } catch (IOException e) {
             e.printStackTrace();
         }

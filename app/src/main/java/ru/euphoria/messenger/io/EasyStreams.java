@@ -5,9 +5,7 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
-import java.io.CharArrayWriter;
 import java.io.Closeable;
-import java.io.Flushable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -16,14 +14,11 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.net.HttpURLConnection;
-import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import static ru.euphoria.messenger.io.Charsets.UTF_8;
-import static ru.euphoria.messenger.io.FileStreams.lineSeparator;
 
 /**
  * Provides static utils methods for manipulation with the {@link java.io.InputStream}.
@@ -41,7 +36,8 @@ public class EasyStreams {
     public static final int CHAR_BUFFER_SIZE = 4096;
 
     // only static methods
-    private EasyStreams() {}
+    private EasyStreams() {
+    }
 
     /**
      * Reads all characters from specified {@link InputStream},

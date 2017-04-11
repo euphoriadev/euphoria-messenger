@@ -8,7 +8,7 @@ import ru.euphoria.messenger.json.JsonObject;
 
 /**
  * Model to parse a list of photo with and heigh.
- *
+ * <p>
  * See https://vk.com/dev/objects/photo_sizes
  */
 
@@ -37,7 +37,7 @@ public class VKPhotoSizes extends VKModel implements Serializable {
         return null;
     }
 
-    public static class PhotoSize extends VKModel implements Serializable{
+    public static class PhotoSize extends VKModel implements Serializable {
         public String src;
         public int width;
         public int height;

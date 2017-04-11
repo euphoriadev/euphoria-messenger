@@ -1,6 +1,5 @@
 package ru.euphoria.messenger.api.model;
 
-import android.content.ContentValues;
 import android.text.TextUtils;
 
 import java.io.Serializable;

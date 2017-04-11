@@ -8,7 +8,6 @@ import java.io.IOException;
  * see website to get description of error codes: http://vk.com/dev/errors
  * <p/>
  * Check {@link ErrorCodes} to get descriptions of error codes.
- *
  */
 public class VKException extends IOException {
     public String url;
@@ -41,7 +40,7 @@ public class VKException extends IOException {
     /**
      * Constructs a new {@code VKException}
      *
-     * @param url          the url of executed request
+     * @param url     the url of executed request
      * @param message the detail error message for this exception
      * @param code    the error code
      */

@@ -80,6 +80,9 @@ public class Identifiers {
             case VK_MD:
                 name = "VK MD";
                 break;
+            case MP3_MOD:
+                name = "MP3 Mod";
+                break;
             case FAST:
                 name = "Fast";
                 break;

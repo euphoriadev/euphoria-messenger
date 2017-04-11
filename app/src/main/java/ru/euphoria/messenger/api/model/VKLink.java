@@ -7,7 +7,6 @@ import ru.euphoria.messenger.json.JsonObject;
 /**
  * Object describes attached link
  */
-
 public class VKLink extends VKModel implements Serializable {
     /** Link URL. */
     public String url;
@@ -27,11 +26,17 @@ public class VKLink extends VKModel implements Serializable {
     /** URL of the page for preview. */
     public String preview_url;
 
+    public VKPhoto photo;
+
     public VKLink(JsonObject source) {
         this.url = source.optString("url");
         this.title = source.optString("title");
         this.caption = source.optString("caption");
+        this.preview_url = source.optString("preview_url");
 
-        System.out.println(source);
+        JsonObject linkPhoto = source.optJsonObject("photo");
+        if (linkPhoto != null) {
+            this.photo = new VKPhoto(linkPhoto);
+        }
     }
 }

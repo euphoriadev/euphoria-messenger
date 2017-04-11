@@ -1,15 +1,8 @@
 package ru.euphoria.messenger.api;
 
-import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import ru.euphoria.messenger.BuildConfig;
 import ru.euphoria.messenger.api.method.AppMethodSetter;
@@ -17,6 +10,7 @@ import ru.euphoria.messenger.api.method.MessageMethodSetter;
 import ru.euphoria.messenger.api.method.MethodSetter;
 import ru.euphoria.messenger.api.method.UserMethodSetter;
 import ru.euphoria.messenger.api.model.VKApp;
+import ru.euphoria.messenger.api.model.VKAttachments;
 import ru.euphoria.messenger.api.model.VKGroup;
 import ru.euphoria.messenger.api.model.VKLongPollServer;
 import ru.euphoria.messenger.api.model.VKMessage;
@@ -53,7 +47,13 @@ public class VKApi {
         }
 
         JsonObject json = new JsonObject(buffer);
-        checkError(json, url);
+        try {
+            checkError(json, url);
+        } catch (VKException ex) {
+            if (ex.code == ErrorCodes.TOO_MANY_REQUESTS) {
+                return execute(url, cls);
+            } else throw ex;
+        }
 
         if (cls == null) {
             return null;
@@ -108,12 +108,14 @@ public class VKApi {
             for (int i = 0; i < array.length(); i++) {
                 models.add((T) new VKApp(array.optJsonObject(i)));
             }
+        } else if (cls == VKModel.class && url.contains("messages.getHistoryAttachments")) {
+            return (ArrayList<T>) VKAttachments.parse(array);
         }
         return models;
     }
 
     public static <E> void execute(final String url, final Class<E> cls,
-                                                   final OnResponseListener<E> listener) {
+                                   final OnResponseListener<E> listener) {
         ThreadExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -221,17 +223,23 @@ public class VKApi {
 
         }
 
-        /** Returns a list of the current user's incoming or outgoing private messages */
+        /**
+         * Returns a list of the current user's incoming or outgoing private messages
+         */
         public MessageMethodSetter get() {
             return new MessageMethodSetter("messages.get");
         }
 
-        /** Returns the list of dialogs of the current user */
+        /**
+         * Returns the list of dialogs of the current user
+         */
         public MessageMethodSetter getDialogs() {
             return new MessageMethodSetter("messages.getDialogs");
         }
 
-        /** Returns messages by their IDs */
+        /**
+         * Returns messages by their IDs
+         */
         public MessageMethodSetter getById() {
             return new MessageMethodSetter("messages.getById");
         }
@@ -302,12 +310,16 @@ public class VKApi {
             return new MessageMethodSetter("messages.deleteDialog");
         }
 
-        /** Restores a deleted message */
+        /**
+         * Restores a deleted message
+         */
         public MessageMethodSetter restore() {
             return new MessageMethodSetter("messages.restore");
         }
 
-        /** Marks messages as read */
+        /**
+         * Marks messages as read
+         */
         public MessageMethodSetter markAsRead() {
             return new MessageMethodSetter("messages.markAsRead");
         }
@@ -321,7 +333,9 @@ public class VKApi {
             return new MessageMethodSetter("messages.markAsNew");
         }
 
-        /** Marks and unmarks messages as important (starred) */
+        /**
+         * Marks and unmarks messages as important (starred)
+         */
         public MessageMethodSetter markAsImportant() {
             return new MessageMethodSetter("messages.markAsImportant");
         }
@@ -486,12 +500,16 @@ public class VKApi {
 
     public static class VKAccounts {
 
-        /** Marks a current user as offline. */
+        /**
+         * Marks a current user as offline.
+         */
         public MethodSetter setOffline() {
             return new MethodSetter("account.setOffline");
         }
 
-        /** Marks the current user as online for 15 minutes. */
+        /**
+         * Marks the current user as online for 15 minutes.
+         */
         public MethodSetter setOnline() {
             return new MethodSetter("account.setOnline");
         }

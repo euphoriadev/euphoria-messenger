@@ -9,6 +9,7 @@ import ru.euphoria.messenger.json.JsonObject;
  */
 
 public class VKSticker extends VKModel implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     /** Sticker ID. */
     public int id;
@@ -28,8 +29,10 @@ public class VKSticker extends VKModel implements Serializable {
     /** URL of the image with height of 352 px. */
     public String photo_352;
 
-    /** Width and height in px. */
+    /** Height in px. */
     public int width;
+
+    /** Height in px. */
     public int height;
 
     /**

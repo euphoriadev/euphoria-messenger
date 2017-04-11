@@ -5,6 +5,7 @@
 
     <!--
         Version API Name
+        7.1     25
         7.0     24  Nougat
         6.0     23  Marshmallow
         5.1     22
@@ -39,13 +40,11 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!--<uses-permission android:name="android.permission.WAKE_LOCK" />-->
-    <!--<uses-permission android:name="android.permission.GET_ACCOUNTS"-->
 
     <application
         android:name=".common.AppGlobal"
         android:allowBackup="true"
-        android:configChanges="keyboardHidden|orientation"
+        android:configChanges="keyboardHidden|screenSize|orientation"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -68,7 +67,8 @@
         <activity android:name=".MessagesActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".ImageViewActivity" />
-        <activity android:name=".FriendsActivity" />
+        <activity android:name=".OpenChatActivity" />
+        <activity android:name=".DialogAttachmentsActivity" />
         <activity
             android:name=".SettingsActivity"
             android:label="@string/item_settings" />

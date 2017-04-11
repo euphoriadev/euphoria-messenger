@@ -1,14 +1,18 @@
 package ru.euphoria.messenger.adapter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.RecyclerView;
+import android.text.Selection;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.TypefaceSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -16,30 +20,29 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 
-import ru.euphoria.messenger.FriendsFragment;
+import ru.euphoria.messenger.OpenChatFragment;
 import ru.euphoria.messenger.MessagesActivity;
 import ru.euphoria.messenger.R;
 import ru.euphoria.messenger.api.model.VKUser;
 import ru.euphoria.messenger.common.AppGlobal;
 import ru.euphoria.messenger.common.ThemeManager;
 import ru.euphoria.messenger.util.AndroidUtils;
-import ru.euphoria.messenger.view.CircleImageView;
 
 /**
  * Created by user on 09.03.17.
  */
 
 public class FriendsAdapter extends BaseAdapter<VKUser, FriendsAdapter.ViewHolder> {
-    private FriendsFragment fragment;
+    private OpenChatFragment fragment;
     private ColorDrawable placeholder;
-    private String online, lastSeenFemale, lastSeenMale, lastSeen;
+    private String online, lastSeenFemale,
+            lastSeenMale, lastSeen, banned, deleted;
     private int bodyColor = -1;
     private int nameColor = -1;
 
-    public FriendsAdapter(FriendsFragment fragment, ArrayList<VKUser> values) {
+    public FriendsAdapter(OpenChatFragment fragment, ArrayList<VKUser> values) {
         super(fragment.getActivity(), values);
 
         this.fragment = fragment;
@@ -49,6 +52,8 @@ public class FriendsAdapter extends BaseAdapter<VKUser, FriendsAdapter.ViewHolde
         this.lastSeenFemale = context.getString(R.string.subtitle_last_seen_female);
         this.lastSeenMale = context.getString(R.string.subtitle_last_seen_male);
         this.lastSeen = context.getString(R.string.subtitle_last_seen);
+        this.banned = context.getString(R.string.banned);
+        this.deleted = context.getString(R.string.deleted);
     }
 
     @Override
@@ -73,13 +78,20 @@ public class FriendsAdapter extends BaseAdapter<VKUser, FriendsAdapter.ViewHolde
             // user deleted or banned
             holder.name.setTextColor(bodyColor);
 
-            String status = "";
+            String status;
             switch (user.deactivated) {
-                case "banned": status = context.getString(R.string.banned); break;
-                case "deleted": status = context.getString(R.string.deleted); break;
+                case "banned":
+                    status = banned;
+                    break;
+                case "deleted":
+                    status = deleted;
+                    break;
+
+                default:
+                    status = "";
             }
             holder.status.setText(status);
-
+            holder.indicator.setVisibility(View.GONE);
         } else {
             holder.name.setTextColor(nameColor);
 
@@ -90,11 +102,17 @@ public class FriendsAdapter extends BaseAdapter<VKUser, FriendsAdapter.ViewHolde
             } else {
                 String res = lastSeen;
                 switch (user.sex) {
-                    case VKUser.Sex.MALE: res = lastSeenMale; break;
-                    case VKUser.Sex.FEMALE: res = lastSeenFemale; break;
+                    case VKUser.Sex.MALE:
+                        res = lastSeenMale;
+                        break;
+                    case VKUser.Sex.FEMALE:
+                        res = lastSeenFemale;
+                        break;
                 }
 
                 holder.indicator.setVisibility(View.GONE);
+                holder.indicator.setImageDrawable(null);
+
                 holder.status.setText(String.format(
                         AppGlobal.locale, res,
                         AndroidUtils.parseDate(user.last_seen * 1000)));

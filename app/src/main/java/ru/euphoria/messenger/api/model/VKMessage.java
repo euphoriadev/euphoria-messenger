@@ -1,11 +1,9 @@
 package ru.euphoria.messenger.api.model;
 
 import java.io.Serializable;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 
 import ru.euphoria.messenger.json.JsonArray;
-import ru.euphoria.messenger.json.JsonException;
 import ru.euphoria.messenger.json.JsonObject;
 
 /**
@@ -196,6 +194,7 @@ public class VKMessage extends VKModel implements Serializable {
 
     /**
      * Returns true if this message are deleted.
+     *
      * @param flags the message flags
      */
     public static boolean isDeleted(int flags) {
@@ -204,6 +203,7 @@ public class VKMessage extends VKModel implements Serializable {
 
     /**
      * Returns true if this message are important.
+     *
      * @param flags the message flags
      */
     public static boolean isImportant(int flags) {
@@ -212,6 +212,7 @@ public class VKMessage extends VKModel implements Serializable {
 
     /**
      * Returns true if this message are unread.
+     *
      * @param flags the message flags
      */
     public static boolean isUnread(int flags) {

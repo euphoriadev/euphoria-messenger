@@ -3,10 +3,7 @@ package ru.euphoria.messenger.common;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -17,11 +14,9 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import java.util.Random;
 
-import ru.euphoria.messenger.BuildConfig;
 import ru.euphoria.messenger.MainActivity;
 import ru.euphoria.messenger.R;
 import ru.euphoria.messenger.SettingsFragment;
@@ -57,7 +52,7 @@ public class ThemeManager {
             getColor(R.color.md_blue_grey_500)
     };
 
-    public static final int[] LIGHT_BUBBLE_COLORS = new int[] {
+    public static final int[] LIGHT_BUBBLE_COLORS = new int[]{
             R.color.md_red_50,
             R.color.md_pink_50,
             R.color.md_purple_50,
@@ -79,7 +74,7 @@ public class ThemeManager {
             R.color.md_blue_grey_50
     };
 
-    public static final int[] DARK_STYLES = new int[] {
+    public static final int[] DARK_STYLES = new int[]{
             R.style.AppTheme_Red,
             R.style.AppTheme_Pink,
             R.style.AppTheme_Purple,
@@ -101,7 +96,7 @@ public class ThemeManager {
             R.style.AppTheme_BlueGrey,
     };
 
-    public static final int[] LIGHT_STYLES = new int[] {
+    public static final int[] LIGHT_STYLES = new int[]{
             R.style.AppTheme_Light_Red,
             R.style.AppTheme_Light_Pink,
             R.style.AppTheme_Light_Purple,
@@ -204,7 +199,7 @@ public class ThemeManager {
         AppGlobal.colorPrimaryDark = ThemeUtil.getThemeAttrColor(context, R.attr.colorPrimaryDark);
     }
 
-    public static void  applyTheme(Activity activity) {
+    public static void applyTheme(Activity activity) {
         applyTheme(activity, activity instanceof MainActivity);
     }
 

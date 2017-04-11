@@ -75,7 +75,7 @@ public class DialogsFragment extends Fragment
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), FriendsActivity.class));
+                startActivity(new Intent(getActivity(), OpenChatActivity.class));
                 getActivity().overridePendingTransition(R.anim.side_left, R.anim.alpha_in);
             }
         });
@@ -175,6 +175,7 @@ public class DialogsFragment extends Fragment
         if (ArrayUtil.isEmpty(dialogs)) {
             return;
         }
+
         createAdapter(dialogs, 0);
     }
 
@@ -236,13 +237,18 @@ public class DialogsFragment extends Fragment
                     groups = VKApi.groups()
                             .getById()
                             .groupIds(groupIds.array())
-                            .execute(VKGroup.class);;
+                            .execute(VKGroup.class);
+                    ;
                     CacheStorage.insert(DatabaseHelper.GROUPS_TABLE, groups);
                 }
             }
 
             @Override
             public void done() {
+                if (!isAdded()) {
+                    return;
+                }
+
                 createAdapter(messages, offset);
                 refreshLayout.setRefreshing(false);
                 setTitle(VKMessage.count);
@@ -267,7 +273,7 @@ public class DialogsFragment extends Fragment
 
         if (chatId > 0) {
             setter.peerId(2000000000 + chatId);
-        } else if (userId < 0){
+        } else if (userId < 0) {
             setter.peerId(userId);
         } else {
             setter.userId(userId);

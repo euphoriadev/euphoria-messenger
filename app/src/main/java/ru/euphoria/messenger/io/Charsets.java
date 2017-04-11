@@ -12,7 +12,8 @@ import java.nio.charset.StandardCharsets;
  * @since 1.0
  */
 public class Charsets {
-    private Charsets() {}
+    private Charsets() {
+    }
 
     /**
      * ASCII: 7-bit, American Standard Code for Information Interchange.

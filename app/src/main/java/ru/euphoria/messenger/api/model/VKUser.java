@@ -18,8 +18,7 @@ public class VKUser extends VKModel implements Serializable {
 
     /** User object with empty name; */
     public static final VKUser EMPTY = new VKUser() {
-        @Override
-        public String toString() {
+        @Override public String toString() {
             return "";
         }
     };
@@ -63,6 +62,7 @@ public class VKUser extends VKModel implements Serializable {
     /** True if the profile is verified, false if not */
     public boolean verified;
 
+    /** Not null if user banned or deleted */
     public String deactivated;
 
     /** User sex (1 — female, 2 — male, 0 — not specified) */

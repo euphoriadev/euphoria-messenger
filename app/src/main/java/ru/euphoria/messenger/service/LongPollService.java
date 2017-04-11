@@ -2,30 +2,20 @@ package ru.euphoria.messenger.service;
 
 import android.app.Service;
 import android.content.Intent;
-import android.database.Cursor;
-import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.support.v4.util.ArrayMap;
 import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.HashMap;
-
 import ru.euphoria.messenger.api.VKApi;
 import ru.euphoria.messenger.api.model.VKLongPollServer;
 import ru.euphoria.messenger.api.model.VKMessage;
 import ru.euphoria.messenger.concurrent.LowThread;
-import ru.euphoria.messenger.database.CacheStorage;
-import ru.euphoria.messenger.database.DatabaseHelper;
 import ru.euphoria.messenger.json.JsonArray;
-import ru.euphoria.messenger.json.JsonException;
 import ru.euphoria.messenger.json.JsonObject;
 import ru.euphoria.messenger.net.HttpRequest;
 import ru.euphoria.messenger.util.AndroidUtils;
-import ru.euphoria.messenger.util.ArrayUtil;
-
-import static ru.euphoria.messenger.database.DatabaseHelper.DIALOGS_TABLE;
 
 public class LongPollService extends Service {
     private static final String TAG = "LongPollService";
@@ -75,7 +65,8 @@ public class LongPollService extends Service {
                     if (server == null) {
                         server = VKApi.messages().getLongPollServer()
                                 .execute(VKLongPollServer.class).get(0);
-                    };
+                    }
+                    ;
 
                     JsonObject response = getResponse(server);
                     if (response == null || response.has("failed")) {
@@ -115,7 +106,8 @@ public class LongPollService extends Service {
             params.put("key", server.key);
             params.put("ts", String.valueOf(server.ts));
             params.put("wait", "25");
-            params.put("mode", "2");;
+            params.put("mode", "2");
+            ;
 
             String buffer = HttpRequest.get("https://" + server.server, params).asString();
             return new JsonObject(buffer);

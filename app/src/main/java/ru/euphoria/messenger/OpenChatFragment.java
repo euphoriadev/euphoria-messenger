@@ -16,7 +16,6 @@ import ru.euphoria.messenger.adapter.FriendsAdapter;
 import ru.euphoria.messenger.adapter.FriendsPagerAdapter;
 import ru.euphoria.messenger.api.VKApi;
 import ru.euphoria.messenger.api.model.VKUser;
-import ru.euphoria.messenger.common.AppGlobal;
 import ru.euphoria.messenger.database.CacheStorage;
 import ru.euphoria.messenger.util.ArrayUtil;
 
@@ -24,7 +23,7 @@ import ru.euphoria.messenger.util.ArrayUtil;
  * Created by igor on 15.03.17.
  */
 
-public class FriendsFragment extends Fragment {
+public class OpenChatFragment extends Fragment {
     private Bundle args;
     private int position;
 
@@ -35,7 +34,7 @@ public class FriendsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_friends, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_open_chat, container, false);
 
         args = getArguments();
 
@@ -52,12 +51,12 @@ public class FriendsFragment extends Fragment {
         return rootView;
     }
 
-    public static FriendsFragment newInstance(int pos, boolean online) {
+    public static OpenChatFragment newInstance(int pos, boolean online) {
         Bundle args = new Bundle();
         args.putBoolean("online", online);
         args.putInt("position", pos);
 
-        FriendsFragment fragment = new FriendsFragment();
+        OpenChatFragment fragment = new OpenChatFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -70,13 +69,11 @@ public class FriendsFragment extends Fragment {
     }
 
     public void updateTabTitle() {
-        FriendsActivity activity = (FriendsActivity) getActivity();
-        int resource = 0;
-        switch (position) {
-            case FriendsPagerAdapter.POSITION_ALL: resource = R.string.friends_tab_all; break;
-            case FriendsPagerAdapter.POSITION_ONLINE: resource = R.string.friends_tab_online; break;
-        }
-        activity.setTabText(position, getString(resource, adapter.getValues().size()));
+        String[] array = getResources().getStringArray(R.array.friend_tabs);
+        String title = String.format(array[position], adapter.getItemCount());
+
+        OpenChatActivity activity = (OpenChatActivity) getActivity();
+        activity.setTabText(position, title);
     }
 
     public FriendsAdapter getAdapter() {

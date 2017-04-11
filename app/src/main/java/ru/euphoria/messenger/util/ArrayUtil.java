@@ -1,17 +1,13 @@
 package ru.euphoria.messenger.util;
 
 
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Random;
 
 /**
  * Static utils methods for array.
- *
+ * <p>
  * For powerful collection util - use {@link Collections}
  *
  * @author Igor Morozkin
@@ -22,7 +18,8 @@ public class ArrayUtil {
     public static final int VALUE_NOT_FOUND = -1;
 
     // uses only static methods
-    private ArrayUtil() {}
+    private ArrayUtil() {
+    }
 
     /**
      * Performs a linear search for value in the ascending array.

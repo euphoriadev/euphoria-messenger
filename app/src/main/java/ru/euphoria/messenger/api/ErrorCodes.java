@@ -3,7 +3,6 @@ package ru.euphoria.messenger.api;
 /**
  * Numeric status codes of errors
  * See website http://vk.com/dev/errors
- *
  */
 public class ErrorCodes {
     /** Unknown error occurred. Try again later. */

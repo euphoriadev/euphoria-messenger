@@ -3,15 +3,9 @@ package ru.euphoria.messenger.adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.PagerAdapter;
-import android.view.View;
 
-import java.util.ArrayList;
-
-import ru.euphoria.messenger.FriendsFragment;
+import ru.euphoria.messenger.OpenChatFragment;
 import ru.euphoria.messenger.R;
-import ru.euphoria.messenger.api.model.VKMessage;
-import ru.euphoria.messenger.api.model.VKUser;
 import ru.euphoria.messenger.common.AppGlobal;
 
 /**
@@ -19,21 +13,20 @@ import ru.euphoria.messenger.common.AppGlobal;
  */
 
 public class FriendsPagerAdapter extends FragmentPagerAdapter {
-    public static final int POSITION_ALL = 0;
-    public static final int POSITION_ONLINE = 1;
-
-    private FriendsFragment[] fragments;
+    private OpenChatFragment[] fragments;
+    private String[] titles;
 
     public FriendsPagerAdapter(FragmentManager fm) {
         super(fm);
 
-        fragments = new FriendsFragment[2];
+        this.fragments = new OpenChatFragment[2];
+        this.titles = AppGlobal.appContext.getResources().getStringArray(R.array.friend_tabs);
     }
 
     @Override
     public Fragment getItem(int position) {
         if (fragments[position] == null) {
-            FriendsFragment fragment = FriendsFragment.newInstance(position, position == 1);
+            OpenChatFragment fragment = OpenChatFragment.newInstance(position, position == 1);
             fragments[position] = fragment;
         }
 
@@ -42,20 +35,16 @@ public class FriendsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        switch (position) {
-            case POSITION_ALL: return AppGlobal.appContext.getString(R.string.friends_tab_all);
-            case POSITION_ONLINE: return AppGlobal.appContext.getString(R.string.friends_tab_online);
-        }
-        return "";
+        return titles[position];
     }
 
     @Override
     public int getCount() {
-        return 2;
+        return titles.length;
     }
 
     public void filter(String s) {
-        for (FriendsFragment f : fragments) {
+        for (OpenChatFragment f : fragments) {
             FriendsAdapter adapter = f.getAdapter();
             if (adapter != null) {
                 adapter.filter(s);
@@ -64,7 +53,7 @@ public class FriendsPagerAdapter extends FragmentPagerAdapter {
     }
 
     public void getCachedFriends() {
-        for (FriendsFragment f : fragments) {
+        for (OpenChatFragment f : fragments) {
             f.getCachedFriends();
         }
     }

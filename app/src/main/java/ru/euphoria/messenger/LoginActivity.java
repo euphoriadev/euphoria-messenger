@@ -17,7 +17,7 @@ import ru.euphoria.messenger.api.Scopes;
 import ru.euphoria.messenger.api.UserConfig;
 
 public class LoginActivity extends Activity {
-    WebView webView;
+    private WebView webView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

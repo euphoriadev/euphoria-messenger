@@ -2,6 +2,10 @@ package ru.euphoria.messenger.common;
 
 import android.util.Log;
 
+import java.io.File;
+import java.io.IOException;
+
+import ru.euphoria.messenger.io.FileStreams;
 import ru.euphoria.messenger.util.AndroidUtils;
 
 /**
@@ -28,6 +32,12 @@ public class CrashManager {
         String trace = Log.getStackTraceString(ex);
         AndroidUtils.copyText(trace);
 
+        File file = new File(AppGlobal.appContext.getFilesDir(), "log_" + System.currentTimeMillis() + ".txt");
+        try {
+            FileStreams.write(trace, file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void init() {

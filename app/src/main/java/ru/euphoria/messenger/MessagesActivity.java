@@ -7,7 +7,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -20,6 +19,7 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -33,6 +33,7 @@ import java.util.HashSet;
 import java.util.Locale;
 
 import ru.euphoria.messenger.adapter.MessageAdapter;
+import ru.euphoria.messenger.api.Identifiers;
 import ru.euphoria.messenger.api.VKApi;
 import ru.euphoria.messenger.api.model.VKGroup;
 import ru.euphoria.messenger.api.model.VKMessage;
@@ -60,7 +61,8 @@ public class MessagesActivity extends BaseActivity
     private LinearLayoutManager layoutManager;
     private MessageAdapter adapter;
     private String title;
-    private int userId, chatId, groupId, membersCount;
+    private int userId, chatId,
+            groupId, membersCount;
     private boolean loading = true;
 
     @Override
@@ -90,6 +92,12 @@ public class MessagesActivity extends BaseActivity
 
         fabSend = (FloatingActionButton) findViewById(R.id.fabSend);
         fabSend.setOnClickListener(this);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) fabSend.getLayoutParams();
+            p.setMargins(0, 0, (int) AndroidUtils.px(8), 0); // get rid of margins since shadow area is now the margin
+            fabSend.setLayoutParams(p);
+        }
 
         editMessage = (EditText) findViewById(R.id.editMessage);
         editMessage.addTextChangedListener(this);
@@ -136,6 +144,12 @@ public class MessagesActivity extends BaseActivity
             case R.id.itemRefresh:
                 getMessages(0);
                 break;
+
+            case R.id.itemAttachments:
+                Intent intent = new Intent(this, DialogAttachmentsActivity.class);
+                intent.putExtra("peer_id", getPeerId());
+                startActivity(intent);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -162,12 +176,12 @@ public class MessagesActivity extends BaseActivity
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        if (s.length() == 0) {
-            // show microphone to send audio messages
-            fabSend.setImageResource(R.drawable.ic_vector_plus);
-        } else {
-            fabSend.setImageResource(R.drawable.ic_vector_keyboard_arrow_right);
-        }
+//        if (s.length() == 0) {
+//            // show microphone to send audio messages
+//            fabSend.setImageResource(R.drawable.ic_vector_plus);
+//        } else {
+//            fabSend.setImageResource(R.drawable.ic_vector_keyboard_arrow_right);
+//        }
     }
 
     @Override
@@ -227,17 +241,23 @@ public class MessagesActivity extends BaseActivity
         if (user == null) {
             return "";
         }
+        if (user.online) {
+            String status = getString(R.string.subtitle_online);
+            if (user.online_mobile && user.online_app > 0) {
+                String app = Identifiers.nameById(user.online_app);
+                if (!TextUtils.isEmpty(app)) {
+                    status += " (" + app + ")";
+                }
+            }
+            return status;
+        }
 
-        return user.online
-                ? getString(R.string.subtitle_online)
-                : String.format(locale, getString(R.string.subtitle_last_seen),
+        return String.format(locale, getString(R.string.subtitle_last_seen),
                 AndroidUtils.parseDate(user.last_seen * 1000));
     }
 
     private long getPeerId() {
-        return groupId > 0 ? (-groupId)
-                : chatId > 0 ? (2_000_000_000 + chatId)
-                : userId;
+        return AndroidUtils.getPeerId(userId, chatId, groupId);
     }
 
     private void loadWallpaper() {

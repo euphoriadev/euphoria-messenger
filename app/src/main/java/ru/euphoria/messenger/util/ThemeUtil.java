@@ -1,12 +1,7 @@
 package ru.euphoria.messenger.util;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
-import android.graphics.Color;
-import android.util.TypedValue;
-
-import ru.euphoria.messenger.util.ColorUtil;
 
 /**
  * Class copied from Android Support Appcompat library

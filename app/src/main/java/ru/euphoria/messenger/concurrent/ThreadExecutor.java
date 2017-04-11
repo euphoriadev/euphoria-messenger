@@ -4,12 +4,14 @@ import java.util.concurrent.Executor;
 
 /**
  * Created by Igor on 05.02.17.
- *
+ * <p>
  * Simple thread executor
  */
 
 public class ThreadExecutor {
-    /** Number of processor cores available */
+    /**
+     * Number of processor cores available
+     */
     public static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
 
     /**

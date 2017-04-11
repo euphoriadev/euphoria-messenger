@@ -7,7 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
  * Builder for raw SQL query.
  */
 public class QueryBuilder {
-    /** SQL Command buffer */
+    /**
+     * SQL Command buffer
+     */
     private StringBuilder buffer;
 
     // internal use only

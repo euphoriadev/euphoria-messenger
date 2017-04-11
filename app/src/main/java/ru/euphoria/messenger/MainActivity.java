@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -19,7 +20,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.Button;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,6 +29,7 @@ import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.HashSet;
@@ -81,7 +84,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         initDrawer();
         switchFragment(new DialogsFragment());
         startService(new Intent(this, LongPollService.class));
-
     }
 
     @Override
@@ -287,5 +289,4 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 .placeholder(new ColorDrawable(AppGlobal.colorPrimary))
                 .into(drawerBackground);
     }
-
 }

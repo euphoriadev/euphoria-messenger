@@ -24,7 +24,8 @@
             android:title="@string/pref_chat_background" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_category_system_panels">
+    <PreferenceCategory android:title="@string/pref_category_system_panels"
+        android:key="system_panels">
         <SwitchPreference
             android:key="translucent_status_bar"
             android:title="@string/pref_translucent_status_bar" />

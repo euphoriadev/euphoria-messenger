@@ -35,12 +35,18 @@ public enum JsonScope {
      */
     NONEMPTY_OBJECT,
 
-    /** No object or array has been started. */
+    /**
+     * No object or array has been started.
+     */
     EMPTY_DOCUMENT,
 
-    /** A document with at an array or object. */
+    /**
+     * A document with at an array or object.
+     */
     NONEMPTY_DOCUMENT,
 
-    /** A document that's been closed and cannot be accessed. */
+    /**
+     * A document that's been closed and cannot be accessed.
+     */
     CLOSED,
 }

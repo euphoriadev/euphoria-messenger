@@ -62,7 +62,7 @@ import ru.euphoria.messenger.view.BoundedLinearLayout;
  * Created by Igor on 13.02.17.
  */
 
-public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHolder>{
+public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHolder> {
     public static final int BUBBLE_LIGHT_COLOR = Color.WHITE;
     public static final int BUBBLE_DARK_COLOR = ContextCompat.getColor(AppGlobal.appContext, R.color.md_grey_800);
 
@@ -414,6 +414,7 @@ public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHo
             Picasso.with(context)
                     .load(smallSrc)
                     .config(Bitmap.Config.RGB_565)
+                    .priority(Picasso.Priority.HIGH)
                     .placeholder(new ColorDrawable(Color.TRANSPARENT))
                     .transform(new BlurTransform(4, true))
                     .transform(new RoundTransform(round ? 0.04f : 0))
@@ -422,6 +423,7 @@ public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHo
                         public void onSuccess() {
                             Picasso.with(context)
                                     .load(normalSrc)
+                                    .priority(Picasso.Priority.LOW)
                                     .placeholder(image.getDrawable())
                                     .transform(new RoundTransform(round ? 0.04f : 0))
                                     .into(image);
@@ -461,7 +463,7 @@ public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHo
 
         public void sticker(ViewGroup parent, VKSticker source, int width) {
             final ImageView image = (ImageView)
-                    inflater.inflate(R.layout.attach_photo, parent, false);
+                    inflater.inflate(R.layout.msg_attach_photo, parent, false);
 
             image.setLayoutParams(getParams(256f, 256f, width));
             loadImage(image, source.photo_64, source.photo_256, false);
@@ -469,7 +471,7 @@ public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHo
         }
 
         public void video(ViewGroup parent, VKVideo source, int width) {
-            View v = inflater.inflate(R.layout.attach_video, parent, false);
+            View v = inflater.inflate(R.layout.msg_attach_video, parent, false);
 
             ImageView image = (ImageView) v.findViewById(R.id.videoImage);
             TextView title = (TextView) v.findViewById(R.id.videoTitle);
@@ -488,7 +490,7 @@ public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHo
 
         public void photo(ViewGroup parent, final VKPhoto source, int width) {
             final ImageView image = (ImageView)
-                    inflater.inflate(R.layout.attach_photo, parent, false);
+                    inflater.inflate(R.layout.msg_attach_photo, parent, false);
 
             image.setLayoutParams(getParams(source.width, source.height, width));
             image.setOnClickListener(new View.OnClickListener() {
@@ -496,7 +498,6 @@ public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHo
                 public void onClick(View v) {
                     Intent intent = new Intent(context, ImageViewActivity.class);
                     intent.putExtra("photo", source);
-                    intent.putExtra("bitmap", AndroidUtils.serializeImage(((BitmapDrawable) image.getDrawable()).getBitmap()));
                     context.startActivity(intent);
                 }
             });
@@ -506,7 +507,7 @@ public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHo
         }
 
         public void message(ViewGroup parent, VKMessage source) {
-            View v = inflater.inflate(R.layout.attach_message, parent, false);
+            View v = inflater.inflate(R.layout.msg_attach_message, parent, false);
 
             TextView userName = (TextView) v.findViewById(R.id.userName);
             TextView userMessage = (TextView) v.findViewById(R.id.userMessage);
@@ -536,14 +537,15 @@ public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHo
         }
 
         public void audio(ViewGroup parent, VKAudio source) {
-            View v = inflater.inflate(R.layout.attach_audio, parent, false);
+            View v = inflater.inflate(R.layout.msg_attach_audio, parent, false);
 
             TextView title = (TextView) v.findViewById(R.id.audioTitle);
             TextView body = (TextView) v.findViewById(R.id.audioBody);
             TextView time = (TextView) v.findViewById(R.id.audioDuration);
 
-            String duration = AndroidUtils.dateFormatter.format(
-                    TimeUnit.SECONDS.toMillis(source.duration));
+            String duration = String.format(AppGlobal.locale, "%d:%02d",
+                    source.duration / 60,
+                    source.duration % 60);
 
             title.setText(source.title);
             body.setText(source.artist);
@@ -553,7 +555,7 @@ public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHo
         }
 
         public void link(ViewGroup parent, VKLink source) {
-            View v = inflater.inflate(R.layout.attach_doc, parent, false);
+            View v = inflater.inflate(R.layout.msg_attach_doc, parent, false);
 
             TextView title = (TextView) v.findViewById(R.id.docTitle);
             TextView body = (TextView) v.findViewById(R.id.docBody);
@@ -569,7 +571,7 @@ public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHo
         }
 
         public void doc(ViewGroup parent, VKDoc source) {
-            View v = inflater.inflate(R.layout.attach_doc, parent, false);
+            View v = inflater.inflate(R.layout.msg_attach_doc, parent, false);
 
             TextView title = (TextView) v.findViewById(R.id.docTitle);
             TextView size = (TextView) v.findViewById(R.id.docBody);

@@ -49,7 +49,7 @@ public class HttpRequest {
     /**
      * Creates a new HTTP HttpRequest with GET method and specified url
      *
-     * @param url    the URL to remote
+     * @param url the URL to remote
      */
     public static HttpRequest get(String url) {
         return get(url, null);
@@ -127,6 +127,7 @@ public class HttpRequest {
         connection = (HttpURLConnection) new java.net.URL(getUrl()).openConnection();
         connection.setReadTimeout(30_000);
         connection.setConnectTimeout(30_000);
+        connection.setUseCaches(true);
         connection.setDoInput(true);
         connection.setDoOutput(!GET.equalsIgnoreCase(method));
         connection.setRequestMethod(method);

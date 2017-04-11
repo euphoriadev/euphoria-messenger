@@ -1,12 +1,11 @@
 package ru.euphoria.messenger.api.method;
 
+import android.support.v4.util.ArrayMap;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import ru.euphoria.messenger.api.UserConfig;
 import ru.euphoria.messenger.api.VKApi;
@@ -15,15 +14,16 @@ import ru.euphoria.messenger.util.ArrayUtil;
 
 public class MethodSetter {
     private String name;
-    private HashMap<String, String> params;
+    private ArrayMap<String, String> params;
 
     /**
      * Creates a new Method Setter
+     *
      * @param name the vk method name, e.g. users.get
      */
     public MethodSetter(String name) {
         this.name = name;
-        this.params = new HashMap<>();
+        this.params = new ArrayMap<>();
     }
 
     public MethodSetter put(String key, Object value) {
@@ -67,14 +67,18 @@ public class MethodSetter {
     public String getParams() {
         StringBuilder buffer = new StringBuilder();
         try {
-            for (Map.Entry<String, String> entry : params.entrySet()) {
+
+            for (int i = 0; i < params.size(); i++) {
+                String key = params.keyAt(i);
+                String value = params.valueAt(i);
+
                 if (buffer.length() != 0) {
                     buffer.append("&");
                 }
 
-                buffer.append(entry.getKey())
+                buffer.append(key)
                         .append("=")
-                        .append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+                        .append(URLEncoder.encode(value, "UTF-8"));
             }
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -99,7 +103,9 @@ public class MethodSetter {
         return null;
     }
 
-    /** User ID. By default, the current user ID */
+    /**
+     * User ID. By default, the current user ID
+     */
     public MethodSetter userId(int value) {
         return put("user_id", value);
     }
@@ -112,12 +118,16 @@ public class MethodSetter {
         return put("user_ids", ArrayUtil.toString(ids.toArray()));
     }
 
-    /** ID of the user or community, e.g. audios.get */
+    /**
+     * ID of the user or community, e.g. audios.get
+     */
     public MethodSetter ownerId(int value) {
         return put("owner_id", value);
     }
 
-    /** ID of community. */
+    /**
+     * ID of community.
+     */
     public MethodSetter groupId(int value) {
         return put("group_id", value);
     }
@@ -126,7 +136,9 @@ public class MethodSetter {
         return put("group_ids", ArrayUtil.toString(ids));
     }
 
-    /** Profile fields separated by ',' */
+    /**
+     * Profile fields separated by ','
+     */
     public MethodSetter fields(String values) {
         return put("fields", values);
     }
@@ -140,19 +152,25 @@ public class MethodSetter {
         return put("count", value);
     }
 
-    /** Sort order. */
+    /**
+     * Sort order.
+     */
     public MethodSetter sort(int value) {
         put("sort", value);
         return this;
     }
 
-    /** Order to return a list */
+    /**
+     * Order to return a list
+     */
     public MethodSetter order(String value) {
         put("order", value);
         return this;
     }
 
-    /** Offset needed to return a specific subset. */
+    /**
+     * Offset needed to return a specific subset.
+     */
     public MethodSetter offset(int value) {
         return put("offset", value);
     }
@@ -170,17 +188,23 @@ public class MethodSetter {
         return put("name_case", value);
     }
 
-    /** Captcha Sid, specifies for Captcha needed error. */
+    /**
+     * Captcha Sid, specifies for Captcha needed error.
+     */
     public MethodSetter captchaSid(String value) {
         return put("captcha_sid", value);
     }
 
-    /** Captcha key, specifies for Captcha needed error. */
+    /**
+     * Captcha key, specifies for Captcha needed error.
+     */
     public MethodSetter captchaKey(String value) {
         return put("captcha_key", value);
     }
 
-    /** Uses a separate config for this request (Access Token) */
+    /**
+     * Uses a separate config for this request (Access Token)
+     */
     public MethodSetter withConfig(UserConfig config) {
         return put("access_token", config.accessToken);
     }

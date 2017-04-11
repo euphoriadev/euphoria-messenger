@@ -27,10 +27,10 @@ import ru.euphoria.messenger.database.DatabaseHelper;
 import ru.euphoria.messenger.util.AndroidUtils;
 
 /**
- * Created by user on 09.03.17.
+ * Created by Igor on 09.03.17.
  */
 
-public class FriendsActivity extends BaseActivity
+public class OpenChatActivity extends BaseActivity
         implements SwipeRefreshLayout.OnRefreshListener {
     private FriendsPagerAdapter pagerAdapter;
     private TabLayout tabLayout;
@@ -40,7 +40,7 @@ public class FriendsActivity extends BaseActivity
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_friends);
+        setContentView(R.layout.activity_open_chat);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -131,6 +131,7 @@ public class FriendsActivity extends BaseActivity
         if (!AndroidUtils.hasConnection()) {
             Snackbar.make((ViewGroup) viewPager.getParent(), R.string.check_connection, Snackbar.LENGTH_LONG)
                     .show();
+            swipeRefresh.setRefreshing(false);
             return;
         }
 
@@ -152,13 +153,19 @@ public class FriendsActivity extends BaseActivity
 
             @Override
             public void done() {
+                if (isFinishing()) {
+                    return;
+                }
+
                 swipeRefresh.setRefreshing(false);
                 pagerAdapter.getCachedFriends();
             }
 
             @Override
             public void error(Exception e) {
-                super.error(e);
+                if (isFinishing()) {
+                    return;
+                }
 
                 Snackbar.make((ViewGroup) viewPager.getParent(), e.getMessage(), Snackbar.LENGTH_LONG)
                         .show();

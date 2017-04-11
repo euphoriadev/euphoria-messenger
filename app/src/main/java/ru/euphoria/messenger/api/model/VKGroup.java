@@ -1,7 +1,6 @@
 package ru.euphoria.messenger.api.model;
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 import ru.euphoria.messenger.json.JsonObject;
 
@@ -109,7 +108,6 @@ public class VKGroup extends VKModel implements Serializable {
     public static boolean isGroupId(int id) {
         return id < 0;
     }
-
 
     /**
      * Access level to manage community.

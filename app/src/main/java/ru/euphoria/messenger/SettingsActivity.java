@@ -1,13 +1,12 @@
 package ru.euphoria.messenger;
 
 import android.os.Bundle;
-import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import ru.euphoria.messenger.common.AppGlobal;
-
 public class SettingsActivity extends BaseActivity {
+    private SettingsFragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,8 +18,9 @@ public class SettingsActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
+        fragment = new SettingsFragment();
         getFragmentManager().beginTransaction()
-                .replace(R.id.settingsFrame, new SettingsFragment())
+                .replace(R.id.settingsFrame, fragment)
                 .commit();
     }
 
@@ -32,4 +32,11 @@ public class SettingsActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        // Android bug, onRequestPermissionsResult not called in fragment
+        fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 }

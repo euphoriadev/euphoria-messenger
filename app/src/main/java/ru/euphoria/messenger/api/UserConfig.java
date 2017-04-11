@@ -1,9 +1,7 @@
 package ru.euphoria.messenger.api;
 
 
-import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
-import android.support.v4.content.SharedPreferencesCompat;
 
 import java.io.File;
 

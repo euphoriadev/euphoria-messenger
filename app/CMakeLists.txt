@@ -20,7 +20,8 @@ add_library( # Sets the name of the library.
              # Provides a relative path to your source file(s).
              # Associated headers in the same location as their source
              # file are automatically included.
-             src/main/jni/image.c)
+             src/main/jni/image.c
+             src/main/jni/util.c)
 
 # Add flags for compiler to best performance
 add_definitions(-O3)

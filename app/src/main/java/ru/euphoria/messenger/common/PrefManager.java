@@ -1,12 +1,12 @@
 package ru.euphoria.messenger.common;
 
 import android.content.SharedPreferences;
-import android.os.Build;
 
-import ru.euphoria.messenger.SettingsFragment;
-
+import static ru.euphoria.messenger.SettingsFragment.PREF_KEY_CHAT_BACKGROUND;
+import static ru.euphoria.messenger.SettingsFragment.PREF_KEY_HEADER_BACKGROUND;
+import static ru.euphoria.messenger.SettingsFragment.PREF_KEY_OFFLINE;
+import static ru.euphoria.messenger.SettingsFragment.PREF_KEY_TRANSLUCENT_STATUS_BAR;
 import static ru.euphoria.messenger.common.AppGlobal.preferences;
-import static ru.euphoria.messenger.SettingsFragment.*;
 
 /**
  * Created by Igor on 13.01.16.

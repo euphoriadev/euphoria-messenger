@@ -8,6 +8,8 @@ import ru.euphoria.messenger.json.JsonObject;
  * Base object model for VK.
  */
 public abstract class VKModel implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private Object tag;
 
     /**
@@ -30,13 +32,5 @@ public abstract class VKModel implements Serializable {
 
     public Object getTag() {
         return tag;
-    }
-
-    public VKUser asUser() {
-        return (VKUser) this;
-    }
-
-    public VKMessage asMessage() {
-        return (VKMessage) this;
     }
 }

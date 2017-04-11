@@ -16,7 +16,8 @@ public class ColorUtil {
     private static final int MIN_ALPHA_SEARCH_MAX_ITERATIONS = 10;
     private static final int MIN_ALPHA_SEARCH_PRECISION = 1;
 
-    private ColorUtil() {}
+    private ColorUtil() {
+    }
 
     /**
      * Darkens color on 35%. a.k.a pressed color of button
@@ -189,7 +190,7 @@ public class ColorUtil {
      * @return the alpha value in the range 0-255, or -1 if no value could be calculated.
      */
     public static int calculateMinimumAlpha(@ColorInt int foreground, @ColorInt int background,
-            float minContrastRatio) {
+                                            float minContrastRatio) {
         if (Color.alpha(background) != 255) {
             throw new IllegalArgumentException("background can not be translucent: #"
                     + Integer.toHexString(background));
@@ -242,8 +243,8 @@ public class ColorUtil {
      * @param hsl 3 element array which holds the resulting HSL components.
      */
     public static void RGBToHSL(@IntRange(from = 0x0, to = 0xFF) int r,
-            @IntRange(from = 0x0, to = 0xFF) int g, @IntRange(from = 0x0, to = 0xFF) int b,
-            @NonNull float[] hsl) {
+                                @IntRange(from = 0x0, to = 0xFF) int g, @IntRange(from = 0x0, to = 0xFF) int b,
+                                @NonNull float[] hsl) {
         final float rf = r / 255f;
         final float gf = g / 255f;
         final float bf = b / 255f;
@@ -289,7 +290,7 @@ public class ColorUtil {
      * </ul>
      *
      * @param color the ARGB color to convert. The alpha component is ignored.
-     * @param hsl 3 element array which holds the resulting HSL components.
+     * @param hsl   3 element array which holds the resulting HSL components.
      */
     public static void colorToHSL(@ColorInt int color, @NonNull float[] hsl) {
         RGBToHSL(Color.red(color), Color.green(color), Color.blue(color), hsl);
@@ -367,7 +368,7 @@ public class ColorUtil {
      */
     @ColorInt
     public static int setAlphaComponent(@ColorInt int color,
-            @IntRange(from = 0x0, to = 0xFF) int alpha) {
+                                        @IntRange(from = 0x0, to = 0xFF) int alpha) {
         if (alpha < 0 || alpha > 255) {
             throw new IllegalArgumentException("alpha must be between 0 and 255.");
         }

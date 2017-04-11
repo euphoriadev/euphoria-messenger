@@ -5,7 +5,8 @@
     android:layout_gravity="center"
     android:orientation="vertical">
 
-    <ru.euphoria.messenger.view.ZoomImageView
+    <ImageView
+        android:scaleType="fitCenter"
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

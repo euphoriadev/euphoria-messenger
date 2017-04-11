@@ -2,14 +2,13 @@ package ru.euphoria.messenger.util;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 
 /**
  * Created by Igor on 17.02.17.
- *
+ * <p>
  * Simple utils for {@link Bitmap}
  */
 public class ImageUtil {
@@ -160,7 +159,7 @@ public class ImageUtil {
             stackpointer = radius;
             for (y = 0; y < h; y++) {
                 // Preserve alpha channel: ( 0xff000000 & pix[yi] )
-                pix[yi] = ( 0xff000000 & pix[yi] ) | ( dv[rsum] << 16 ) | ( dv[gsum] << 8 ) | dv[bsum];
+                pix[yi] = (0xff000000 & pix[yi]) | (dv[rsum] << 16) | (dv[gsum] << 8) | dv[bsum];
 
                 rsum -= routsum;
                 gsum -= goutsum;
@@ -289,9 +288,7 @@ public class ImageUtil {
                 source.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
 
         Canvas canvas = new Canvas(bitmap);
-//        source.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
         source.draw(canvas);
-
         return bitmap;
     }
 

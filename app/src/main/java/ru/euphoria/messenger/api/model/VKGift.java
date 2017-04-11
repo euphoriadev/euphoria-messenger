@@ -5,6 +5,7 @@ import java.io.Serializable;
 import ru.euphoria.messenger.json.JsonObject;
 
 public class VKGift extends VKModel implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     /** User id who sent the gift, or 0 if the sender is hidden */
     public int from_id;

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 import ru.euphoria.messenger.api.model.VKGroup;
 import ru.euphoria.messenger.api.model.VKUser;
-import ru.euphoria.messenger.util.ArrayUtil;
 
 /**
  * Created by Igor on 09.02.17.

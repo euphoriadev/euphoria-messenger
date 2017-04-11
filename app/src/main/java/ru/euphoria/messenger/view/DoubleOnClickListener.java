@@ -4,7 +4,7 @@ import android.view.View;
 
 /**
  * Created by Igor on 07.03.17.
- *
+ * <p>
  * Definition for a callback to be invoked when a view is double clicked
  */
 
@@ -17,6 +17,7 @@ public abstract class DoubleOnClickListener implements View.OnClickListener {
 
     /**
      * Called when view has been double clicked
+     *
      * @param v the clicked view
      */
     public abstract void onDoubleClick(View v);

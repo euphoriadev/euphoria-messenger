@@ -105,7 +105,7 @@ public class VKVideo extends VKModel implements Serializable {
      *
      * @param source the json source to parse
      */
-	public VKVideo(JsonObject source) {
+    public VKVideo(JsonObject source) {
         this.id = source.optInt("id");
         this.owner_id = source.optInt("owner_id");
         this.title = source.optString("title");
@@ -124,7 +124,7 @@ public class VKVideo extends VKModel implements Serializable {
         this.photo_640 = source.optString("photo_640");
 
         JsonObject likes = source.optJsonObject("likes");
-        if(likes != null) {
+        if (likes != null) {
             this.likes = likes.optInt("count");
             this.user_likes = likes.optInt("user_likes") == 1;
         }
@@ -141,7 +141,7 @@ public class VKVideo extends VKModel implements Serializable {
             this.mp4_1080 = files.optString("mp4_1080");
             this.external = files.optString("external");
         }
-	}
+    }
 
     public CharSequence toAttachmentString() {
         StringBuilder result = new StringBuilder("video").append(owner_id).append('_').append(id);
