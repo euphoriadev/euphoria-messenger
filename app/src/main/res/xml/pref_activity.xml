@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+
     <PreferenceCategory android:title="@string/pref_category_general">
         <SwitchPreference
             android:defaultValue="false"
-            android:key="night_mode"
+            android:key="enable_night_mode"
             android:title="@string/pref_night_mode" />
-
         <SwitchPreference
             android:defaultValue="false"
             android:key="random_theme"
@@ -22,6 +22,25 @@
         <Preference
             android:key="chat_background"
             android:title="@string/pref_chat_background" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_night_mode_auto">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="night_mode_auto"
+            android:title="@string/pref_enable" />
+
+        <Preference
+            android:key="night_start"
+            android:title="@string/pref_night_start"
+            android:summary="21:00"/>
+
+        <Preference
+            android:key="night_end"
+            android:title="@string/pref_night_end"
+            android:summary="7:00"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory

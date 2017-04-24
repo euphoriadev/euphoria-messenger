@@ -15,6 +15,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Random;
 
 import ru.euphoria.messenger.MainActivity;
@@ -139,11 +141,12 @@ public class ThemeManager {
                     : LIGHT_STYLES[index];
         }
         int color = getThemeColor();
+        boolean nightMode = isNightMode();
 
         for (int i = 0; i < PALETTE.length; i++) {
             int c = PALETTE[i];
             if (c == color) {
-                return isNightMode() ? DARK_STYLES[i] : LIGHT_STYLES[i];
+                return nightMode ? DARK_STYLES[i] : LIGHT_STYLES[i];
             }
         }
         return DARK_STYLES[0];
@@ -170,8 +173,29 @@ public class ThemeManager {
     }
 
     public static boolean isNightMode() {
+        if (PrefManager.getNightModeAuto()) {
+            String nightStart = PrefManager.getNightStart();
+            String nightEnd = PrefManager.getNightEnd();
+
+            String[] timeStart = nightStart.split(":");
+            int hourStart = Integer.parseInt(timeStart[0]);
+            int minStart = Integer.parseInt(timeStart[1]);
+
+            String[] timeEnd = nightEnd.split(":");
+            int hourEnd = Integer.parseInt(timeEnd[0]);
+            int minEnd = Integer.parseInt(timeEnd[1]);
+
+            Calendar calendar = Calendar.getInstance();
+            int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+            int currentMin = calendar.get(Calendar.MINUTE);
+
+            boolean lightThemeTime = currentHour > hourEnd && currentHour < hourStart;
+            if (!lightThemeTime) {
+                return true;
+            }
+        }
         return AppGlobal.preferences
-                .getBoolean(SettingsFragment.PREF_KEY_NIGHT_MODE, false);
+                .getBoolean(SettingsFragment.PREF_KEY_ENABLE_NIGHT_MODE, false);
     }
 
 

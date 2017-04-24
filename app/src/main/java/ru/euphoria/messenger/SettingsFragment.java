@@ -1,6 +1,7 @@
 package ru.euphoria.messenger;
 
 import android.Manifest;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -17,6 +18,7 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
@@ -25,10 +27,12 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 
 import ru.euphoria.messenger.api.VKApi;
 import ru.euphoria.messenger.common.AppGlobal;
+import ru.euphoria.messenger.common.PrefManager;
 import ru.euphoria.messenger.common.ThemeManager;
 import ru.euphoria.messenger.database.DatabaseHelper;
 import ru.euphoria.messenger.database.MemoryCache;
@@ -47,8 +51,11 @@ public class SettingsFragment extends PreferenceFragment
     private static final int REQUEST_CODE_HEADER = 100;
     private static final int REQUEST_CODE_CHAT = 200;
 
-    public static final String PREF_KEY_NIGHT_MODE = "night_mode";
+    public static final String PREF_KEY_ENABLE_NIGHT_MODE = "enable_night_mode";
     public static final String PREF_KEY_THEME_COLOR = "theme_color";
+    public static final String PREF_NIGHT_MODE_AUTO = "night_mode_auto";
+    public static final String PREF_NIGHT_START = "night_start";
+    public static final String PREF_NIGHT_END = "night_end";
     public static final String PREF_KEY_ICON_COLOR = "icon_color";
     public static final String PREF_KEY_RANDOM_THEME = "random_theme";
     public static final String PREF_KEY_CHAT_BACKGROUND = "chat_background";
@@ -86,7 +93,8 @@ public class SettingsFragment extends PreferenceFragment
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_activity);
 
-        findPreference(PREF_KEY_NIGHT_MODE).setOnPreferenceChangeListener(this);
+        findPreference(PREF_KEY_ENABLE_NIGHT_MODE).setOnPreferenceChangeListener(this);
+        findPreference(PREF_NIGHT_MODE_AUTO).setOnPreferenceChangeListener(this);
         findPreference(PREF_KEY_RANDOM_THEME).setOnPreferenceChangeListener(this);
         findPreference(PREF_KEY_TRANSLUCENT_STATUS_BAR).setOnPreferenceChangeListener(this);
         findPreference(PREF_KEY_OFFLINE).setOnPreferenceChangeListener(this);
@@ -96,6 +104,8 @@ public class SettingsFragment extends PreferenceFragment
         findPreference(PREF_KET_CLEAR_CACHE).setOnPreferenceClickListener(this);
         findPreference(PREF_KET_CLEAR_IMAGES).setOnPreferenceClickListener(this);
         findPreference(PREF_KEY_GITHUB).setOnPreferenceClickListener(this);
+        findPreference(PREF_NIGHT_START).setOnPreferenceClickListener(this);
+        findPreference(PREF_NIGHT_END).setOnPreferenceClickListener(this);
 //        findPreference(PREF_KEY_ICON_COLOR).setOnPreferenceClickListener(this);
 
         SwitchPreference randomTheme = (SwitchPreference) findPreference(PREF_KEY_RANDOM_THEME);
@@ -123,6 +133,19 @@ public class SettingsFragment extends PreferenceFragment
                 headerType.setSummary(types[2]);
                 break;
         }
+
+        SwitchPreference nightAuto = (SwitchPreference) findPreference(PREF_NIGHT_MODE_AUTO);
+        Preference nightStart = findPreference(PREF_NIGHT_START);
+        Preference nightEnd = findPreference(PREF_NIGHT_END);
+
+        SwitchPreference nightMode = (SwitchPreference) findPreference(PREF_KEY_ENABLE_NIGHT_MODE);
+        nightMode.setEnabled(!nightAuto.isChecked());
+
+        nightStart.setEnabled(nightAuto.isChecked());
+        nightEnd.setEnabled(nightAuto.isChecked());
+
+        nightStart.setSummary(PrefManager.getNightStart());
+        nightEnd.setSummary(PrefManager.getNightEnd());
 
         ListPreference blurRadius = (ListPreference) findPreference(PREF_KEY_BLUR_RADIUS);
         blurRadius.setSummary(blurs[Integer.parseInt(blurRadius.getValue())]);
@@ -314,6 +337,23 @@ public class SettingsFragment extends PreferenceFragment
         builder.show();
     }
 
+    private void createTimePicker(final Preference preference) {
+        Calendar calendar = Calendar.getInstance();
+
+        TimePickerDialog dialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                if (preference.getKey().equals(PREF_NIGHT_START)) {
+                    PrefManager.setNightStart(hourOfDay, minute);
+                } else {
+                    PrefManager.setNightEnd(hourOfDay, minute);
+                }
+                preference.setSummary(hourOfDay + ":" + minute);
+            }
+        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
+        dialog.show();
+    }
+
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         if (values == null) {
@@ -324,8 +364,14 @@ public class SettingsFragment extends PreferenceFragment
         EventBus.getDefault().postSticky(values);
 
         switch (preference.getKey()) {
-            case PREF_KEY_NIGHT_MODE:
+            case PREF_KEY_ENABLE_NIGHT_MODE:
                 restartScreen();
+                break;
+
+            case PREF_NIGHT_MODE_AUTO:
+                findPreference(PREF_KEY_ENABLE_NIGHT_MODE).setEnabled(!(Boolean) newValue);
+                findPreference(PREF_NIGHT_START).setEnabled((Boolean) newValue);
+                findPreference(PREF_NIGHT_END).setEnabled((Boolean) newValue);
                 break;
 
             case PREF_KEY_TRANSLUCENT_STATUS_BAR:
@@ -382,9 +428,10 @@ public class SettingsFragment extends PreferenceFragment
                 createColorPicker();
                 break;
 
-//            case PREF_KEY_ICON_COLOR:
-//                ThemeManager.changeIconColor();
-//                break;
+            case PREF_NIGHT_START:
+            case PREF_NIGHT_END:
+                createTimePicker(preference);
+                break ;
 
             case PREF_KEY_VERSION:
                 if (Math.round(Math.random()) % 10 == 0) {

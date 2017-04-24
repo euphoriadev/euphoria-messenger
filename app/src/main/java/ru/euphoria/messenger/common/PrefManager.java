@@ -6,6 +6,9 @@ import static ru.euphoria.messenger.SettingsFragment.PREF_KEY_CHAT_BACKGROUND;
 import static ru.euphoria.messenger.SettingsFragment.PREF_KEY_HEADER_BACKGROUND;
 import static ru.euphoria.messenger.SettingsFragment.PREF_KEY_OFFLINE;
 import static ru.euphoria.messenger.SettingsFragment.PREF_KEY_TRANSLUCENT_STATUS_BAR;
+import static ru.euphoria.messenger.SettingsFragment.PREF_NIGHT_END;
+import static ru.euphoria.messenger.SettingsFragment.PREF_NIGHT_MODE_AUTO;
+import static ru.euphoria.messenger.SettingsFragment.PREF_NIGHT_START;
 import static ru.euphoria.messenger.common.AppGlobal.preferences;
 
 /**
@@ -44,6 +47,26 @@ public class PrefManager {
 
     public static void setOffline(boolean value) {
         putBoolean(PREF_KEY_OFFLINE, value);
+    }
+
+    public static boolean getNightModeAuto() {
+        return getBoolean(PREF_NIGHT_MODE_AUTO);
+    }
+
+    public static void setNightStart(int hours, int minutes) {
+        putString(PREF_NIGHT_START, hours + ":" + minutes);
+    }
+
+    public static void setNightEnd(int hours, int minutes) {
+        putString(PREF_NIGHT_END, hours + ":" + minutes);
+    }
+
+    public static String getNightStart() {
+        return getString(PREF_NIGHT_START, "7:00");
+    }
+
+    public static String getNightEnd() {
+        return getString(PREF_NIGHT_END, "21:00");
     }
 
     /**

@@ -1,5 +1,6 @@
 package ru.euphoria.messenger;
 
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -24,6 +25,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.squareup.picasso.Picasso;
 
@@ -84,6 +86,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         initDrawer();
         switchFragment(new DialogsFragment());
         startService(new Intent(this, LongPollService.class));
+
     }
 
     @Override
