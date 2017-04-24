@@ -90,6 +90,10 @@ public class VKApi {
             if (url.contains("messages.getDialogs")) {
                 VKMessage.count = json.optJsonObject("response").optInt("count");
             }
+            if (url.contains("messages.getHistory")) {
+                VKMessage.lastHistoryCount = json.optJsonObject("response")
+                        .optInt("count");
+            }
             for (int i = 0; i < array.length(); i++) {
                 JsonObject source = array.optJsonObject(i);
                 int unread = source.optInt("unread");

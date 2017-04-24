@@ -13,8 +13,8 @@
 
     <!--Official VK Material Colors -->
     <color name="vk_official">#5281B9</color>
-    <color name="vk_official_dark">#3C5F87</color>
-    <color name="vk_bubble_color">#D4E7F8</color>
+    <color name="vk_official_dark">#406693</color>
+    <color name="vk_bubble_color">#dde9f7</color>
     <color name="tg_bubble_color">#effdde</color>
 
     <!-- Material Design Colors -->

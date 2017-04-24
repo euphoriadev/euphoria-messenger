@@ -1,5 +1,6 @@
 package ru.euphoria.messenger;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
@@ -60,7 +61,7 @@ public class MessagesActivity extends BaseActivity
 
     private LinearLayoutManager layoutManager;
     private MessageAdapter adapter;
-    private String title;
+    private String title, photo;
     private int userId, chatId,
             groupId, membersCount;
     private boolean loading = true;
@@ -80,7 +81,6 @@ public class MessagesActivity extends BaseActivity
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setTitle(title);
         getSupportActionBar().setSubtitle(getSubtitleStatus());
-
 
         layoutManager = new LinearLayoutManager(this);
         layoutManager.setStackFromEnd(true);
@@ -149,6 +149,17 @@ public class MessagesActivity extends BaseActivity
                 Intent intent = new Intent(this, DialogAttachmentsActivity.class);
                 intent.putExtra("peer_id", getPeerId());
                 startActivity(intent);
+
+                overridePendingTransition(R.anim.side_left, R.anim.alpha_in);
+                break;
+
+            case R.id.itemAnalise:
+                startActivity(new Intent(this, AnaliseActivity.class)
+                        .putExtra("peer_id", getPeerId())
+                        .putExtra("chat_id", chatId)
+                        .putExtra("title", title)
+                        .putExtra("photo", photo));
+                overridePendingTransition(R.anim.side_left, R.anim.alpha_in);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -161,12 +172,6 @@ public class MessagesActivity extends BaseActivity
                 sendMessage();
                 break;
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(0, R.anim.side_right);
     }
 
     @Override
@@ -197,6 +202,7 @@ public class MessagesActivity extends BaseActivity
         this.chatId = intent.getIntExtra("chat_id", -1);
         this.groupId = intent.getIntExtra("group_id", -1);
         this.membersCount = intent.getIntExtra("members_count", -1);
+        this.photo = intent.getStringExtra("photo");
     }
 
     private void createAdapter(ArrayList<VKMessage> messages) {
@@ -213,10 +219,7 @@ public class MessagesActivity extends BaseActivity
     private void insertMessages(ArrayList<VKMessage> messages) {
         if (adapter != null) {
             adapter.insert(messages);
-            adapter.notifyDataSetChanged();
-
-            recyclerView.scrollToPosition(layoutManager.findFirstVisibleItemPosition()
-                    + messages.size());
+            adapter.notifyItemRangeInserted(0, messages.size());
         }
     }
 
@@ -376,7 +379,7 @@ public class MessagesActivity extends BaseActivity
         message.is_out = true;
 
         adapter.add(message, false);
-        recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+        recyclerView.scrollToPosition(adapter.getMessagesCount());
         editMessage.setText("");
 
         VKApi.messages()
@@ -388,7 +391,6 @@ public class MessagesActivity extends BaseActivity
                 message.id = response.get(0);
                 message.setTag(MessageAdapter.SendStatus.SENT);
 
-                adapter.notifyDataSetChanged();
                 CacheStorage.insert(DatabaseHelper.MESSAGES_TABLE,
                         ArrayUtil.singletonList(message));
             }
@@ -405,10 +407,10 @@ public class MessagesActivity extends BaseActivity
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
 
-            if (dy < 0) {
+            if (dy < 0 && !loading) {
                 // Scrolling down
                 final int position = layoutManager.findFirstVisibleItemPosition();
-                if (position <= 10 && !loading) {
+                if (position <= 10) {
                     // can load old messages
                     getMessages(adapter.getMessagesCount());
                 }

@@ -17,5 +17,6 @@
     <attr name="onlineColor" format="reference" />
     <attr name="fwdMessageColor" format="reference" />
     <attr name="textColorSecondary" format="color" />
+    <attr name="textColorPrimary" format="color" />
 
 </resources>

@@ -18,6 +18,24 @@
     <string name="item_exit">Выход из аккаунта</string>
     <string name="item_search">Search</string>
 
+    <string name="attach_photo">Фото</string>
+    <string name="attach_video">Видео</string>
+    <string name="attach_audio">Аудио</string>
+    <string name="attach_doc">Документ</string>
+    <string name="attach_sticker">Стикер</string>
+    <string name="attach_gift">Подарок</string>
+    <string name="attach_link">Ссылка</string>
+
+    <string name="action_chat_create">%s создал(а) беседу</string>
+    <string name="action_chat_invite_user"
+        formatted="false">%s пригласил(а) %s</string>
+    <string name="action_char_user_leave">%s вышел</string>
+    <string name="action_chat_kick_user"
+        formatted="false">%s исключил(а) %s</string>
+    <string name="action_chat_photo_update">Обновлена фотография беседы</string>
+    <string name="action_chat_photo_remove">Удалена фотография беседы</string>
+    <string name="action_chat_title_update">Обновлено название беседы</string>
+
     <string name="auth">Авторизация</string>
     <string name="login_with_token">Вход через токен</string>
 
@@ -37,6 +55,7 @@
 
     <string name="refresh">Обновить</string>
     <string name="attachments">Вложения</string>
+    <string name="analise">Анализ</string>
     <string name="open_dialog">Открыть диалог</string>
     <string name="banned">забанен(а)</string>
     <string name="deleted">удален(а)</string>
@@ -85,4 +104,8 @@
         \nВиктор Гардетский (<b>Designer</b>),
         \nАлександр Белоусов (<b>Designer</b>),
         \nДенис Якут (<b>Vector Designer</b>)</string>
+    <string name="pref_official_group">Группа</string>
+    <string name="pref_official_group_summary">Всупить в оффициальную группу для наблюдения за разватием приложения?</string>
+    <string name="pref_github">Euphoria on GitHub</string>
+    <string name="pref_github_summary">Посмотреть исходный код проекта</string>
 </resources>

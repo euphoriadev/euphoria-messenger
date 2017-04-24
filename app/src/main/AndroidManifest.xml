@@ -69,6 +69,7 @@
         <activity android:name=".ImageViewActivity" />
         <activity android:name=".OpenChatActivity" />
         <activity android:name=".DialogAttachmentsActivity" />
+        <activity android:name=".AnaliseActivity" />
         <activity
             android:name=".SettingsActivity"
             android:label="@string/item_settings" />

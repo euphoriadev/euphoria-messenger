@@ -125,8 +125,8 @@ public class HttpRequest {
 
     private HttpURLConnection createConnection() throws IOException {
         connection = (HttpURLConnection) new java.net.URL(getUrl()).openConnection();
-        connection.setReadTimeout(30_000);
-        connection.setConnectTimeout(30_000);
+        connection.setReadTimeout(60_000);
+        connection.setConnectTimeout(60_000);
         connection.setUseCaches(true);
         connection.setDoInput(true);
         connection.setDoOutput(!GET.equalsIgnoreCase(method));

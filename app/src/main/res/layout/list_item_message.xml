@@ -53,7 +53,7 @@
                 android:id="@+id/msgAttachments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"/>
+                android:orientation="vertical" />
 
         </ru.euphoria.messenger.view.BoundedLinearLayout>
 
@@ -62,6 +62,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="14dp"
-            android:orientation="vertical"/>
+            android:orientation="vertical" />
     </LinearLayout>
 </LinearLayout>

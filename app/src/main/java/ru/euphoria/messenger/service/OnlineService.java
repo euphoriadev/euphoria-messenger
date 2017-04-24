@@ -6,10 +6,14 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.CountDownLatch;
+
 import ru.euphoria.messenger.api.VKApi;
 
-public class OnlineService extends Service implements Runnable {
-    private Handler handler;
+public class OnlineService extends Service {
+    private Timer timer;
 
     public OnlineService() {
     }
@@ -18,15 +22,20 @@ public class OnlineService extends Service implements Runnable {
     public void onCreate() {
         super.onCreate();
 
-        handler = new Handler(Looper.getMainLooper());
-        handler.post(this);
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                VKApi.account().setOnline().execute(null, null);
+            }
+        }, 0, 60 * 1000);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
 
-        handler.removeCallbacks(this);
+        timer.cancel();
     }
 
     @Override
@@ -34,8 +43,4 @@ public class OnlineService extends Service implements Runnable {
         return null;
     }
 
-    @Override
-    public void run() {
-        VKApi.account().setOnline().execute(null, null);
-    }
 }

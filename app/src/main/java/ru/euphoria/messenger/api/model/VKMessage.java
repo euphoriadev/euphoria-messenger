@@ -14,6 +14,7 @@ public class VKMessage extends VKModel implements Serializable {
 
     // total messages count
     public static int count;
+    public static int lastHistoryCount;
 
     public static final int UNREAD = 1;       // message unread
     public static final int OUTBOX = 2;       // исходящее сообщение

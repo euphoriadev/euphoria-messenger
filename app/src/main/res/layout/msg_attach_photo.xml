@@ -5,4 +5,4 @@
     android:adjustViewBounds="true"
     android:paddingTop="4dp"
     android:paddingRight="8dp"
-    android:scaleType="fitCenter"/>
+    android:scaleType="fitCenter" />

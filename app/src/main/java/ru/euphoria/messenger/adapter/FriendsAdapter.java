@@ -131,6 +131,7 @@ public class FriendsAdapter extends BaseAdapter<VKUser, FriendsAdapter.ViewHolde
                 Intent intent = new Intent(context, MessagesActivity.class);
                 intent.putExtra("title", user.toString());
                 intent.putExtra("user_id", user.id);
+                intent.putExtra("photo", user.photo_50);
 
                 context.startActivity(intent);
                 ((Activity) context).overridePendingTransition(R.anim.side_left, R.anim.alpha_in);

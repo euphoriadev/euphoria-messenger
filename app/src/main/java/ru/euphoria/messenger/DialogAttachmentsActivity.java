@@ -99,6 +99,8 @@ public class DialogAttachmentsActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+
     private int getToolbarTitleTextColor(Toolbar toolbar) {
         try {
             Field f = toolbar.getClass().getDeclaredField("mTitleTextView");

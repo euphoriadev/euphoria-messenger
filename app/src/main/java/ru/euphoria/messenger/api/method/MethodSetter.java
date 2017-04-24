@@ -114,6 +114,11 @@ public class MethodSetter {
         return put("user_ids", ArrayUtil.toString(ids));
     }
 
+    public MethodSetter userIds(Integer... ids) {
+        return put("user_ids", ArrayUtil.toString(ids));
+    }
+
+
     public MethodSetter userIds(Collection<Integer> ids) {
         return put("user_ids", ArrayUtil.toString(ids.toArray()));
     }
@@ -133,6 +138,10 @@ public class MethodSetter {
     }
 
     public MethodSetter groupIds(int... ids) {
+        return put("group_ids", ArrayUtil.toString(ids));
+    }
+
+    public MethodSetter groupIds(Integer... ids) {
         return put("group_ids", ArrayUtil.toString(ids));
     }
 

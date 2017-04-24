@@ -55,6 +55,16 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/dialogChatIndicator"
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical|bottom"
+                android:layout_marginRight="4dp"
+                android:tint="?textColorPrimary"
+                app:srcCompat="@drawable/ic_vector_people" />
+
             <TextView
                 android:id="@+id/dialogTitle"
                 android:layout_width="wrap_content"
@@ -73,7 +83,7 @@
                 android:layout_gravity="bottom|center_vertical"
                 android:layout_marginBottom="1dp"
                 android:layout_marginLeft="8dp"
-                app:backgroundTint="?colorAccent"
+                android:backgroundTint="?colorAccent"
                 app:srcCompat="@drawable/ic_vector_done_all" />
 
             <TextView
@@ -90,6 +100,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:gravity="center_vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">

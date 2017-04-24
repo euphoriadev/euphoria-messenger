@@ -59,6 +59,7 @@ public class SettingsFragment extends PreferenceFragment
     public static final String PREF_KEY_TRANSLUCENT_STATUS_BAR = "translucent_status_bar";
     public static final String PREF_KEY_VERSION = "version";
     public static final String PREF_KEY_GROUP = "group";
+    public static final String PREF_KEY_GITHUB = "github";
 
     public static final String PREF_KEY_OFFLINE = "offline";
     public static final String PREF_KEY_NO_READING = "no_reading";
@@ -94,6 +95,7 @@ public class SettingsFragment extends PreferenceFragment
         findPreference(PREF_KEY_THEME_COLOR).setOnPreferenceClickListener(this);
         findPreference(PREF_KET_CLEAR_CACHE).setOnPreferenceClickListener(this);
         findPreference(PREF_KET_CLEAR_IMAGES).setOnPreferenceClickListener(this);
+        findPreference(PREF_KEY_GITHUB).setOnPreferenceClickListener(this);
 //        findPreference(PREF_KEY_ICON_COLOR).setOnPreferenceClickListener(this);
 
         SwitchPreference randomTheme = (SwitchPreference) findPreference(PREF_KEY_RANDOM_THEME);
@@ -416,6 +418,10 @@ public class SettingsFragment extends PreferenceFragment
                 preference.setSummary(getImagesSummary());
 
                 AndroidUtils.clearCache(Picasso.with(getActivity()));
+                break;
+
+            case PREF_KEY_GITHUB:
+                AndroidUtils.openLink(getActivity(), "https://github.com/EuphoriaDev/euphoria-messenger");
                 break;
         }
         return true;

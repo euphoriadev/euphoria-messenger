@@ -9,6 +9,8 @@
         <item name="onlineColor">@android:color/white</item>
         <item name="fwdMessageColor">?android:textColorSecondary</item>
         <item name="textColorSecondary">@color/secondary_text_color_light</item>
+        <item name="textColorPrimary">@color/primary_text_color_light</item>
+
     </style>
 
     <style name="AppTheme.Light" parent="Theme.AppCompat.Light.NoActionBar">
@@ -20,6 +22,8 @@
         <item name="onlineColor">@android:color/white</item>
         <item name="fwdMessageColor">?colorPrimary</item>
         <item name="textColorSecondary">@color/secondary_text_color</item>
+        <item name="textColorPrimary">@color/primary_text_color</item>
+
     </style>
 
     <style name="AppTheme.Red">
@@ -305,7 +309,6 @@
 
     <style name="AppTheme.Light.Welcome">
         <item name="colorPrimary">@color/md_red_600</item>
-
     </style>
 
 </resources>

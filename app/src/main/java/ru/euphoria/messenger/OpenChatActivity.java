@@ -112,13 +112,6 @@ public class OpenChatActivity extends BaseActivity
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-
-        overridePendingTransition(0, R.anim.side_right);
-    }
-
-    @Override
     public void onRefresh() {
         getFriends();
     }

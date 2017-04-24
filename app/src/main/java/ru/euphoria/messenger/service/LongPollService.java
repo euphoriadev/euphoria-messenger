@@ -66,7 +66,6 @@ public class LongPollService extends Service {
                         server = VKApi.messages().getLongPollServer()
                                 .execute(VKLongPollServer.class).get(0);
                     }
-                    ;
 
                     JsonObject response = getResponse(server);
                     if (response == null || response.has("failed")) {
@@ -100,14 +99,12 @@ public class LongPollService extends Service {
         }
 
         public JsonObject getResponse(VKLongPollServer server) throws Exception {
-
             ArrayMap<String, String> params = new ArrayMap<>();
             params.put("act", "a_check");
             params.put("key", server.key);
             params.put("ts", String.valueOf(server.ts));
             params.put("wait", "25");
             params.put("mode", "2");
-            ;
 
             String buffer = HttpRequest.get("https://" + server.server, params).asString();
             return new JsonObject(buffer);

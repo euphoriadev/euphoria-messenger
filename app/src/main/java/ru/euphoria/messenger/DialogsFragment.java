@@ -22,6 +22,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.ArraySet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,7 @@ import com.squareup.picasso.Target;
 
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Locale;
 
 import ru.euphoria.messenger.adapter.DialogAdapter;
@@ -131,6 +133,7 @@ public class DialogsFragment extends Fragment
 
         Intent intent = new Intent(getActivity(), MessagesActivity.class);
         intent.putExtra("title", adapter.getTitle(item, user, group));
+        intent.putExtra("photo", adapter.getPhoto(item, user, group));
         intent.putExtra("user_id", item.user_id);
         intent.putExtra("chat_id", item.chat_id);
         intent.putExtra("group_id", group != null ? group.id : -1);
@@ -206,27 +209,32 @@ public class DialogsFragment extends Fragment
                     CacheStorage.insert(DatabaseHelper.DIALOGS_TABLE, messages);
                 }
 
-                IntBuffer userIds = IntBuffer.allocate(messages.size() + 1);
-                IntBuffer groupIds = IntBuffer.allocate(10);
+                HashSet<Integer> userIds = new HashSet<>();
+                HashSet<Integer> groupIds = new HashSet<>();
 
                 if (offset == 0) {
                     // for update navigation header status
-                    userIds.put(VKApi.config.userId);
+                    userIds.add(VKApi.config.userId);
                 }
 
                 boolean hasGroups = false;
                 for (VKMessage item : messages) {
                     if (VKGroup.isGroupId(item.user_id)) {
-                        groupIds.put(VKGroup.toGroupId(item.user_id));
+                        groupIds.add(VKGroup.toGroupId(item.user_id));
                         hasGroups = true;
                     } else {
-                        userIds.put(item.user_id);
+                        userIds.add(item.user_id);
+                        if (item.isChat() && !TextUtils.isEmpty(item.action)) {
+                            userIds.add(item.action_mid);
+                        }
                     }
                 }
+                Integer[] ids = new Integer[userIds.size()];
+                userIds.toArray(ids);
 
                 final ArrayList<VKUser> users = VKApi.users()
                         .get()
-                        .userIds(userIds.array())
+                        .userIds(ids)
                         .fields(VKUser.DEFAULT_FIELDS)
                         .execute(VKUser.class);
 
@@ -236,7 +244,7 @@ public class DialogsFragment extends Fragment
                 if (hasGroups) {
                     groups = VKApi.groups()
                             .getById()
-                            .groupIds(groupIds.array())
+                            .groupIds(groupIds.toArray(new Integer[groupIds.size()]))
                             .execute(VKGroup.class);
                     ;
                     CacheStorage.insert(DatabaseHelper.GROUPS_TABLE, groups);

@@ -5,10 +5,10 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <include layout="@layout/appbar"/>
+    <include layout="@layout/appbar" />
 
     <FrameLayout
         android:id="@+id/settingsFrame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 </LinearLayout>

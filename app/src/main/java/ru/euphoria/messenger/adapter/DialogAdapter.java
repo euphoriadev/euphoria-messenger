@@ -3,6 +3,7 @@ package ru.euphoria.messenger.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
@@ -21,18 +22,28 @@ import com.squareup.picasso.Picasso;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Objects;
 
 import ru.euphoria.messenger.R;
 import ru.euphoria.messenger.api.Identifiers;
+import ru.euphoria.messenger.api.model.VKAudio;
+import ru.euphoria.messenger.api.model.VKDoc;
+import ru.euphoria.messenger.api.model.VKGift;
 import ru.euphoria.messenger.api.model.VKGroup;
+import ru.euphoria.messenger.api.model.VKLink;
 import ru.euphoria.messenger.api.model.VKMessage;
+import ru.euphoria.messenger.api.model.VKModel;
+import ru.euphoria.messenger.api.model.VKPhoto;
+import ru.euphoria.messenger.api.model.VKSticker;
 import ru.euphoria.messenger.api.model.VKUser;
+import ru.euphoria.messenger.api.model.VKVideo;
 import ru.euphoria.messenger.common.AppGlobal;
 import ru.euphoria.messenger.common.ThemeManager;
 import ru.euphoria.messenger.database.MemoryCache;
@@ -50,9 +61,6 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
     private LayoutInflater inflater;
     private Context context;
 
-    private Calendar calendar;
-    private Date currentDate;
-
     private Comparator<VKMessage> comparator;
     private ColorDrawable placeholder;
     private OnItemClickListener listener;
@@ -67,8 +75,6 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
 
         this.context = context;
         this.inflater = LayoutInflater.from(context);
-        this.calendar = Calendar.getInstance();
-        this.currentDate = new Date();
 
         this.placeholder = new ColorDrawable(
                 ThemeManager.isNightMode() ? Color.DKGRAY : Color.GRAY);
@@ -144,12 +150,33 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
         holder.body.setText(msg.body);
         holder.date.setText(AndroidUtils.parseDate(msg.date * 1000));
 
-        if (msg.isChat() && !msg.is_out) {
-            SpannableString span = new SpannableString(user.first_name.concat(": ").concat(msg.body));
-            span.setSpan(new ForegroundColorSpan(AppGlobal.colorPrimary), 0, user.first_name.length() + 1, 0);
+        if (TextUtils.isEmpty(msg.action)) {
+            if (msg.isChat() && !msg.is_out) {
+                SpannableString span = new SpannableString(user.first_name.concat(": ")
+                        .concat(msg.body));
+                span.setSpan(new ForegroundColorSpan(AppGlobal.colorPrimary), 0, user.first_name.length() + 1, 0);
+
+                holder.body.setText(span);
+            }
+            if (!ArrayUtil.isEmpty(msg.attachments) && TextUtils.isEmpty(msg.body)) {
+                String body = getAttachmentBody(msg.attachments);
+                SpannableString span = new SpannableString(body);
+                int start = body.indexOf(':');
+                span.setSpan(new ForegroundColorSpan(AppGlobal.colorPrimary), start == -1 ? 0 : start, body.length(), 0);
+
+                holder.body.append(span);
+            }
+        } else {
+            String body = getActionBody(msg);
+            SpannableString span = new SpannableString(body);
+            span.setSpan(new ForegroundColorSpan(AppGlobal.colorPrimary), 0, body.length(), 0);
 
             holder.body.setText(span);
         }
+
+
+        holder.chatIndicator.setVisibility(msg.isChat()
+                ? View.VISIBLE : View.GONE);
 
         if (msg.unread > 0) {
             holder.body.setTextColor(titleColor);
@@ -227,11 +254,75 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
                 ? msg.title : user.toString();
     }
 
+    public String getPhoto(VKMessage msg, VKUser user, VKGroup group) {
+        if (msg.isChat() && !TextUtils.isEmpty(msg.photo_50)) {
+            return msg.photo_50;
+        }
+        return group != null
+                ? group.photo_50 : user.photo_50;
+    }
+
     public void changeItems(ArrayList<VKMessage> messages) {
         if (!ArrayUtil.isEmpty(messages)) {
             this.messages.clear();
             this.messages.addAll(messages);
         }
+    }
+
+    private String getActionBody(VKMessage msg) {
+        switch (msg.action) {
+            case VKMessage.ACTION_CHAT_KICK_USER:
+                if (msg.user_id == msg.action_mid) {
+                    return context.getString(R.string.action_char_user_leave, MemoryCache.getUser(msg.user_id));
+                } else return context.getString(R.string.action_chat_kick_user,
+                        MemoryCache.getUser(msg.user_id), MemoryCache.getUser(msg.action_mid));
+
+            case VKMessage.ACTION_CHAT_INVITE_USER:
+                VKUser owner = MemoryCache.getUser(msg.user_id);
+                VKUser invited = MemoryCache.getUser(msg.action_mid);
+
+                return context.getString(R.string.action_chat_invite_user, owner, invited);
+
+            case VKMessage.ACTION_CHAT_PHOTO_UPDATE:
+                return context.getString(R.string.action_chat_photo_update);
+
+            case VKMessage.ACTION_CHAT_PHOTO_REMOVE:
+                return context.getString(R.string.action_chat_photo_remove);
+
+            case VKMessage.ACTION_CHAT_TITLE_UPDATE:
+                return context.getString(R.string.action_chat_title_update);
+
+            case VKMessage.ACTION_CHAT_CREATE:
+                return context.getString(R.string.action_chat_create, MemoryCache.getUser(msg.user_id));
+        }
+
+        return "";
+    }
+
+    private String getAttachmentBody(ArrayList<VKModel> attachments) {
+        if (ArrayUtil.isEmpty(attachments)) {
+            return "";
+        }
+        VKModel attach = attachments.get(0);
+        int res = 0;
+
+        if (attach instanceof VKPhoto) {
+            res = R.string.attach_photo;
+        } else if (attach instanceof VKAudio) {
+            res = R.string.attach_audio;
+        } else if (attach instanceof VKVideo) {
+            res = R.string.attach_video;
+        } else if (attach instanceof VKDoc) {
+            res = R.string.attach_doc;
+        } else if (attach instanceof VKSticker) {
+            res = R.string.attach_sticker;
+        } else if (attach instanceof VKGift) {
+            res = R.string.attach_gift;
+        } else if (attach instanceof VKLink) {
+            res = R.string.attach_link;
+        }
+
+        return context.getString(res);
     }
 
     private void initListeners(View v, final int position) {
@@ -372,6 +463,7 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
     static class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView avatar;
         private ImageView online;
+        private ImageView chatIndicator;
         private View done;
 
         private TextView title;
@@ -385,6 +477,7 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
             this.done = v.findViewById(R.id.viewDone);
             this.avatar = (ImageView) v.findViewById(R.id.dialogPhoto);
             this.online = (ImageView) v.findViewById(R.id.onlineIndicator);
+            this.chatIndicator = (ImageView) v.findViewById(R.id.dialogChatIndicator);
 
             this.title = (TextView) v.findViewById(R.id.dialogTitle);
             this.body = (TextView) v.findViewById(R.id.dialogBody);

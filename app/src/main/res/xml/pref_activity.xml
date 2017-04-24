@@ -16,16 +16,17 @@
             android:title="@string/pref_theme_color" />
 
         <!--<Preference-->
-            <!--android:key="icon_color"-->
-            <!--android:title="@string/pref_icon_color_title" />-->
+        <!--android:key="icon_color"-->
+        <!--android:title="@string/pref_icon_color_title" />-->
 
         <Preference
             android:key="chat_background"
             android:title="@string/pref_chat_background" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_category_system_panels"
-        android:key="system_panels">
+    <PreferenceCategory
+        android:key="system_panels"
+        android:title="@string/pref_category_system_panels">
         <SwitchPreference
             android:key="translucent_status_bar"
             android:title="@string/pref_translucent_status_bar" />
@@ -94,9 +95,15 @@
             android:title="@string/pref_authors_title" />
 
         <Preference
+            android:key="github"
+            android:summary="@string/pref_github_summary"
+            android:title="@string/pref_github" />
+
+        <Preference
             android:key="group"
-            android:summary="Всупить в оффициальную группу для наблюдения за разватием приложения?"
-            android:title="Группа" />
+            android:summary="@string/pref_official_group_summary"
+            android:title="@string/pref_official_group" />
+
 
     </PreferenceCategory>
 </PreferenceScreen>

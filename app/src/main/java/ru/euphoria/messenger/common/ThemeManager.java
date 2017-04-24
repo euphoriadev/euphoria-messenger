@@ -49,7 +49,8 @@ public class ThemeManager {
             getColor(R.color.md_deep_orange_500),
             getColor(R.color.md_brown_500),
             getColor(R.color.md_grey_500),
-            getColor(R.color.md_blue_grey_500)
+            getColor(R.color.md_blue_grey_500),
+            getColor(R.color.vk_official)
     };
 
     public static final int[] LIGHT_BUBBLE_COLORS = new int[]{
@@ -71,7 +72,8 @@ public class ThemeManager {
             R.color.md_deep_orange_50,
             R.color.md_brown_50,
             R.color.md_grey_50,
-            R.color.md_blue_grey_50
+            R.color.md_blue_grey_50,
+            R.color.vk_bubble_color
     };
 
     public static final int[] DARK_STYLES = new int[]{
@@ -94,6 +96,7 @@ public class ThemeManager {
             R.style.AppTheme_Brown,
             R.style.AppTheme_Grey,
             R.style.AppTheme_BlueGrey,
+            R.style.AppTheme_Official
     };
 
     public static final int[] LIGHT_STYLES = new int[]{
@@ -116,6 +119,7 @@ public class ThemeManager {
             R.style.AppTheme_Light_Brown,
             R.style.AppTheme_Light_Grey,
             R.style.AppTheme_Light_BlueGrey,
+            R.style.AppTheme_Light_Official
     };
 
     private static int getColor(int id) {
