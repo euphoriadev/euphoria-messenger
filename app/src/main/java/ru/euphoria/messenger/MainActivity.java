@@ -1,12 +1,10 @@
 package ru.euphoria.messenger;
 
-import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,17 +19,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.util.HashSet;
@@ -49,7 +43,6 @@ import ru.euphoria.messenger.database.MemoryCache;
 import ru.euphoria.messenger.service.LongPollService;
 import ru.euphoria.messenger.service.OnlineService;
 import ru.euphoria.messenger.util.AndroidUtils;
-import ru.euphoria.messenger.util.ThemeUtil;
 
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -261,35 +254,47 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void loadBackground(final ImageView drawerBackground) {
-        if (AppGlobal.preferences.getString(SettingsFragment.PREF_KEY_HEADER_TYPE, "solid").equals("solid")) {
-            drawerBackground.setBackgroundColor(ThemeUtil.getThemeAttrColor(this, R.attr.colorPrimary));
-            drawerBackground.invalidate();
-            return;
-        }
-        final String header = PrefManager.getHeaderBackground();
-        if (!TextUtils.isEmpty(header)) {
-            // for get width and height of drawer header
-            drawerBackground.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    Picasso.with(MainActivity.this)
-                            .load(new File(header))
-                            .resize(drawerBackground.getWidth(), drawerBackground.getHeight())
-                            .centerCrop()
-                            .into(drawerBackground);
-                    drawerBackground.getViewTreeObserver().removeOnPreDrawListener(this);
-                    return false;
+        final int blurRadius;
+        switch (PrefManager.getDrawerHeaderType()) {
+            case "solid":
+                drawerBackground.setBackgroundColor(AppGlobal.colorPrimary);
+                break;
+
+            case "blur":
+                blurRadius = Integer.parseInt(AppGlobal.preferences.getString(SettingsFragment.PREF_KEY_BLUR_RADIUS, "0"));
+                Picasso.with(this)
+                        .load(currentUser.photo_50)
+                        .transform(new BlurTransform(blurRadius * 3, true))
+                        .transform(new DarkFilterTransform())
+                        .placeholder(new ColorDrawable(AppGlobal.colorPrimary))
+                        .into(drawerBackground);
+                break;
+
+            case "wallpaper":
+                blurRadius = Integer.parseInt(AppGlobal.preferences.getString(SettingsFragment.PREF_KEY_BLUR_RADIUS, "0"));
+                final String header = PrefManager.getHeaderBackground();
+                if (TextUtils.isEmpty(header)) {
+                    return;
                 }
-            });
-            return;
+
+                // for get width and height of drawer header
+                drawerBackground.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                    @Override
+                    public boolean onPreDraw() {
+                        Picasso.with(MainActivity.this)
+                                .load(new File(header))
+                                .resize(drawerBackground.getWidth(), drawerBackground.getHeight())
+                                .centerCrop()
+                                .transform(new BlurTransform(blurRadius * 3, false))
+                                .transform(new DarkFilterTransform())
+                                .into(drawerBackground);
+                        drawerBackground.getViewTreeObserver().removeOnPreDrawListener(this);
+                        return false;
+                    }
+                });
+                break;
         }
 
-        int blurRadius = Integer.parseInt(AppGlobal.preferences.getString(SettingsFragment.PREF_KEY_BLUR_RADIUS, "0"));
-        Picasso.with(this)
-                .load(currentUser.photo_50)
-                .transform(new BlurTransform(blurRadius * 3, true))
-                .transform(new DarkFilterTransform())
-                .placeholder(new ColorDrawable(AppGlobal.colorPrimary))
-                .into(drawerBackground);
+
     }
 }

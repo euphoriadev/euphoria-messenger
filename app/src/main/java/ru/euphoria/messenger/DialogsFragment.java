@@ -43,6 +43,7 @@ import ru.euphoria.messenger.api.model.VKApp;
 import ru.euphoria.messenger.api.model.VKGroup;
 import ru.euphoria.messenger.api.model.VKMessage;
 import ru.euphoria.messenger.api.model.VKUser;
+import ru.euphoria.messenger.common.PrefManager;
 import ru.euphoria.messenger.concurrent.AsyncCallback;
 import ru.euphoria.messenger.concurrent.ThreadExecutor;
 import ru.euphoria.messenger.database.CacheStorage;
@@ -99,6 +100,10 @@ public class DialogsFragment extends Fragment
         getCachedDialogs(0, 30);
         getDialogs(0, 30);
         setTitle(0);
+
+        if (PrefManager.getOffline() && !PrefManager.getBoolean("first_show_alert")) {
+            showOfflineAlert();
+        }
         return rootView;
     }
 
@@ -191,6 +196,9 @@ public class DialogsFragment extends Fragment
         if (!AndroidUtils.hasConnection()) {
             snackbarNoConnection();
             refreshLayout.setRefreshing(false);
+            return;
+        }
+        if (PrefManager.getOffline()) {
             return;
         }
 
@@ -424,6 +432,21 @@ public class DialogsFragment extends Fragment
                         }
                     }
                 });
+
+        builder.show();
+    }
+
+    private void showOfflineAlert() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.fucking_admins_title);
+        builder.setMessage(R.string.fucking_admins_description);
+        builder.setPositiveButton(android.R.string.ok, null);
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                PrefManager.putBoolean("first_show_alert", true);
+            }
+        });
 
         builder.show();
     }

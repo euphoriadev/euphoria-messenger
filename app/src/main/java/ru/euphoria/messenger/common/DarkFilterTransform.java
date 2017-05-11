@@ -16,13 +16,18 @@ import com.squareup.picasso.Transformation;
 public class DarkFilterTransform implements Transformation {
     @Override
     public Bitmap transform(Bitmap source) {
+        Bitmap copy = source.copy(Bitmap.Config.ARGB_8888, true);
+        if (copy != source) {
+            source.recycle();
+            source = copy;
+        }
+
         ColorFilter filter = new LightingColorFilter(0xffb3b3b3, 0);
         Paint paint = new Paint();
         paint.setColorFilter(filter);
 
         Canvas canvas = new Canvas(source);
         canvas.drawBitmap(source, new Matrix(), paint);
-
         return source;
     }
 

@@ -63,6 +63,16 @@
     <string name="banned">забанен(а)</string>
     <string name="deleted">удален(а)</string>
 
+    <!-- Offline now working -->
+    <string name="fucking_admins_title">Offline R.I.P</string>
+    <string name="fucking_admins_description">Благодаря новому API при
+        обновлении списка диалогов и написании сообщения
+        <b>оффлайн пропадает</b>. Увы, мы тут ни при чем,
+        такое решение приняла администрация вк.\n\n Зато теперь
+        вместо "был в сети 15 минут назад", показывает лишь 5,
+        ага, спасибо
+    </string>
+
     <!-- General Settings -->
     <string name="pref_category_general">Внешний вид</string>
     <string name="pref_night_mode">Ночной режим</string>
@@ -115,4 +125,14 @@
     <string name="pref_official_group_summary">Всупить в оффициальную группу для наблюдения за разватием приложения?</string>
     <string name="pref_github">Euphoria on GitHub</string>
     <string name="pref_github_summary">Посмотреть исходный код проекта</string>
+
+    <string name="changelog">
+        <u>2.1</u>\n
+        • Исправление багов;\n
+        • Автоматический ночной режим;\n
+        • Открытие диалога с начала;\n
+        • Анализатор беседы, подобно MP3 mod;\n
+        • Отключение автоматического обновления даилогов при включеном оффлайне;\n
+
+    </string>
 </resources>

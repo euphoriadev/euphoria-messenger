@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 
 import static ru.euphoria.messenger.SettingsFragment.PREF_KEY_CHAT_BACKGROUND;
 import static ru.euphoria.messenger.SettingsFragment.PREF_KEY_HEADER_BACKGROUND;
+import static ru.euphoria.messenger.SettingsFragment.PREF_KEY_HEADER_TYPE;
 import static ru.euphoria.messenger.SettingsFragment.PREF_KEY_OFFLINE;
 import static ru.euphoria.messenger.SettingsFragment.PREF_KEY_TRANSLUCENT_STATUS_BAR;
 import static ru.euphoria.messenger.SettingsFragment.PREF_NIGHT_END;
@@ -43,6 +44,10 @@ public class PrefManager {
 
     public static boolean getOffline() {
         return getBoolean(PREF_KEY_OFFLINE, true);
+    }
+
+    public static String getDrawerHeaderType() {
+        return getString(PREF_KEY_HEADER_TYPE, "solid");
     }
 
     public static void setOffline(boolean value) {

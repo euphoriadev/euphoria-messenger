@@ -149,7 +149,7 @@ public class SettingsFragment extends PreferenceFragment
 
         ListPreference blurRadius = (ListPreference) findPreference(PREF_KEY_BLUR_RADIUS);
         blurRadius.setSummary(blurs[Integer.parseInt(blurRadius.getValue())]);
-        blurRadius.setEnabled(!headerType.getValue().equals("blur"));
+        blurRadius.setEnabled(!headerType.getValue().equals("solid"));
         blurRadius.setOnPreferenceChangeListener(this);
 
         Preference version = findPreference(PREF_KEY_VERSION);
@@ -408,7 +408,7 @@ public class SettingsFragment extends PreferenceFragment
                 if (newValue.equals("wallpaper")) {
                     pickImageFromGallery(REQUEST_CODE_HEADER);
                 }
-                findPreference(PREF_KEY_BLUR_RADIUS).setEnabled(newValue.equals("blur"));
+                findPreference(PREF_KEY_BLUR_RADIUS).setEnabled(!newValue.toString().equals("solid"));
                 break;
 
             case PREF_KEY_OFFLINE:
