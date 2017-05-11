@@ -62,11 +62,11 @@ public class PrefManager {
     }
 
     public static String getNightStart() {
-        return getString(PREF_NIGHT_START, "7:00");
+        return getString(PREF_NIGHT_START, "21:00");
     }
 
     public static String getNightEnd() {
-        return getString(PREF_NIGHT_END, "21:00");
+        return getString(PREF_NIGHT_END, "7:00");
     }
 
     /**

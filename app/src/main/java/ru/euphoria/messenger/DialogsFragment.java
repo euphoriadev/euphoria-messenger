@@ -127,6 +127,20 @@ public class DialogsFragment extends Fragment
 
     @Override
     public void onItemClick(View view, int position) {
+        openChat(position, false);
+    }
+
+    @Override
+    public void onItemLongClick(View view, int position) {
+        createOptionsDialog(position);
+    }
+
+    private void snackbarNoConnection() {
+        Snackbar.make(fab, R.string.check_connection, Snackbar.LENGTH_LONG)
+                .show();
+    }
+
+    private void openChat(int position, boolean fromStart) {
         VKMessage item = adapter.messages.get(position);
         VKUser user = adapter.searchUser(item.user_id);
         VKGroup group = adapter.searchGroup(item.user_id);
@@ -138,19 +152,10 @@ public class DialogsFragment extends Fragment
         intent.putExtra("chat_id", item.chat_id);
         intent.putExtra("group_id", group != null ? group.id : -1);
         intent.putExtra("members_count", item.isChat() ? item.users_count : -1);
+        intent.putExtra("from_start", fromStart);
 
         startActivity(intent);
         getActivity().overridePendingTransition(R.anim.side_left, R.anim.alpha_in);
-    }
-
-    @Override
-    public void onItemLongClick(View view, int position) {
-        createOptionsDialog(position);
-    }
-
-    private void snackbarNoConnection() {
-        Snackbar.make(fab, R.string.check_connection, Snackbar.LENGTH_LONG)
-                .show();
     }
 
     private void createAdapter(ArrayList<VKMessage> messages, int offset) {
@@ -403,13 +408,17 @@ public class DialogsFragment extends Fragment
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case 0:
+                                openChat(position, true);
+                                break;
+
+                            case 1:
                                 final VKUser user = MemoryCache.getUser(msg.user_id);
                                 if (!VKGroup.isGroupId(msg.user_id) && !msg.isChat() && user.online_app > 0) {
                                     createAppInfo(user.online_app);
                                     break;
                                 }
 
-                            case 1:
+                            case 2:
                                 createDeleteConfirm(finalTitle, position, msg.user_id, msg.chat_id);
                                 break;
                         }

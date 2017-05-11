@@ -128,6 +128,7 @@ public class OpenChatActivity extends BaseActivity
             return;
         }
 
+        swipeRefresh.setRefreshing(true);
         ThreadExecutor.execute(new AsyncCallback(this) {
             @Override
             public void ready() throws Exception {
@@ -159,6 +160,7 @@ public class OpenChatActivity extends BaseActivity
                 if (isFinishing()) {
                     return;
                 }
+                swipeRefresh.setRefreshing(false);
 
                 Snackbar.make((ViewGroup) viewPager.getParent(), e.getMessage(), Snackbar.LENGTH_LONG)
                         .show();

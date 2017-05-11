@@ -158,8 +158,10 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
 
                 holder.body.setText(span);
             }
-            if (!ArrayUtil.isEmpty(msg.attachments) && TextUtils.isEmpty(msg.body)) {
-                String body = getAttachmentBody(msg.attachments);
+            if ((!ArrayUtil.isEmpty(msg.attachments)
+                    || !ArrayUtil.isEmpty(msg.fws_messages))
+                    && TextUtils.isEmpty(msg.body)) {
+                String body = getAttachmentBody(msg.attachments, msg.fws_messages);
                 SpannableString span = new SpannableString(body);
                 int start = body.indexOf(':');
                 span.setSpan(new ForegroundColorSpan(AppGlobal.colorPrimary), start == -1 ? 0 : start, body.length(), 0);
@@ -299,7 +301,7 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
         return "";
     }
 
-    private String getAttachmentBody(ArrayList<VKModel> attachments) {
+    private String getAttachmentBody(ArrayList<VKModel> attachments, ArrayList<VKMessage> forwards) {
         if (ArrayUtil.isEmpty(attachments)) {
             return "";
         }
@@ -320,6 +322,10 @@ public class DialogAdapter extends RecyclerView.Adapter<DialogAdapter.ViewHolder
             res = R.string.attach_gift;
         } else if (attach instanceof VKLink) {
             res = R.string.attach_link;
+        }
+        if (!ArrayUtil.isEmpty(forwards) && res == 0) {
+            res = forwards.size() > 1 ? R.string.attach_forward_messages
+                    : R.string.attach_forward_message;
         }
 
         return context.getString(res);

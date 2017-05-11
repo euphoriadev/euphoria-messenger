@@ -65,6 +65,7 @@ public class MessagesActivity extends BaseActivity
     private int userId, chatId,
             groupId, membersCount;
     private boolean loading = true;
+    private boolean chronologyOrder;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,7 +89,11 @@ public class MessagesActivity extends BaseActivity
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addOnScrollListener(new DownScrollListener());
+        if (chronologyOrder) {
+            recyclerView.addOnScrollListener(new UpScrollListener());
+        } else {
+            recyclerView.addOnScrollListener(new DownScrollListener());
+        }
 
         fabSend = (FloatingActionButton) findViewById(R.id.fabSend);
         fabSend.setOnClickListener(this);
@@ -194,6 +199,10 @@ public class MessagesActivity extends BaseActivity
 
     }
 
+    public RecyclerView getRecycler() {
+        return recyclerView;
+    }
+
     private void getIntentData() {
         Intent intent = getIntent();
 
@@ -203,6 +212,7 @@ public class MessagesActivity extends BaseActivity
         this.groupId = intent.getIntExtra("group_id", -1);
         this.membersCount = intent.getIntExtra("members_count", -1);
         this.photo = intent.getStringExtra("photo");
+        this.chronologyOrder = intent.getBooleanExtra("from_start", false);
     }
 
     private void createAdapter(ArrayList<VKMessage> messages) {
@@ -212,14 +222,23 @@ public class MessagesActivity extends BaseActivity
         } else {
             adapter = new MessageAdapter(this, messages, chatId, userId);
             recyclerView.setAdapter(adapter);
-            recyclerView.scrollToPosition(adapter.getItemCount() - 1);
+            if (chronologyOrder) {
+                recyclerView.scrollToPosition(0);
+            } else {
+                recyclerView.scrollToPosition(adapter.getMessagesCount());
+            }
         }
     }
 
     private void insertMessages(ArrayList<VKMessage> messages) {
         if (adapter != null) {
-            adapter.insert(messages);
-            adapter.notifyItemRangeInserted(0, messages.size());
+            if (!chronologyOrder) {
+                adapter.insert(messages);
+                adapter.notifyItemRangeInserted(0, messages.size());
+            } else {
+                adapter.getValues().addAll(messages);
+                adapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -315,13 +334,16 @@ public class MessagesActivity extends BaseActivity
     private void getMessages(final int offset) {
         loading = true;
         VKApi.messages().getHistory()
+                .rev(chronologyOrder)
                 .peerId(getPeerId())
                 .offset(offset)
                 .count(30)
                 .execute(VKMessage.class, new VKApi.OnResponseListener<VKMessage>() {
                     @Override
                     public void onSuccess(ArrayList<VKMessage> messages) {
-                        Collections.reverse(messages);
+                        if (!chronologyOrder) {
+                            Collections.reverse(messages);
+                        }
                         if (offset == 0) {
                             CacheStorage.deleteMessages(userId, chatId);
                             CacheStorage.insert(DatabaseHelper.MESSAGES_TABLE, messages);
@@ -416,6 +438,21 @@ public class MessagesActivity extends BaseActivity
                 }
             }
         }
+    }
 
+    private class UpScrollListener extends RecyclerView.OnScrollListener {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+
+            if (dy > 0 && !loading) {
+                // Scrolling up
+                final int position = layoutManager.findLastVisibleItemPosition();
+                if (adapter.getMessagesCount() - position < 10) {
+                    // can load old messages
+                    getMessages(adapter.getMessagesCount());
+                }
+            }
+        }
     }
 }

@@ -19,9 +19,10 @@ public class VKUser extends VKModel implements Serializable {
     /** User object with empty name; */
     public static final VKUser EMPTY = new VKUser() {
         @Override public String toString() {
-            return "";
+            return "Unknown Unknown";
         }
     };
+
 
     /** User ID, positive number. */
     public int id;
@@ -81,7 +82,8 @@ public class VKUser extends VKModel implements Serializable {
      * Creates a new User model without fields
      */
     public VKUser() {
-        // empty
+        this.first_name = "Unknown";
+        this.last_name = "Unknown";
     }
 
     /**

@@ -182,7 +182,7 @@ public class AndroidUtils {
     }
 
     /**
-     * Magic, don't to touch
+     * Magic, don't touch
      */
     public static String parseSize(long sizeInBytes) {
         long unit = 1024;

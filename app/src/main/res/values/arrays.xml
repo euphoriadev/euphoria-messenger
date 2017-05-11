@@ -14,10 +14,12 @@
     </string-array>
 
     <string-array name="dialog_options">
+        <item>Открыть с начала</item>
         <item>Удалить диалог</item>
     </string-array>
 
     <string-array name="dialog_options_online">
+        <item>Открыть с начала</item>
         <item>Онлайн приложение</item>
         <item>Удалить диалог</item>
     </string-array>

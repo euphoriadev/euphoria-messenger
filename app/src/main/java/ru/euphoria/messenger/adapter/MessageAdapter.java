@@ -1,5 +1,6 @@
 package ru.euphoria.messenger.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -36,6 +37,7 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import ru.euphoria.messenger.ImageViewActivity;
+import ru.euphoria.messenger.MessagesActivity;
 import ru.euphoria.messenger.R;
 import ru.euphoria.messenger.SettingsFragment;
 import ru.euphoria.messenger.api.VKApi;
@@ -199,6 +201,8 @@ public class MessageAdapter extends BaseAdapter<VKMessage, MessageAdapter.ViewHo
             getValues().add(message);
             notifyDataSetChanged();
         }
+        MessagesActivity root = (MessagesActivity) context;
+        root.getRecycler().scrollToPosition(getMessagesCount());
     }
 
     public void destroy() {

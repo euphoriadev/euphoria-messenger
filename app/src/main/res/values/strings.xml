@@ -25,6 +25,8 @@
     <string name="attach_sticker">Стикер</string>
     <string name="attach_gift">Подарок</string>
     <string name="attach_link">Ссылка</string>
+    <string name="attach_forward_message">Пересланное сообщение</string>
+    <string name="attach_forward_messages">Пересланные сообщения</string>
 
     <string name="action_chat_create">%s создал(а) беседу</string>
     <string name="action_chat_invite_user"
@@ -52,6 +54,7 @@
     <string name="subtitle_last_seen_female">заходила %s</string>
     <string name="subtitle_community">сообщество</string>
     <string name="subtitle_chat">%d участников</string>
+    <string name="subtitle_messages">%,d ✉</string>
 
     <string name="refresh">Обновить</string>
     <string name="attachments">Вложения</string>
