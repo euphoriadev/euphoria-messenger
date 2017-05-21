@@ -14,7 +14,7 @@ import ru.euphoria.messenger.json.JsonObject;
  * such as the token, email, api id and user id
  */
 public class UserConfig {
-    public static final int EUPHORIA_ID = 4510232;
+    public static final int EUPHORIA_ID = Identifiers.EUPHORIA;
 
     public static final String ACCESS_TOKEN = "access_token";
     public static final String USER_ID = "user_id";

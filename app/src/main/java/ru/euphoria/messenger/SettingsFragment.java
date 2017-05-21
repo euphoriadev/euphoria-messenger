@@ -18,6 +18,14 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -31,12 +39,15 @@ import java.util.Calendar;
 import java.util.HashSet;
 
 import ru.euphoria.messenger.api.VKApi;
+import ru.euphoria.messenger.api.model.VKUser;
 import ru.euphoria.messenger.common.AppGlobal;
 import ru.euphoria.messenger.common.PrefManager;
 import ru.euphoria.messenger.common.ThemeManager;
+import ru.euphoria.messenger.concurrent.ThreadExecutor;
 import ru.euphoria.messenger.database.DatabaseHelper;
 import ru.euphoria.messenger.database.MemoryCache;
 import ru.euphoria.messenger.util.AndroidUtils;
+import ru.euphoria.messenger.util.ArrayUtil;
 import ru.euphoria.messenger.view.ColorPickerPalette;
 import ru.euphoria.messenger.view.ColorPickerSwatch;
 
@@ -65,6 +76,7 @@ public class SettingsFragment extends PreferenceFragment
     public static final String PREF_KEY_BLUR_RADIUS = "blur_radius";
     public static final String PREF_KEY_TRANSLUCENT_STATUS_BAR = "translucent_status_bar";
     public static final String PREF_KEY_VERSION = "version";
+    public static final String PREF_KEY_AUTHORS = "authors";
     public static final String PREF_KEY_GROUP = "group";
     public static final String PREF_KEY_GITHUB = "github";
 
@@ -106,6 +118,7 @@ public class SettingsFragment extends PreferenceFragment
         findPreference(PREF_KEY_GITHUB).setOnPreferenceClickListener(this);
         findPreference(PREF_NIGHT_START).setOnPreferenceClickListener(this);
         findPreference(PREF_NIGHT_END).setOnPreferenceClickListener(this);
+        findPreference(PREF_KEY_AUTHORS).setOnPreferenceClickListener(this);
 //        findPreference(PREF_KEY_ICON_COLOR).setOnPreferenceClickListener(this);
 
         SwitchPreference randomTheme = (SwitchPreference) findPreference(PREF_KEY_RANDOM_THEME);
@@ -337,6 +350,19 @@ public class SettingsFragment extends PreferenceFragment
         builder.show();
     }
 
+    private void createDevelopers() {
+
+    }
+
+    private void createChangelog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.pref_changelog);
+        builder.setMessage(R.string.changelog);
+        builder.setPositiveButton(android.R.string.ok, null);
+
+        builder.show();
+    }
+
     private void createTimePicker(final Preference preference) {
         Calendar calendar = Calendar.getInstance();
 
@@ -434,9 +460,11 @@ public class SettingsFragment extends PreferenceFragment
                 break ;
 
             case PREF_KEY_VERSION:
-                if (Math.round(Math.random()) % 10 == 0) {
-                    Toast.makeText(getActivity(), "Увы, разраб слишком ленив, шобы придумывать пасхалку", Toast.LENGTH_SHORT).show();
-                }
+                createChangelog();
+                break;
+
+            case PREF_KEY_AUTHORS:
+                createDevelopers();
                 break;
 
             case PREF_KEY_CHAT_BACKGROUND:

@@ -110,6 +110,7 @@
             android:key="version"
             android:title="@string/pref_version_title" />
         <Preference
+            android:key="authors"
             android:summary="@string/pref_devs_title"
             android:title="@string/pref_authors_title" />
 

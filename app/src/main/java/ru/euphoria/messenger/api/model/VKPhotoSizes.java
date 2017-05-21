@@ -13,6 +13,8 @@ import ru.euphoria.messenger.json.JsonObject;
  */
 
 public class VKPhotoSizes extends VKModel implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private ArrayList<PhotoSize> sizes;
 
     /**

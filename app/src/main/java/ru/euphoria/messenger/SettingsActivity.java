@@ -2,8 +2,13 @@ package ru.euphoria.messenger;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+
+import ru.euphoria.messenger.common.PrefManager;
+import ru.euphoria.messenger.common.ThemeManager;
+import ru.euphoria.messenger.util.AndroidUtils;
 
 public class SettingsActivity extends BaseActivity {
     private SettingsFragment fragment;

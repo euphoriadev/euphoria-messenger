@@ -8,6 +8,8 @@ import ru.euphoria.messenger.json.JsonObject;
  * Object describes attached link
  */
 public class VKLink extends VKModel implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     /** Link URL. */
     public String url;
 

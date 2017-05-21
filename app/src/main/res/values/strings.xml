@@ -41,6 +41,9 @@
     <string name="auth">Авторизация</string>
     <string name="login_with_token">Вход через токен</string>
 
+    <string name="label_user_id">User ID</string>
+    <string name="label_user_token">Access Token</string>
+
     <string name="check_connection">Ошибка! Где интернет?</string>
     <string name="thanks">Спасибо!</string>
     <string name="me">Я:</string>
@@ -69,7 +72,7 @@
         обновлении списка диалогов и написании сообщения
         <b>оффлайн пропадает</b>. Увы, мы тут ни при чем,
         такое решение приняла администрация вк.\n\n Зато теперь
-        вместо "был в сети 15 минут назад", показывает лишь 5,
+        вместо \"был в сети 15 минут назад\", показывает лишь 5,
         ага, спасибо
     </string>
 
@@ -126,6 +129,7 @@
     <string name="pref_github">Euphoria on GitHub</string>
     <string name="pref_github_summary">Посмотреть исходный код проекта</string>
 
+    <string name="pref_changelog">Список изминений</string>
     <string name="changelog">
         <u>2.1</u>\n
         • Исправление багов;\n

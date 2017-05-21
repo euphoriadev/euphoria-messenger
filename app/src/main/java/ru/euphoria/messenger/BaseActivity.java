@@ -23,6 +23,8 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(0, R.anim.side_right);
+        if (!(this instanceof MainActivity)) {
+            overridePendingTransition(0, R.anim.side_right);
+        }
     }
 }

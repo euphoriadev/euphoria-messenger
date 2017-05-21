@@ -1,5 +1,6 @@
 package ru.euphoria.messenger;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -19,6 +20,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -58,11 +60,12 @@ import ru.euphoria.messenger.util.ArrayUtil;
 
 public class DialogsFragment extends Fragment
         implements SwipeRefreshLayout.OnRefreshListener,
-        DialogAdapter.OnItemClickListener {
+        DialogAdapter.OnItemClickListener, View.OnClickListener {
 
     private View rootView;
     private RecyclerView recyclerView;
     private SwipeRefreshLayout refreshLayout;
+    private Toolbar toolbar;
     private FloatingActionButton fab;
 
     private LinearLayoutManager layoutManager;
@@ -73,6 +76,9 @@ public class DialogsFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_dialogs, container, false);
+
+        toolbar = ((MainActivity) getActivity()).getToolbar();
+        toolbar.setOnClickListener(this);
 
         fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -98,12 +104,15 @@ public class DialogsFragment extends Fragment
         refreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.CYAN, Color.BLACK);
 
         getCachedDialogs(0, 30);
-        getDialogs(0, 30);
+        if (!PrefManager.getOffline() || adapter == null) {
+            getDialogs(0, 30);
+        }
         setTitle(0);
 
         if (PrefManager.getOffline() && !PrefManager.getBoolean("first_show_alert")) {
             showOfflineAlert();
         }
+
         return rootView;
     }
 
@@ -114,6 +123,8 @@ public class DialogsFragment extends Fragment
         if (adapter != null) {
             adapter.destroy();
         }
+
+        toolbar.setOnClickListener(null);
     }
 
     public void setTitle(int count) {
@@ -138,6 +149,13 @@ public class DialogsFragment extends Fragment
     @Override
     public void onItemLongClick(View view, int position) {
         createOptionsDialog(position);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (adapter != null) {
+            recyclerView.smoothScrollToPosition(0);
+        }
     }
 
     private void snackbarNoConnection() {
@@ -196,9 +214,6 @@ public class DialogsFragment extends Fragment
         if (!AndroidUtils.hasConnection()) {
             snackbarNoConnection();
             refreshLayout.setRefreshing(false);
-            return;
-        }
-        if (PrefManager.getOffline()) {
             return;
         }
 
